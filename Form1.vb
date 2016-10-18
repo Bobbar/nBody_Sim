@@ -1786,7 +1786,7 @@ finished:
 
     End Sub
     Private Sub Render_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Render.MouseDown
-        Debug.Print(e.Location.ToString)
+        Debug.Print("RenLoc: " & e.Location.ToString)
         If e.Button = Windows.Forms.MouseButtons.Right Then
 
             bolStopDraw = True
@@ -1836,7 +1836,8 @@ finished:
 
                     If MouseOver(New SPoint(e.Location), Ball(i)) And Ball(i).Visible Then
                         'Debug.Print(Render.PointToClient(New Point(Ball(i).LocX, Ball(i).LocY)).ToString)
-                        Debug.Print(Ball(i).LocX & "-" & Ball(i).LocY)
+                        Debug.Print("BLoc: " & Ball(i).LocX & "-" & Ball(i).LocY)
+
                         If Not bolAltDown And bolShiftDown Then MoV = 1
                         Sel = i
                         If bolShiftDown Then
@@ -1861,6 +1862,7 @@ finished:
 
                         'Debug.Print("Mass: " & Ball(i).Mass & " units")
                         ' Debug.Print("Index: " & i)
+
 
                     End If
 
@@ -2108,6 +2110,10 @@ finished:
 
         intTargetFPS = txtFPS.Text
 
+        Dim X As Single = Me.Render.Width / 2
+        Dim Y As Single = Me.Render.Height / 2
+        ScaleOffset.X = ScaleMousePosExact(New SPoint(X, Y)).X
+        ScaleOffset.Y = ScaleMousePosExact(New SPoint(X, Y)).Y
 
         bolShadows = False
 
@@ -2399,11 +2405,11 @@ finished:
             Ball(UBound(Ball)).Color = Color.Black 'RandomRGBColor() 'vbWhite
             Ball(UBound(Ball)).Visible = True
 
-            Ball(UBound(Ball)).LocX = GetRandomNumber(1, Render.Width)
+            Ball(UBound(Ball)).LocX = GetRandomNumber(1, Render.Width) - ScaleOffset.X
             'Ball(UBound(Ball)).LocX = CInt(Int((Render.ScaleWidth * Rnd()) + 1))  '((Render2.ScaleWidth) / 2) ' - 10
             'Randomize(Timer)
             'Ball(UBound(Ball)).LocY = CInt(Int((Render.ScaleHeight * Rnd()) + 1)) '((Render2.ScaleHeight) / 2) '+ Ball(UBound(Ball) - 1).LocY + Ball(UBound(Ball) - 1).Size
-            Ball(UBound(Ball)).LocY = GetRandomNumber(1, Render.Height)
+            Ball(UBound(Ball)).LocY = GetRandomNumber(1, Render.Height) - ScaleOffset.Y
 
             Ball(UBound(Ball)).SpeedX = 0
             Ball(UBound(Ball)).SpeedY = 0
@@ -2761,15 +2767,22 @@ finished:
     End Sub
     Public BallViewLoc As New SPoint
     Private Sub Render_MouseWheel(sender As Object, e As MouseEventArgs) Handles Render.MouseWheel
-        Dim scale_amount As Single = 0.1
+        Dim scale_amount As Single = 0.03 * pic_scale
+
         If e.Delta > 0 Then
             pic_scale += scale_amount
         Else
             pic_scale -= scale_amount
         End If
+        UpdateScale()
+        Debug.Print(pic_scale)
+        Dim X As Single = Me.Render.Width / 2
+        Dim Y As Single = Me.Render.Height / 2
+        ScaleOffset.X = ScaleMousePosExact(New SPoint(X, Y)).X
+        ScaleOffset.Y = ScaleMousePosExact(New SPoint(X, Y)).Y
 
 
-
+        Debug.Print("Scale Offset: " + ScaleMousePosExact(New SPoint(X, Y)).ToString)
 
 
         Dim OffsetValue As New SPoint
@@ -2777,8 +2790,7 @@ finished:
         OffsetValue.Y = Render.Height / 2 * pic_scale 'RelBallPosMod.Y / pic_scale
         Dim CentOffset As New SPoint(RelBallPosMod.X - OffsetValue.X, RelBallPosMod.Y - OffsetValue.Y)
         Dim Dist As Double = Math.Sqrt((0 - Render.Width) ^ 2 + (0 - Render.Height) ^ 2)
-        Debug.Print(Dist / 4 * pic_scale)
-        UpdateScale()
+        'Debug.Print(Dist / 4 * pic_scale)
 
         '  RelBallPosMod = RelBallPosMod - CentOffset
 
@@ -2790,7 +2802,7 @@ finished:
 
         'Dim mouse_true As New Point(e.X / pic_scale + BallViewLoc.X, e.Y / pic_scale + BallViewLoc.Y)
         'Dim mouse_relative As New Point(Render.)
-        Debug.Print(pic_scale)
+        'Debug.Print(pic_scale)
         Debug.Print(RelBallPosMod.ToString)
     End Sub
 

@@ -65,7 +65,7 @@ Public Module Renderer
                         '  Dim myPen As New Pen(Color.Red)
                         Dim myBrush As New SolidBrush(Ball(i).Color)
                         Dim myBrush2 As New SolidBrush(Color.Red)
-                        gr.FillEllipse(myBrush, Ball(i).LocX - Ball(i).Size / 2 + RelBallPosMod.X, Ball(i).LocY - Ball(i).Size / 2 + RelBallPosMod.Y, Ball(i).Size, Ball(i).Size)
+                        gr.FillEllipse(myBrush, Ball(i).LocX - Ball(i).Size / 2 + RelBallPosMod.X + ScaleOffset.X, Ball(i).LocY - Ball(i).Size / 2 + RelBallPosMod.Y + ScaleOffset.Y, Ball(i).Size, Ball(i).Size)
 
 
                         gr.FillEllipse(myBrush2, Origin.X, Origin.Y, 5, 5)

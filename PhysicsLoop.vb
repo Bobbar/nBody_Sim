@@ -28,7 +28,7 @@ Public Module PhysicsLoop
 
     Public pic_scale As Single
     Public RelBallPosMod As New SPoint
-
+    Public ScaleOffset As New SPoint
 
     Public gravity As Single = 0.0
     Public friction As Single = 0.99
@@ -675,15 +675,17 @@ restart:
 
 
             If bolFollow Then
-                Dim DiffX As Double, DiffY As Double
+                '  Dim DiffX As Double, DiffY As Double
 
                 If Ball(lngFollowBall).LocX <> FollowX Or Ball(lngFollowBall).LocY <> FollowY Then
 
-                    DiffX = Ball(lngFollowBall).LocX - (Form1.Render.Width / 2) 'FollowX
-                    DiffY = Ball(lngFollowBall).LocY - (Form1.Render.Height / 2) 'FollowY
+                    'DiffX = Ball(lngFollowBall).LocX - (Form1.Render.Width / 2) 'FollowX
+                    'DiffY = Ball(lngFollowBall).LocY - (Form1.Render.Height / 2) 'FollowY
 
                     RelBallPosMod.X = -(Ball(lngFollowBall).LocX - (Form1.Render.Width / 2)) 'FollowX
                     RelBallPosMod.Y = -(Ball(lngFollowBall).LocY - (Form1.Render.Height / 2)) '
+
+
 
                     'For A = 1 To UBound(Ball)
 
