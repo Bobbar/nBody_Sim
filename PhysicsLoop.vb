@@ -4,6 +4,8 @@ Imports System.Threading.Tasks
 Imports System.Threading
 Imports System.Drawing.Drawing2D
 Public Module PhysicsLoop
+
+
     Public Class SPoint
         Public X As Single
         Public Y As Single
@@ -680,8 +682,8 @@ restart:
                     DiffX = Ball(lngFollowBall).LocX - (Form1.Render.Width / 2) 'FollowX
                     DiffY = Ball(lngFollowBall).LocY - (Form1.Render.Height / 2) 'FollowY
 
-                    RelBallPosMod.X = Ball(lngFollowBall).LocX - (Form1.Render.Width / 2) 'FollowX
-                    RelBallPosMod.Y = Ball(lngFollowBall).LocY - (Form1.Render.Height / 2) '
+                    RelBallPosMod.X = -(Ball(lngFollowBall).LocX - (Form1.Render.Width / 2)) 'FollowX
+                    RelBallPosMod.Y = -(Ball(lngFollowBall).LocY - (Form1.Render.Height / 2)) '
 
                     'For A = 1 To UBound(Ball)
 
@@ -699,45 +701,45 @@ restart:
 
 
 
-            If Form1.chkTrails.Checked And s.ThreadState <> Threading.ThreadState.Running Then
-                For A = 1 To UBound(Ball)
+            'If Form1.chkTrails.Checked And s.ThreadState <> Threading.ThreadState.Running Then
+            '    For A = 1 To UBound(Ball)
 
-                    If Ball(A).Visible And Ball(A).LocX > 0 And Ball(A).LocX < Form1.Render.Width And Ball(A).LocY > 0 And Ball(A).LocY < Form1.Render.Height And s.ThreadState <> Threading.ThreadState.Running Then
-                        'g = g + 1
-                        ' If g > 4 Then g = 0
+            '        If Ball(A).Visible And Ball(A).LocX > 0 And Ball(A).LocX < Form1.Render.Width And Ball(A).LocY > 0 And Ball(A).LocY < Form1.Render.Height And s.ThreadState <> Threading.ThreadState.Running Then
+            '            'g = g + 1
+            '            ' If g > 4 Then g = 0
 
 
-                        ' e.Graphics.FillEllipse(Brushes.LightBlue, ball_loc_x(A) - 1, ball_loc_y(A) - 1, BallSize(A) + 2, BallSize(A) + 2)
-                        ' e.Graphics.FillEllipse(Brushes.Blue, ball_loc_x(A), ball_loc_y(A), BallSize(A), BallSize(A))
+            '            ' e.Graphics.FillEllipse(Brushes.LightBlue, ball_loc_x(A) - 1, ball_loc_y(A) - 1, BallSize(A) + 2, BallSize(A) + 2)
+            '            ' e.Graphics.FillEllipse(Brushes.Blue, ball_loc_x(A), ball_loc_y(A), BallSize(A), BallSize(A))
 
-                        ' Dim myBrush As New SolidBrush(Ball(A).Color)
-                        Dim myPen As New Pen(Ball(A).Color)
+            '            ' Dim myBrush As New SolidBrush(Ball(A).Color)
+            '            Dim myPen As New Pen(Ball(A).Color)
 
-                        'Render.CreateGraphics.SmoothingMode = SmoothingMode.AntiAlias
-                        ' Render.CreateGraphics.FillEllipse(Brushes.Black, Ball(A).LocX - Ball(A).Size / 2 - 1, Ball(A).LocY - Ball(A).Size / 2 - 1, Ball(A).Size + 2, Ball(A).Size + 2)
-                        'Render.CreateGraphics.FillEllipse(myBrush, Ball(A).LocX - Ball(A).Size / 2, Ball(A).LocY - Ball(A).Size / 2, Ball(A).Size, Ball(A).Size)
-                        Form1.Render.CreateGraphics.DrawEllipse(myPen, Ball(A).LocX - Ball(A).Size / 2, Ball(A).LocY - Ball(A).Size / 2, Ball(A).Size, Ball(A).Size)
+            '            'Render.CreateGraphics.SmoothingMode = SmoothingMode.AntiAlias
+            '            ' Render.CreateGraphics.FillEllipse(Brushes.Black, Ball(A).LocX - Ball(A).Size / 2 - 1, Ball(A).LocY - Ball(A).Size / 2 - 1, Ball(A).Size + 2, Ball(A).Size + 2)
+            '            'Render.CreateGraphics.FillEllipse(myBrush, Ball(A).LocX - Ball(A).Size / 2, Ball(A).LocY - Ball(A).Size / 2, Ball(A).Size, Ball(A).Size)
+            '            Form1.Render.CreateGraphics.DrawEllipse(myPen, Ball(A).LocX - Ball(A).Size / 2, Ball(A).LocY - Ball(A).Size / 2, Ball(A).Size, Ball(A).Size)
 
-                    End If
+            '        End If
 
-                Next A
+            '    Next A
 
-            End If
+            'End If
 
             'If bolBallsRemoved Then ShrinkBallArray()
 
-            If Not Form1.chkTrails.Checked And s.ThreadState <> Threading.ThreadState.Running Then
+            If s.ThreadState <> Threading.ThreadState.Running Then
                 'Render.Refresh()
 
-                Dim bm As New Bitmap(CInt(Form1.Render.Width), CInt(Form1.Render.Height)) '(CInt(pic_scale * Render.Width), CInt(pic_scale * Render.Height))
-                Using gr As Graphics = Graphics.FromImage(bm)
-                    gr.Clear(Color.White)
-                    gr.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
-                    gr.ScaleTransform(pic_scale, pic_scale)
+                '  Dim bm As New Bitmap(CInt(Form1.Render.Width), CInt(Form1.Render.Height)) '(CInt(pic_scale * Render.Width), CInt(pic_scale * Render.Height))
+                '  Using gr As Graphics = Graphics.FromImage(bm)
+                '  If Not Form1.chkTrails.Checked Then gr.Clear(Color.White)
+                ' gr.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
+                'gr.ScaleTransform(pic_scale, pic_scale)
 
-                    Drawr(gr)
-                End Using
-                Form1.Render.Image = bm
+                '  Drawr()
+                ' End Using
+                Form1.Render.Image = Drawr()
             End If
 
 

@@ -2077,6 +2077,10 @@ finished:
         End If
 
         FPS = 0
+
+        RenderWindowDims.X = CInt(Me.Render.Width)
+        RenderWindowDims.Y = CInt(Me.Render.Height)
+
         Application.DoEvents()
         'condense array by removing invisible balls
     End Sub
@@ -2156,6 +2160,7 @@ finished:
         't2.Start()
         't3.Start()
         ' butAddBall.PerformClick()
+
         MainLoop()
 
 
@@ -2369,6 +2374,8 @@ finished:
 
         'If UBound(Ball) > 0 And lngFollowBall > 0 Then
 
+
+
         txtSpeedX.Text = Ball(lngFollowBall).SpeedX
         txtSpeedY.Text = Ball(lngFollowBall).SpeedY
         txtSize.Text = Ball(lngFollowBall).Size
@@ -2523,27 +2530,33 @@ finished:
 
         Render.Width = Me.Width - 30
         Render.Height = Me.Height - 70
-        If bolFollow Then
-            Dim DiffX As Double, DiffY As Double
 
-            If Ball(lngFollowBall).LocX <> FollowX Or Ball(lngFollowBall).LocY <> FollowY Then
+        'If bGrav = 1 Then
+        '    RenderWindowDims.X = CInt(Me.Render.Width)
+        '    RenderWindowDims.Y = CInt(Me.Render.Height)
+        'End If
 
-                DiffX = Ball(lngFollowBall).LocX - (Render.Width / 2) 'FollowX
-                DiffY = Ball(lngFollowBall).LocY - (Render.Height / 2) 'FollowY
+        'If bolFollow Then
+        '    Dim DiffX As Double, DiffY As Double
 
-                For i = 1 To UBound(Ball)
+        '    If Ball(lngFollowBall).LocX <> FollowX Or Ball(lngFollowBall).LocY <> FollowY Then
 
-                    Ball(i).LocX = Ball(i).LocX - DiffX
-                    Ball(i).LocY = Ball(i).LocY - DiffY
+        '        DiffX = Ball(lngFollowBall).LocX - (Render.Width / 2) 'FollowX
+        '        DiffY = Ball(lngFollowBall).LocY - (Render.Height / 2) 'FollowY
 
-                Next
+        '        For i = 1 To UBound(Ball)
 
-                FollowX = Ball(lngFollowBall).LocX
-                FollowY = Ball(lngFollowBall).LocY
+        '            Ball(i).LocX = Ball(i).LocX - DiffX
+        '            Ball(i).LocY = Ball(i).LocY - DiffY
 
-            End If
+        '        Next
 
-        End If
+        '        FollowX = Ball(lngFollowBall).LocX
+        '        FollowY = Ball(lngFollowBall).LocY
+
+        '    End If
+
+        'End If
 
     End Sub
 
@@ -2716,7 +2729,9 @@ finished:
     End Sub
 
     Private Sub Form1_ResizeEnd(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.ResizeEnd
-
+        'RenderWindowDims.X = CInt(Me.Render.Width)
+        'RenderWindowDims.Y = CInt(Me.Render.Height)
+        ' UpdateScale()
 
         'If bolStop Then
         '    ' Button3.Text = "Start"
@@ -2753,13 +2768,17 @@ finished:
             pic_scale -= scale_amount
         End If
 
+
+
+
+
         Dim OffsetValue As New SPoint
         OffsetValue.X = Render.Width / 2 * pic_scale ' RelBallPosMod.X / pic_scale
         OffsetValue.Y = Render.Height / 2 * pic_scale 'RelBallPosMod.Y / pic_scale
         Dim CentOffset As New SPoint(RelBallPosMod.X - OffsetValue.X, RelBallPosMod.Y - OffsetValue.Y)
         Dim Dist As Double = Math.Sqrt((0 - Render.Width) ^ 2 + (0 - Render.Height) ^ 2)
         Debug.Print(Dist / 4 * pic_scale)
-
+        UpdateScale()
 
         '  RelBallPosMod = RelBallPosMod - CentOffset
 

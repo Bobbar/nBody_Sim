@@ -122,7 +122,9 @@
     <Compile Include="PhysicsLoop.vb" />
     <Compile Include="Point2D.vb" />
     <Compile Include="Point3D.vb" />
-    <Compile Include="Render.vb" />
+    <Compile Include="Render.vb">
+      <CustomToolNamespace>Renderer</CustomToolNamespace>
+    </Compile>
     <Compile Include="Vector2D.vb" />
     <Compile Include="Vector3D.vb" />
   </ItemGroup>
