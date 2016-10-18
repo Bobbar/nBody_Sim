@@ -13,7 +13,7 @@ Module PhysicsLoop
     Public right_side As Integer
     Public bottom_side As Integer
     Public g As Integer
-    Public Sel As Integer, MoV As Integer
+    Public Sel As Integer, MoV As Integer = 0
 
 
     Public bGrav As Integer
@@ -305,40 +305,40 @@ restart:
 
 
 
-                                                                              If Abs(Abstand) < ((Ball(i).Size / 2) + (Ball(X).Size / 2)) And Abstand <> 0 Then
+                                                                              'If Abs(Abstand) < ((Ball(i).Size / 2) + (Ball(X).Size / 2)) And Abstand <> 0 Then
 
-                                                                                  V1x = Ball(i).SpeedX
-                                                                                  V1y = Ball(i).SpeedY
-                                                                                  V2x = Ball(X).SpeedX
-                                                                                  V2y = Ball(X).SpeedY
-                                                                                  M1 = Ball(i).Mass / 4 ' * 4 ' ^ 2
-                                                                                  M2 = Ball(X).Mass / 4 ' * 4 ' ^ 2
+                                                                              '    V1x = Ball(i).SpeedX
+                                                                              '    V1y = Ball(i).SpeedY
+                                                                              '    V2x = Ball(X).SpeedX
+                                                                              '    V2y = Ball(X).SpeedY
+                                                                              '    M1 = Ball(i).Mass / 4 ' * 4 ' ^ 2
+                                                                              '    M2 = Ball(X).Mass / 4 ' * 4 ' ^ 2
 
-                                                                                  VeKY = (Ball(i).LocY - Ball(X).LocY) / 2
-                                                                                  VekX = (Ball(i).LocX - Ball(X).LocX) / 2
+                                                                              '    VeKY = (Ball(i).LocY - Ball(X).LocY) / 2
+                                                                              '    VekX = (Ball(i).LocX - Ball(X).LocX) / 2
 
-                                                                                  LenG = Sqrt(VeKY * VeKY + VekX * VekX)
-                                                                                  VekX = VekX / LenG
-                                                                                  VeKY = VeKY / LenG
+                                                                              '    LenG = Sqrt(VeKY * VeKY + VekX * VekX)
+                                                                              '    VekX = VekX / LenG
+                                                                              '    VeKY = VeKY / LenG
 
-                                                                                  V1 = VekX * V1x + VeKY * V1y
-                                                                                  V2 = VekX * V2x + VeKY * V2y
+                                                                              '    V1 = VekX * V1x + VeKY * V1y
+                                                                              '    V2 = VekX * V2x + VeKY * V2y
 
-                                                                                  If V1 - V2 < 0 Then
+                                                                              '    If V1 - V2 < 0 Then
 
-                                                                                      U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-                                                                                      U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
+                                                                              '        U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
+                                                                              '        U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
 
-                                                                                      'If Ball(i).Flags <> "B" Then
-                                                                                      Ball(i).SpeedX = Ball(i).SpeedX + (U1 - V1) * VekX
-                                                                                      Ball(i).SpeedY = Ball(i).SpeedY + (U1 - V1) * VeKY
-                                                                                      'ElseIf Ball(X).Flags <> "B" Then
-                                                                                      Ball(X).SpeedX = Ball(X).SpeedX + (U2 - V2) * VekX
-                                                                                      Ball(X).SpeedY = Ball(X).SpeedY + (U2 - V2) * VeKY
-                                                                                      'End If
+                                                                              '        'If Ball(i).Flags <> "B" Then
+                                                                              '        Ball(i).SpeedX = Ball(i).SpeedX + (U1 - V1) * VekX
+                                                                              '        Ball(i).SpeedY = Ball(i).SpeedY + (U1 - V1) * VeKY
+                                                                              '        'ElseIf Ball(X).Flags <> "B" Then
+                                                                              '        Ball(X).SpeedX = Ball(X).SpeedX + (U2 - V2) * VekX
+                                                                              '        Ball(X).SpeedY = Ball(X).SpeedY + (U2 - V2) * VeKY
+                                                                              '        'End If
 
-                                                                                  End If
-                                                                              End If
+                                                                              '    End If
+                                                                              'End If
                                                                           Else
 
                                                                               If Not Ball(i).Locked Then
@@ -751,32 +751,32 @@ here:
 
                                                                   '// Collision with Walls
 
-                                                                  If bGrav = 0 Then
-                                                                      right_side = Form1.Render.Width - Ball(i).Size
-                                                                      bottom_side = Form1.Render.Height - Ball(i).Size
+                                                                  'If bGrav = 0 Then
+                                                                  '    right_side = Form1.Render.Width - Ball(i).Size
+                                                                  '    bottom_side = Form1.Render.Height - Ball(i).Size
 
-                                                                      If Ball(i).LocY > bottom_side Then
-                                                                          Ball(i).LocY = bottom_side
+                                                                  '    If Ball(i).LocY > bottom_side Then
+                                                                  '        Ball(i).LocY = bottom_side
 
-                                                                          Ball(i).SpeedY = Ball(i).SpeedY * -1
-
-
-                                                                      ElseIf Ball(i).LocY < Ball(i).Size Then
-
-                                                                          Ball(i).LocY = Ball(i).Size
-                                                                          Ball(i).SpeedY = Ball(i).SpeedY * -1
+                                                                  '        Ball(i).SpeedY = Ball(i).SpeedY * -1
 
 
-                                                                      End If
+                                                                  '    ElseIf Ball(i).LocY < Ball(i).Size Then
 
-                                                                      If Ball(i).LocX > right_side Then
-                                                                          Ball(i).LocX = right_side
-                                                                          Ball(i).SpeedX = Ball(i).SpeedX * -1
-                                                                      ElseIf Ball(i).LocX < Ball(i).Size Then
-                                                                          Ball(i).LocX = Ball(i).Size
-                                                                          Ball(i).SpeedX = Ball(i).SpeedX * -1
-                                                                      End If
-                                                                  End If
+                                                                  '        Ball(i).LocY = Ball(i).Size
+                                                                  '        Ball(i).SpeedY = Ball(i).SpeedY * -1
+
+
+                                                                  '    End If
+
+                                                                  '    If Ball(i).LocX > right_side Then
+                                                                  '        Ball(i).LocX = right_side
+                                                                  '        Ball(i).SpeedX = Ball(i).SpeedX * -1
+                                                                  '    ElseIf Ball(i).LocX < Ball(i).Size Then
+                                                                  '        Ball(i).LocX = Ball(i).Size
+                                                                  '        Ball(i).SpeedX = Ball(i).SpeedX * -1
+                                                                  '    End If
+                                                                  'End If
 
                                                               End If
 
@@ -865,6 +865,7 @@ here:
                     gr.Clear(Color.White)
                     gr.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
                     gr.ScaleTransform(pic_scale, pic_scale)
+
                     Drawr(gr)
                 End Using
                 Form1.Render.Image = bm

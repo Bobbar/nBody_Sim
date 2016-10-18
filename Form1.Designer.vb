@@ -67,7 +67,6 @@ Partial Class Form1
         Me.Render.Location = New System.Drawing.Point(8, 28)
         Me.Render.Name = "Render"
         Me.Render.Size = New System.Drawing.Size(1084, 672)
-        Me.Render.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize
         Me.Render.TabIndex = 15
         Me.Render.TabStop = False
         '

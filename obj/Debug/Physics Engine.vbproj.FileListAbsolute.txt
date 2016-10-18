@@ -146,3 +146,14 @@ C:\GitHub\Physics Engine - Copy\bin\Debug\Gravity Physics.xml
 C:\GitHub\Physics Engine - Copy\obj\Debug\Physics_Engine.Form1.resources
 C:\GitHub\Physics Engine - Copy\obj\Debug\Physics_Engine.Resources.resources
 C:\GitHub\Physics Engine - Copy\obj\Debug\Physics Engine.vbproj.GenerateResource.Cache
+C:\GitHub\Physics Engine - Copy\Physics-2\bin\Debug\Gravity Physics.exe.config
+C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Gravity Physics.exe
+C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Gravity Physics.xml
+C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Gravity Physics.pdb
+C:\GitHub\Physics Engine - Copy\Physics-2\bin\Debug\Gravity Physics.exe
+C:\GitHub\Physics Engine - Copy\Physics-2\bin\Debug\Gravity Physics.pdb
+C:\GitHub\Physics Engine - Copy\Physics-2\bin\Debug\Gravity Physics.xml
+C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Physics Engine.vbprojResolveAssemblyReference.cache
+C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Physics_Engine.Form1.resources
+C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Physics_Engine.Resources.resources
+C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Physics Engine.vbproj.GenerateResource.Cache

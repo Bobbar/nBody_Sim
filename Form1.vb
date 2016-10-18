@@ -173,15 +173,18 @@ Public Class Form1
 
             If Ball(lngFollowBall).LocX <> FollowX Or Ball(lngFollowBall).LocY <> FollowY Then
 
-                DiffX = Ball(lngFollowBall).LocX - (Render.Width / 2) 'FollowX
-                DiffY = Ball(lngFollowBall).LocY - (Render.Height / 2) 'FollowY
+                'DiffX = Ball(lngFollowBall).LocX - (Render.Width / 2) 'FollowX
+                ' DiffY = Ball(lngFollowBall).LocY - (Render.Height / 2) 'FollowY
+                RelBallPosMod.X = Ball(lngFollowBall).LocX - (Render.Width / 2) 'FollowX
+                RelBallPosMod.Y = Ball(lngFollowBall).LocY - (Render.Height / 2) '
 
-                For i = 1 To UBound(Ball)
 
-                    Ball(i).LocX = Ball(i).LocX - DiffX
-                    Ball(i).LocY = Ball(i).LocY - DiffY
+                'For i = 1 To UBound(Ball)
 
-                Next
+                '    Ball(i).LocX = Ball(i).LocX - DiffX
+                '    Ball(i).LocY = Ball(i).LocY - DiffY
+
+                'Next
 
                 FollowX = Ball(lngFollowBall).LocX
                 FollowY = Ball(lngFollowBall).LocY
@@ -1562,100 +1565,7 @@ finished:
 
     End Sub
 
-    Private Sub Render_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Render.MouseDown
-        Debug.Print(e.Location.ToString)
-        If e.Button = Windows.Forms.MouseButtons.Right Then
 
-            bolStopDraw = True
-
-            ReDim Preserve Ball(UBound(Ball) + 1)
-            Debug.Print("Index: " & UBound(Ball))
-
-            Ball(UBound(Ball)).Color = RandomRGBColor()
-            Ball(UBound(Ball)).LocX = e.X - Ball(UBound(Ball)).Size / 2
-            Ball(UBound(Ball)).LocY = e.Y - Ball(UBound(Ball)).Size / 2
-            Ball(UBound(Ball)).SpeedX = 0
-            Ball(UBound(Ball)).SpeedY = 0
-
-            Ball(UBound(Ball)).Size = 1
-            Ball(UBound(Ball)).Mass = fnMass(Ball(UBound(Ball)).Size)
-            Ball(UBound(Ball)).Visible = True
-            Ball(UBound(Ball)).Flags = Ball(UBound(Ball)).Flags + "BH"
-            MouseIndex = UBound(Ball)
-
-
-            Timer3.Enabled = True
-
-        End If
-
-
-        If Windows.Forms.MouseButtons.Left Then
-
-            If bolAltDown Then
-                tmrFollow.Enabled = False
-                bolFollow = False
-                Ball(lngFollowBall).Flags = Replace(Ball(lngFollowBall).Flags, "F", "")
-
-
-                lngFollowBall = 0
-            End If
-
-
-            For i = 1 To UBound(Ball)
-                Ball(i).Old_LocX = Ball(i).LocX
-                Ball(i).Old_LocY = Ball(i).LocY
-
-            Next
-            If Sel = -1 Then
-                For i = 1 To UBound(Ball)
-                    'Debug.Print "LocX: " & Ball(i).LocX & vbCrLf & "LocY: " & Ball(i).LocY & vbCrLf & "SpeedX: " & Ball(i).SpeedX & vbCrLf & "SpeedY: " & Ball(i).SpeedY
-
-
-
-                    If e.X > Ball(i).LocX - Ball(i).Size And e.X < Ball(i).LocX + Ball(i).Size And e.Y > Ball(i).LocY - Ball(i).Size And e.Y < Ball(i).LocY + Ball(i).Size And Ball(i).Visible Then
-                        If Not bolAltDown Then MoV = 1
-                        Sel = i
-                        If bolShiftDown Then
-                            Ball(Sel).Locked = True
-                            Ball(Sel).Flags = "BH"
-                        End If
-
-                        If bolAltDown Then
-
-                            lngFollowBall = Sel
-                            Ball(Sel).Flags = Ball(Sel).Flags + "F"
-
-                        End If
-
-                        txtSpeedX.Text = Ball(Sel).SpeedX
-                        txtSpeedY.Text = Ball(Sel).SpeedY
-                        txtSize.Text = Ball(Sel).Size
-                        txtMass.Text = Ball(Sel).Mass
-                        txtFlag.Text = Ball(Sel).Flags
-
-                        PubSel = Sel
-
-                        Debug.Print("Mass: " & Ball(i).Mass & " units")
-                        Debug.Print("Index: " & i)
-
-                    End If
-
-                Next
-            End If
-
-            If bolShiftDown Then
-
-                MouseDnX = e.X
-                MouseDnY = e.Y
-            End If
-
-
-
-
-        End If
-
-
-    End Sub
     Public Function SegmentsIntersect(ByVal X1 As Double,
     ByVal Y1 As Double, ByVal X2 As Double, ByVal Y2 As _
     Double, ByVal A1 As Double, ByVal B1 As Double, ByVal _
@@ -1719,6 +1629,8 @@ finished:
 
 
     Private Sub Render_Paint(ByVal sender As Object, ByVal e As System.Windows.Forms.PaintEventArgs) Handles Render.Paint
+
+
         '        On Error GoTo Leave
         '        'Render.Image = New Bitmap(Render.ClientSize.Width, Render.ClientSize.Height)
         '        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias
@@ -1873,7 +1785,102 @@ finished:
 
 
     End Sub
+    Private Sub Render_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Render.MouseDown
+        Debug.Print(e.Location.ToString)
+        If e.Button = Windows.Forms.MouseButtons.Right Then
 
+            bolStopDraw = True
+
+            ReDim Preserve Ball(UBound(Ball) + 1)
+            Debug.Print("Index: " & UBound(Ball))
+
+            Ball(UBound(Ball)).Color = RandomRGBColor()
+            Ball(UBound(Ball)).LocX = ScaleMousePosRelative(e.Location).X - (Ball(UBound(Ball)).Size / 2)  ' ScaleMousePosRelative(e.Location).X - Ball(UBound(Ball)).Size / 2
+            Ball(UBound(Ball)).LocY = ScaleMousePosRelative(e.Location).Y - (Ball(UBound(Ball)).Size / 2)
+            Ball(UBound(Ball)).SpeedX = 0
+            Ball(UBound(Ball)).SpeedY = 0
+
+            Ball(UBound(Ball)).Size = 1
+            Ball(UBound(Ball)).Mass = fnMass(Ball(UBound(Ball)).Size)
+            Ball(UBound(Ball)).Visible = True
+            Ball(UBound(Ball)).Flags = Ball(UBound(Ball)).Flags + "BH"
+            MouseIndex = UBound(Ball)
+
+
+            Timer3.Enabled = True
+
+        End If
+
+
+        If Windows.Forms.MouseButtons.Left Then
+
+            If bolAltDown Then
+                tmrFollow.Enabled = False
+                bolFollow = False
+                Ball(lngFollowBall).Flags = Replace(Ball(lngFollowBall).Flags, "F", "")
+
+
+                lngFollowBall = 0
+            End If
+
+
+            For i = 1 To UBound(Ball)
+                Ball(i).Old_LocX = Ball(i).LocX
+                Ball(i).Old_LocY = Ball(i).LocY
+
+            Next
+            If Sel = -1 Then
+                For i = 1 To UBound(Ball)
+                    'Debug.Print "LocX: " & Ball(i).LocX & vbCrLf & "LocY: " & Ball(i).LocY & vbCrLf & "SpeedX: " & Ball(i).SpeedX & vbCrLf & "SpeedY: " & Ball(i).SpeedY
+
+
+
+                    If MouseOver(New Point(e.Location), Ball(i)) And Ball(i).Visible Then
+                        'Debug.Print(Render.PointToClient(New Point(Ball(i).LocX, Ball(i).LocY)).ToString)
+                        Debug.Print(Ball(i).LocX & "-" & Ball(i).LocY)
+                        If Not bolAltDown And bolShiftDown Then MoV = 1
+                        Sel = i
+                        If bolShiftDown Then
+                            Ball(Sel).Locked = True
+                            Ball(Sel).Flags = "BH"
+                        End If
+
+                        If bolAltDown Then
+
+                            lngFollowBall = Sel
+                            Ball(Sel).Flags = Ball(Sel).Flags + "F"
+
+                        End If
+
+                        txtSpeedX.Text = Ball(Sel).SpeedX
+                        txtSpeedY.Text = Ball(Sel).SpeedY
+                        txtSize.Text = Ball(Sel).Size
+                        txtMass.Text = Ball(Sel).Mass
+                        txtFlag.Text = Ball(Sel).Flags
+
+                        PubSel = Sel
+
+                        'Debug.Print("Mass: " & Ball(i).Mass & " units")
+                        ' Debug.Print("Index: " & i)
+
+                    End If
+
+                Next
+            End If
+
+            ' If bolShiftDown Then
+
+            MouseDnX = e.X
+                MouseDnY = e.Y
+            ' End If
+
+
+
+
+        End If
+
+
+    End Sub
     Private Sub Render_MouseMove(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Render.MouseMove
 
         On Error Resume Next
@@ -1892,8 +1899,8 @@ finished:
             If Sel = -1 Then
                 For i = 0 To UBound(Ball)
 
-
-                    If e.X > Ball(i).LocX And e.X < Ball(i).LocX + Ball(i).Size And e.Y > Ball(i).LocY And e.Y < Ball(i).LocY + Ball(i).Size And Not bolShiftDown Then
+                    'ScaleMousePos(e.X) > Ball(i).LocX And ScaleMousePos(e.X) < Ball(i).LocX + Ball(i).Size And ScaleMousePos(e.Y) > Ball(i).LocY And ScaleMousePos(e.Y) < Ball(i).LocY + Ball(i).Size And Not bolShiftDown Then
+                    If MouseOver(New Point(e.Location), Ball(i)) And bolShiftDown Then
                         MoV = 1
                         Sel = i
                     End If
@@ -1909,8 +1916,8 @@ finished:
 
 
                 Ball(Sel).MovinG = True
-                Ball(Sel).LocX = e.X
-                Ball(Sel).LocY = e.Y
+                Ball(Sel).LocX = ScaleMousePosRelative(e.Location).X
+                Ball(Sel).LocY = ScaleMousePosRelative(e.Location).Y
                 'ax(Sel) = 0
                 'ay(Sel) = 0
                 'bCenterX(Sel) = e.X
@@ -1926,7 +1933,7 @@ finished:
                 If Ball(Sel).Old_LocY > Ball(Sel).LocY - Ball(Sel).Size / 2 Then Ball(Sel).SpeedY = (Ball(Sel).LocY - Ball(Sel).Old_LocY) / 2 'Down
 
             Else
-                If bolShiftDown Then
+                If e.Button = Windows.Forms.MouseButtons.Left Then
 
                     'Dim StartPos As New Point(MouseDnX, MouseDnY)
                     'Dim EndPos As New Point(e.X, e.Y)
@@ -1939,26 +1946,49 @@ finished:
                     Dim MouseXDiff As Double
                     Dim MouseYDiff As Double
 
-                    MouseUpX = e.X
-                    MouseUpY = e.Y
+                    MouseUpX = e.X 'ScaleMousePosExact(e.Location).X
+                    MouseUpY = e.Y 'ScaleMousePosExact(e.Location).Y
 
                     MouseXDiff = MouseUpX - MouseDnX
                     MouseYDiff = MouseUpY - MouseDnY
+                    Dim MouseDiff As New Point(MouseXDiff, MouseYDiff)
 
-
-                    RelBallPosMod.X = RelBallPosMod.X + MouseXDiff / pic_scale
-                    RelBallPosMod.Y = RelBallPosMod.Y + MouseYDiff / pic_scale
-                    MouseDnX = e.X
-                    MouseDnY = e.Y
+                    RelBallPosMod.X = RelBallPosMod.X + ScaleMousePosExact(MouseDiff).X
+                    RelBallPosMod.Y = RelBallPosMod.Y + ScaleMousePosExact(MouseDiff).Y
+                    MouseDnX = e.X 'ScaleMousePosExact(e.Location).X
+                    MouseDnY = e.Y 'ScaleMousePosExact(e.Location).Y
 
                     Debug.Print(RelBallPosMod.ToString)
                 End If
 
 
             End If
-            End If
+        End If
     End Sub
+    Private Function ScaleMousePosRelative(MousePos As Point) As Point
+        Dim CorrectedPos As New Point((MousePos.X / pic_scale) - RelBallPosMod.X, (MousePos.Y / pic_scale) - RelBallPosMod.Y)
 
+        Return CorrectedPos
+    End Function
+    Private Function ScaleMousePosExact(MousePos As Point) As Point
+        Dim CorrectedPos As New Point((MousePos.X / pic_scale), (MousePos.Y / pic_scale))
+
+        Return CorrectedPos
+    End Function
+    Private Function MouseOver(MousePos As Point, Ball As BallParms) As Boolean
+        'ScaleMousePos(e.X) > Ball(i).LocX And ScaleMousePos(e.X) < Ball(i).LocX + Ball(i).Size And ScaleMousePos(e.Y) > Ball(i).LocY And ScaleMousePos(e.Y) < Ball(i).LocY + Ball(i).Size And Not bolShiftDown Then
+        ' MouseOver(New Point(e.Location), New Point(Ball(i).LocX, Ball(i).LocY + Ball(i).Size))
+
+        Dim Dist As Double = Math.Sqrt((ScaleMousePosRelative(MousePos).X - Ball.LocX) ^ 2 + (ScaleMousePosRelative(MousePos).Y - Ball.LocY) ^ 2)
+        If Dist < Ball.Size / 2 Then
+            Return True
+        End If
+
+
+        'If ScaleMousePos(MousePos.X) > Ball.LocX And ScaleMousePos(MousePos.X) < Ball.LocX + Ball.Size And ScaleMousePos(MousePos.Y) > Ball.LocY And ScaleMousePos(MousePos.Y) < Ball.LocY + Ball.Size Then
+        '    Return True
+        'End If
+    End Function
     Private Sub Render_MouseUp(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Render.MouseUp
         On Error Resume Next
         Timer3.Enabled = False
@@ -2728,11 +2758,14 @@ finished:
         OffsetValue.X = Render.Width / 2 * pic_scale ' RelBallPosMod.X / pic_scale
         OffsetValue.Y = Render.Height / 2 * pic_scale 'RelBallPosMod.Y / pic_scale
         Dim CentOffset As New Point(RelBallPosMod.X - OffsetValue.X, RelBallPosMod.Y - OffsetValue.Y)
+        Dim Dist As Double = Math.Sqrt((0 - Render.Width) ^ 2 + (0 - Render.Height) ^ 2)
+        Debug.Print(Dist / 4 * pic_scale)
+
 
         '  RelBallPosMod = RelBallPosMod - CentOffset
 
-        'RelBallPosMod.X = RelBallPosMod.X / pic_scale
-        'RelBallPosMod.Y = RelBallPosMod.Y / pic_scale
+        'RelBallPosMod.X = RelBallPosMod.X + (40 * pic_scale)
+        ' RelBallPosMod.Y = RelBallPosMod.Y + (30 * pic_scale)
         'Dim Vectors As New GeomLib.Vector2D(e.X, e.Y)
         'Dim curVec As New Point(e.X, e.Y)
         '' Dim newVex As Point = Vectors.UnitVector()
