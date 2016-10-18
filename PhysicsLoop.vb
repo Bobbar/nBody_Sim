@@ -3,9 +3,29 @@ Imports System.Math
 Imports System.Threading.Tasks
 Imports System.Threading
 Imports System.Drawing.Drawing2D
-Module PhysicsLoop
+Public Module PhysicsLoop
+    Public Class SPoint
+        Public X As Single
+        Public Y As Single
+        Sub New(pnt As Point)
+            X = pnt.X
+            Y = pnt.Y
+        End Sub
+        Sub New(Xval As Single, Yval As Single)
+            X = Xval
+            Y = Yval
+        End Sub
+        Sub New()
+            X = 0
+            Y = 0
+        End Sub
+        Public Overrides Function ToString() As String
+            Return "{X=" + X.ToString & ",Y=" + Y.ToString + "}"
+        End Function
+    End Class
+
     Public pic_scale As Single
-    Public RelBallPosMod As New Point
+    Public RelBallPosMod As New SPoint
 
 
     Public gravity As Single = 0.0
@@ -17,50 +37,6 @@ Module PhysicsLoop
 
 
     Public bGrav As Integer
-
-    'Public BallSize(0 To 1000) As Single
-
-    'Public speedX(0 To 1000) As Single
-    'Public speedY(0 To 1000) As Single
-    'Public ax(0 To 1000) As Single
-    'Public ay(0 To 1000) As Single
-    'Public ball_loc_x(0 To 1000) As Single
-    'Public ball_loc_y(0 To 1000) As Single
-    'Public MoVinG(0 To 1000) As Long
-    'Public old_loc_x(0 To 1000) As Single
-    'Public old_loc_y(0 To 1000) As Single
-
-
-
-
-    'Public BposX As Single
-    'Public BPosY As Single
-
-    'Public bCenterX(0 To 1000) As Single
-    'Public bCenterY(0 To 1000) As Single
-
-
-    'Public w1 As Single
-    'Public w2 As Single
-
-    'Public w As Single
-    'Public u As Single
-    'Public r As Single
-
-
-
-    ' Public Collision, ColB
-
-
-
-
-
-
-
-    'Public aN As Single
-    'Public bN As Single
-    'Public BSize As Single
-    'Public Hsize As Single
 
     Public FPS As Single
 
@@ -164,7 +140,7 @@ Module PhysicsLoop
         sw.Start()
         Do While sw.ElapsedMilliseconds < interval
             ' Allows UI to remain responsive
-            Application.DoEvents()
+            ' Application.DoEvents()
         Loop
         sw.Stop()
     End Sub
@@ -183,8 +159,8 @@ Module PhysicsLoop
         Dim V1y As Double
         Dim V2y As Double
 
-        Dim a As Double
-        Dim b As Double
+        Dim E As Double
+        Dim F As Double
         Dim Abstand As Double
         Dim rc As Double
         Dim rx As Double
@@ -213,7 +189,7 @@ Module PhysicsLoop
         Dim Force As Double
         Dim BUB As Long
 
-        Dim X As Long
+        'Dim B As Long
 
         Dim options As New ParallelOptions
         Dim Tasker As TaskScheduler
@@ -239,554 +215,444 @@ restart:
 
 
 
-                Parallel.For(1, BUB + 1, options, Sub(i)
+                '     Parallel.For(1, BUB + 1, options, Sub(A)
 
 
-                                                      SyncLock LoopLockObject
-                                                          If Ball(i).Visible Then
-                                                              If Ball(i).MovinG = False Then
+                'SyncLock LoopLockObject
+                For A = 1 To BUB
+                    If Ball(A).Visible Then
+                        If Ball(A).MovinG = False Then
 
 
 
 
 
 
+                            For B = 1 To BUB
+                                If Ball(B).Visible Then
 
-                                                                  For X = 1 To BUB
-                                                                      If Ball(X).Visible Then
+                                    If Form1.chkShadow.Checked Then
+                                        If InStr(1, Ball(A).Flags, "S") Then
+                                            Dim m As Double, SlX As Double, SlY As Double
+                                            SlX = Ball(B).LocX - Ball(A).LocX
+                                            SlY = Ball(B).LocY - Ball(A).LocY
 
-                                                                          If Form1.chkShadow.Checked Then
-                                                                              If InStr(1, Ball(i).Flags, "S") Then
-                                                                                  Dim m As Double, SlX As Double, SlY As Double
-                                                                                  SlX = Ball(X).LocX - Ball(i).LocX
-                                                                                  SlY = Ball(X).LocY - Ball(i).LocY
+                                            m = SlY / SlX
 
-                                                                                  m = SlY / SlX
+                                            Ball(B).ShadAngle = Math.Atan2(Ball(B).LocY - Ball(A).LocY, Ball(B).LocX - Ball(A).LocX)   'Math.Tan(SlX / SlY) 'Math.Atan2(SlY, SlX) * 180 / PI 'Math.Atan(SlX / SlY) * 180 / PI
 
-                                                                                  Ball(X).ShadAngle = Math.Atan2(Ball(X).LocY - Ball(i).LocY, Ball(X).LocX - Ball(i).LocX)   'Math.Tan(SlX / SlY) 'Math.Atan2(SlY, SlX) * 180 / PI 'Math.Atan(SlX / SlY) * 180 / PI
+                                            'Debug.Print(Ball(B).ShadAngle)
 
-                                                                                  'Debug.Print(Ball(X).ShadAngle)
 
+                                            '
 
-                                                                                  '
+                                        End If
+                                    End If
 
-                                                                              End If
-                                                                          End If
 
 
 
+                                    If Ball(B).LocX = Ball(A).LocX And Ball(B).LocY = Ball(A).LocY And B <> A Then
+                                        Ball(B).LocX = Ball(B).LocX + Ball(B).Size
+                                        Ball(B).LocY = Ball(B).LocY + Ball(B).Size
+                                    End If
 
-                                                                          If Ball(X).LocX = Ball(i).LocX And Ball(X).LocY = Ball(i).LocY And X <> i Then
-                                                                              Ball(X).LocX = Ball(X).LocX + Ball(X).Size
-                                                                              Ball(X).LocY = Ball(X).LocY + Ball(X).Size
-                                                                          End If
+                                    'E = (Ball(A).LocX - (Ball(B).LocX)) / 2  '+ ball(B).size) ' / 2)
+                                    'F = (Ball(A).LocY - (Ball(B).LocY)) / 2 '+ ball(B).size) '/ 2)
 
-                                                                          a = (Ball(i).LocX - (Ball(X).LocX)) / 2  '+ ball(x).size) ' / 2)
-                                                                          b = (Ball(i).LocY - (Ball(X).LocY)) / 2 '+ ball(x).size) '/ 2)
+                                    'If E = 0 Or F = 0 Then
 
-                                                                          If a = 0 Or b = 0 Then
+                                    '    If E = 0 Then Abstand = Abs(E)
+                                    '    If F = 0 Then Abstand = Abs(F)
 
-                                                                              If b = 0 Then Abstand = Abs(a)
-                                                                              If a = 0 Then Abstand = Abs(b)
+                                    'Else
+                                    '    Abstand = Sqrt((Abs(E) ^ 2) + (Abs(F) ^ 2))
+                                    'End If
 
-                                                                          Else
-                                                                              Abstand = Sqrt((Abs(a) ^ 2) + (Abs(b) ^ 2))
-                                                                          End If
 
 
 
+                                    '// Collision Reaction (Vektors)
 
-                                                                          '// Collision Reaction (Vektors)
+                                    If bGrav = 0 Then
 
-                                                                          If bGrav = 0 Then
 
 
 
 
+                                    Else
 
+                                        If Not Ball(A).Locked Then
 
-                                                                              'If Abs(Abstand) < ((Ball(i).Size / 2) + (Ball(X).Size / 2)) And Abstand <> 0 Then
 
-                                                                              '    V1x = Ball(i).SpeedX
-                                                                              '    V1y = Ball(i).SpeedY
-                                                                              '    V2x = Ball(X).SpeedX
-                                                                              '    V2y = Ball(X).SpeedY
-                                                                              '    M1 = Ball(i).Mass / 4 ' * 4 ' ^ 2
-                                                                              '    M2 = Ball(X).Mass / 4 ' * 4 ' ^ 2
+                                            If B <> A Then
+                                                M1 = Ball(A).Mass ^ 2 ' * 2
+                                                M2 = Ball(B).Mass ^ 2 ' * 2
+                                                TotMass = M1 * M2
+                                                LoccX = Ball(B).LocX - Ball(A).LocX
 
-                                                                              '    VeKY = (Ball(i).LocY - Ball(X).LocY) / 2
-                                                                              '    VekX = (Ball(i).LocX - Ball(X).LocX) / 2
+                                                LoccY = Ball(B).LocY - Ball(A).LocY
+                                                Veck = (LoccX * LoccX) + (LoccY * LoccY)
+                                                VeckSqr = Sqrt(Veck)
+                                                Force = TotMass / (Veck * VeckSqr)
 
-                                                                              '    LenG = Sqrt(VeKY * VeKY + VekX * VekX)
-                                                                              '    VekX = VekX / LenG
-                                                                              '    VeKY = VeKY / LenG
+                                                'If Double.IsNaN(Force) Then
+                                                '    Debug.Print(Force)
+                                                '    Stop
+                                                'End If
+                                                ForceX = Force * LoccX
+                                                ForceY = Force * LoccY
+                                                Ball(A).SpeedX = Ball(A).SpeedX + ForceX / M1
+                                                Ball(A).SpeedY = Ball(A).SpeedY + ForceY / M1
+                                                'If InStr(1, Ball(A).Flags, "P") Then
+                                                '    Debug.Print("P!!!!")
+                                                '    ' Stop
+                                                'End If
 
-                                                                              '    V1 = VekX * V1x + VeKY * V1y
-                                                                              '    V2 = VekX * V2x + VeKY * V2y
+                                                If Force > (Ball(A).Mass ^ 3) And Ball(B).Mass > Ball(A).Mass * 5 And Ball(A).Size > 1 And Ball(A).Visible = True Then  ' And Not InStr(1, Bll(A).Flags, "B")
 
-                                                                              '    If V1 - V2 < 0 Then
+                                                    FractureBall(A)
+                                                    'Dim TotBMass As Double
+                                                    'Dim Area As Double
+                                                    'Dim RadUPX As Double, RadDNX As Double, RadUPY As Double, RadDNY As Double
 
-                                                                              '        U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-                                                                              '        U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
+                                                    'Divisor = Int(Ball(A).Size)
+                                                    'If Divisor <= 1 Then Divisor = 2
 
-                                                                              '        'If Ball(i).Flags <> "B" Then
-                                                                              '        Ball(i).SpeedX = Ball(i).SpeedX + (U1 - V1) * VekX
-                                                                              '        Ball(i).SpeedY = Ball(i).SpeedY + (U1 - V1) * VeKY
-                                                                              '        'ElseIf Ball(X).Flags <> "B" Then
-                                                                              '        Ball(X).SpeedX = Ball(X).SpeedX + (U2 - V2) * VekX
-                                                                              '        Ball(X).SpeedY = Ball(X).SpeedY + (U2 - V2) * VeKY
-                                                                              '        'End If
+                                                    'PrevSize = Ball(A).Size
+                                                    'PrevMass = Ball(A).Mass
 
-                                                                              '    End If
-                                                                              'End If
-                                                                          Else
+                                                    ''PrevSize = Sqr(PrevSize / pi)
+                                                    'Area = PI * (Ball(A).Size ^ 2)
+                                                    'Area = Area / Divisor
 
-                                                                              If Not Ball(i).Locked Then
+                                                    'NewBallSize = fnRadius(Area)  'fnRadius(fnArea(Ball(A).Size) / 2)  'Sqr(Area / pi) 'ball(A).Size / Divisor
+                                                    'NewBallMass = PrevMass / Divisor  '(Ball(A).Mass / Divisor)
 
+                                                    'Ball(A).Visible = False
+                                                    ''
+                                                    ''                                            Ball(A).Size = NewBallSize
+                                                    ''                                            Ball(A).Mass = NewBallMass
+                                                    ''                                            Ball(A).Flags = "B"
+                                                    'RadUPX = (Ball(A).LocX) + PrevSize / 2 + Ball(A).SpeedX * StepMulti
+                                                    'RadDNX = (Ball(A).LocX) - PrevSize / 2 + Ball(A).SpeedX * StepMulti
+                                                    'RadUPY = (Ball(A).LocY) + PrevSize / 2 + Ball(A).SpeedY * StepMulti
+                                                    'RadDNY = (Ball(A).LocY) - PrevSize / 2 + Ball(A).SpeedY * StepMulti
+                                                    ''RadUPX = (Ball(A).LocX) + PrevSize / 2
+                                                    ''RadDNX = (Ball(A).LocX) - PrevSize / 2
+                                                    ''RadUPY = (Ball(A).LocY) + PrevSize / 2
+                                                    ''RadDNY = (Ball(A).LocY) - PrevSize / 2
 
-                                                                                  If X <> i Then
-                                                                                      M1 = Ball(i).Mass ^ 2 ' * 2
-                                                                                      M2 = Ball(X).Mass ^ 2 ' * 2
-                                                                                      TotMass = M1 * M2
-                                                                                      LoccX = Ball(X).LocX - Ball(i).LocX
+                                                    'Dim u As Long
 
-                                                                                      LoccY = Ball(X).LocY - Ball(i).LocY
-                                                                                      Veck = (LoccX * LoccX) + (LoccY * LoccY)
-                                                                                      VeckSqr = Sqrt(Veck)
-                                                                                      Force = TotMass / (Veck * VeckSqr)
+                                                    'For h = 1 To Divisor
 
-                                                                                      'If Double.IsNaN(Force) Then
-                                                                                      '    Debug.Print(Force)
-                                                                                      '    Stop
-                                                                                      'End If
-                                                                                      ForceX = Force * LoccX
-                                                                                      ForceY = Force * LoccY
-                                                                                      Ball(i).SpeedX = Ball(i).SpeedX + ForceX / M1
-                                                                                      Ball(i).SpeedY = Ball(i).SpeedY + ForceY / M1
-                                                                                      'If InStr(1, Ball(i).Flags, "P") Then
-                                                                                      '    Debug.Print("P!!!!")
-                                                                                      '    ' Stop
-                                                                                      'End If
 
-                                                                                      If Force > (Ball(i).Mass ^ 3) And Ball(X).Mass > Ball(i).Mass * 5 And Ball(i).Size > 1 And Ball(i).Visible = True Then  ' And Not InStr(1, Bll(i).Flags, "B")
+                                                    '    ReDim Preserve Ball(UBound(Ball) + 1)
+                                                    '    u = UBound(Ball)
 
-                                                                                          Dim TotBMass As Double
-                                                                                          Dim Area As Double
-                                                                                          Dim RadUPX As Double, RadDNX As Double, RadUPY As Double, RadDNY As Double
+                                                    '    Ball(u).Size = NewBallSize '(2 * Rnd()) + 0.2
+                                                    '    Ball(u).Mass = NewBallMass
+                                                    '    TotBMass = TotBMass + NewBallMass
 
-                                                                                          Divisor = Int(Ball(i).Size)
-                                                                                          If Divisor <= 1 Then Divisor = 2
+                                                    '    Ball(u).SpeedX = Ball(A).SpeedX
+                                                    '    Ball(u).SpeedY = Ball(A).SpeedY
 
-                                                                                          PrevSize = Ball(i).Size
-                                                                                          PrevMass = Ball(i).Mass
+                                                    '    'If Not InStr(1, Ball(A).Flags, "R") Then Ball(u).Flags = Ball(A).Flags + "R"
+                                                    '    Ball(u).Flags = Ball(A).Flags + "R"
+                                                    '    Ball(u).Color = Ball(A).Color 'vbWhite
+                                                    '    Ball(u).Visible = True
 
-                                                                                          'PrevSize = Sqr(PrevSize / pi)
-                                                                                          Area = PI * (Ball(i).Size ^ 2)
-                                                                                          Area = Area / Divisor
 
-                                                                                          NewBallSize = fnRadius(Area)  'fnRadius(fnArea(Ball(i).Size) / 2)  'Sqr(Area / pi) 'ball(i).Size / Divisor
-                                                                                          NewBallMass = PrevMass / Divisor  '(Ball(i).Mass / Divisor)
+                                                    '    ' Ball(u).LocY = Ball(A).LocY + Ball(u).Size * h
+                                                    '    'Ball(u).LocX = Ball(A).LocX + Ball(u).Size * h
 
-                                                                                          Ball(i).Visible = False
-                                                                                          '
-                                                                                          '                                            Ball(i).Size = NewBallSize
-                                                                                          '                                            Ball(i).Mass = NewBallMass
-                                                                                          '                                            Ball(i).Flags = "B"
-                                                                                          RadUPX = (Ball(i).LocX) + PrevSize / 2 + Ball(i).SpeedX * StepMulti
-                                                                                          RadDNX = (Ball(i).LocX) - PrevSize / 2 + Ball(i).SpeedX * StepMulti
-                                                                                          RadUPY = (Ball(i).LocY) + PrevSize / 2 + Ball(i).SpeedY * StepMulti
-                                                                                          RadDNY = (Ball(i).LocY) - PrevSize / 2 + Ball(i).SpeedY * StepMulti
-                                                                                          'RadUPX = (Ball(i).LocX) + PrevSize / 2
-                                                                                          'RadDNX = (Ball(i).LocX) - PrevSize / 2
-                                                                                          'RadUPY = (Ball(i).LocY) + PrevSize / 2
-                                                                                          'RadDNY = (Ball(i).LocY) - PrevSize / 2
 
-                                                                                          Dim u As Long
+                                                    '    Ball(u).LocX = GetRandomNumber((RadDNX), RadUPX)
 
-                                                                                          For h = 1 To Divisor
+                                                    '    Ball(u).LocY = GetRandomNumber((RadDNY), RadUPY)
 
+                                                    'Next h
 
-                                                                                              ReDim Preserve Ball(UBound(Ball) + 1)
-                                                                                              u = UBound(Ball)
+                                                End If
 
-                                                                                              Ball(u).Size = NewBallSize '(2 * Rnd()) + 0.2
-                                                                                              Ball(u).Mass = NewBallMass
-                                                                                              TotBMass = TotBMass + NewBallMass
 
-                                                                                              Ball(u).SpeedX = Ball(i).SpeedX
-                                                                                              Ball(u).SpeedY = Ball(i).SpeedY
 
-                                                                                              'If Not InStr(1, Ball(i).Flags, "R") Then Ball(u).Flags = Ball(i).Flags + "R"
-                                                                                              Ball(u).Flags = Ball(i).Flags + "R"
-                                                                                              Ball(u).Color = Ball(i).Color 'vbWhite
-                                                                                              Ball(u).Visible = True
 
+                                            End If
 
-                                                                                              ' Ball(u).LocY = Ball(i).LocY + Ball(u).Size * h
-                                                                                              'Ball(u).LocX = Ball(i).LocX + Ball(u).Size * h
+                                            'End If ' **
 
+                                        End If
 
-                                                                                              Ball(u).LocX = GetRandomNumber((RadDNX), RadUPX)
+                                    End If
+                                    If A <> B And Ball(A).Visible = True Then
 
-                                                                                              Ball(u).LocY = GetRandomNumber((RadDNY), RadUPY)
 
-                                                                                          Next h
+                                        rc = (Ball(A).Size / 4) + (Ball(B).Size / 4)
+                                        ry = (Ball(A).LocY - Ball(B).LocY) / 2
+                                        rx = (Ball(A).LocX - Ball(B).LocX) / 2
 
-                                                                                      End If
 
+                                        d = Sqrt(rx * rx + ry * ry)
 
+                                        Dim Multi As Double
+                                        Multi = 0.7
+                                        If d < (Ball(A).Size + Ball(B).Size) Then 'Collide
+                                            '  Dim BlahX As Double
+                                            '    Dim BlahY As Double
+                                            Dim ClsForce2 As Double
 
+                                            '  BlahX = (Ball(A).LocX + (Ball(A).LocX + Ball(A).SpeedX) / 2)
+                                            '         BlahY = (Ball(A).LocY + (Ball(A).LocY + Ball(A).SpeedY) / 2)
 
-                                                                                  End If
 
-                                                                                  'End If ' **
 
-                                                                              End If
+                                            If d < rc Then
+                                                'Perlenkettenproblem liegt hier:
 
-                                                                          End If
-                                                                          If X <> i And Ball(i).Visible = True Then
+                                                V1x = Ball(A).SpeedX
+                                                V1y = Ball(A).SpeedY
+                                                V2x = Ball(B).SpeedX
+                                                V2y = Ball(B).SpeedY
 
+                                                ClsSpeedX = V1x - V2x
+                                                ClsSpeedy = V1y - V2y
+                                                ClsSpeed = Abs(ClsSpeedX) + Abs(ClsSpeedy)
+                                                ' Debug.Print(ClsSpeed)
+                                                M1 = Ball(A).Mass / 1000 ' * 4 '^ 2
+                                                M2 = Ball(B).Mass / 1000 ' * 4 '^ 2
+                                                ' ClsForce = ClsSpeed * (M1 + M2)
 
-                                                                              rc = (Ball(i).Size / 4) + (Ball(X).Size / 4)
-                                                                              ry = (Ball(i).LocY - Ball(X).LocY) / 2
-                                                                              rx = (Ball(i).LocX - Ball(X).LocX) / 2
+                                                ClsForce2 = ClsSpeed * M2
 
+                                                VekX = (Ball(A).LocX - Ball(B).LocX) / 2
+                                                VeKY = (Ball(A).LocY - Ball(B).LocY) / 2
 
-                                                                              d = Sqrt(rx * rx + ry * ry)
+                                                LenG = Sqrt(VeKY * VeKY + VekX * VekX)
 
-                                                                              Dim Multi As Double
-                                                                              Multi = 0.7
-                                                                              If d < (Ball(i).Size + Ball(X).Size) Then
-                                                                                  Dim BlahX As Double
-                                                                                  Dim BlahY As Double
-                                                                                  Dim ClsForce2 As Double
+                                                VekX = VekX / LenG
+                                                VeKY = VeKY / LenG
 
-                                                                                  BlahX = (Ball(i).LocX + (Ball(i).LocX + Ball(i).SpeedX) / 2)
-                                                                                  BlahY = (Ball(i).LocY + (Ball(i).LocY + Ball(i).SpeedY) / 2)
+                                                V1 = VekX * V1x + VeKY * V1y
+                                                V2 = VekX * V2x + VeKY * V2y
 
+                                                If V1 - V2 < 0 Then
 
+                                                    U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
+                                                    U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
+                                                    'Debug.Print(ClsForce)
+                                                    ' If 1 = 1 Then ' ClsForce > (Ball(A).Mass / 4 + Ball(B).Mass / 4)
 
-                                                                                  If d < rc Then
-                                                                                      'Perlenkettenproblem liegt hier:
 
-                                                                                      V1x = Ball(i).SpeedX
-                                                                                      V1y = Ball(i).SpeedY
-                                                                                      V2x = Ball(X).SpeedX
-                                                                                      V2y = Ball(X).SpeedY
 
-                                                                                      ClsSpeedX = V1x - V2x
-                                                                                      ClsSpeedy = V1y - V2y
-                                                                                      ClsSpeed = Abs(ClsSpeedX) + Abs(ClsSpeedy)
-                                                                                      ' Debug.Print(ClsSpeed)
-                                                                                      M1 = Ball(i).Mass / 1000 ' * 4 '^ 2
-                                                                                      M2 = Ball(X).Mass / 1000 ' * 4 '^ 2
-                                                                                      'ClsForce = ClsSpeed * (M1 + M2)
 
-                                                                                      ClsForce2 = ClsSpeed * M2
 
-                                                                                      VekX = (Ball(i).LocX - Ball(X).LocX) / 2
-                                                                                      VeKY = (Ball(i).LocY - Ball(X).LocY) / 2
+                                                    If Ball(B).Mass < Ball(A).Mass And ClsForce2 > (Ball(A).Mass) And Ball(A).Size > 1 And Ball(B).Size > 1 Then 'And InStr(1, Ball(A).Flags, "R") = 0 And InStr(1, Ball(A).Flags, "S") = 0
+                                                        ' Debug.Print(Ball(B).Mass)
+                                                        FractureBall(A)
+                                                        FractureBall(B)
+                                                        '  GoTo here
 
-                                                                                      LenG = Sqrt(VeKY * VeKY + VekX * VekX)
+                                                    Else
 
-                                                                                      VekX = VekX / LenG
-                                                                                      VeKY = VeKY / LenG
 
-                                                                                      V1 = VekX * V1x + VeKY * V1y
-                                                                                      V2 = VekX * V2x + VeKY * V2y
+                                                        If InStr(1, Ball(B).Flags, "R") > 0 And Force < (Ball(A).Mass ^ 3) Or InStr(1, Ball(B).Flags, "R") = 0 Then
+                                                            Dim Area1 As Double, Area2 As Double
 
-                                                                                      If V1 - V2 < 0 Then
 
-                                                                                          U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-                                                                                          U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
-                                                                                          'Debug.Print(ClsForce)
-                                                                                          If 1 = 1 Then ' ClsForce > (Ball(i).Mass / 4 + Ball(X).Mass / 4)
 
+                                                            If Ball(A).Mass > Ball(B).Mass Then
 
 
-                                                                                              'If Ball(i).Mass > Ball(X).Mass And ClsSpeed * (Ball(X).Mass) > ((Ball(i).Mass * 2) ^ 2) And Ball(i).Size > 1 And Ball(X).Size > 1 Then
-                                                                                              'If ClsSpeed * (Ball(X).Mass) > ((Ball(i).Mass * 4) ^ 2) And Ball(i).Size > 1 And Ball(X).Size > 1 Then
-                                                                                              '    'Debug.Print(ClsForce2)
 
+                                                                If Ball(B).Origin <> A Then
 
-                                                                                              '    V1x = Ball(i).SpeedX
-                                                                                              '    V1y = Ball(i).SpeedY
-                                                                                              '    V2x = Ball(X).SpeedX
-                                                                                              '    V2y = Ball(X).SpeedY
+                                                                    Ball(A).Flags = Replace$(Ball(A).Flags, "R", "")
+                                                                    Ball(A).SpeedX = Ball(A).SpeedX + (U1 - V1) * VekX
+                                                                    Ball(A).SpeedY = Ball(A).SpeedY + (U1 - V1) * VeKY
 
-                                                                                              '    M1 = Ball(i).Mass / 1000 ' * 4 '^ 2
-                                                                                              '    M2 = Ball(X).Mass / 1000 ' * 4 '^ 2
 
 
-                                                                                              '    VekX = (Ball(i).LocX - Ball(X).LocX) / 2
-                                                                                              '    VeKY = (Ball(i).LocY - Ball(X).LocY) / 2
+                                                                    Area1 = PI * (Ball(A).Size ^ 2)
+                                                                    Area2 = PI * (Ball(B).Size ^ 2)
 
-                                                                                              '    LenG = Sqrt(VeKY * VeKY + VekX * VekX)
+                                                                    Area1 = Area1 + Area2
+                                                                    Ball(A).Size = Sqrt(Area1 / PI)
 
-                                                                                              '    VekX = VekX / LenG
-                                                                                              '    VeKY = VeKY / LenG
 
-                                                                                              '    V1 = VekX * V1x + VeKY * V1y
-                                                                                              '    V2 = VekX * V2x + VeKY * V2y
 
-                                                                                              '    U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-                                                                                              '    U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
+                                                                    Ball(A).Mass = Ball(A).Mass + Ball(B).Mass 'Sqr(Ball(B).Mass)
+                                                                    Ball(B).Visible = False
 
-                                                                                              '    Ball(i).SpeedX = Ball(i).SpeedX + (U1 - V1) * VekX * 0.5
-                                                                                              '    Ball(i).SpeedY = Ball(i).SpeedY + (U1 - V1) * VeKY * 0.5
+                                                                End If
 
-                                                                                              '    Ball(X).SpeedX = Ball(X).SpeedX + (U1 - V1) * -VekX * 0.5
-                                                                                              '    Ball(X).SpeedY = Ball(X).SpeedY + (U1 - V1) * -VeKY * 0.5
 
-                                                                                              '    FractureBall(i)
-                                                                                              '    FractureBall(X)
-                                                                                              '    'GoTo here
 
-                                                                                              'End If
 
-                                                                                              'ElseIf Ball(i).Mass < Ball(X).Mass And ClsSpeed * (Ball(i).Mass) > ((Ball(X).Mass * 2) ^ 2) And Ball(i).Size > 1 And Ball(X).Size > 1 Then
-                                                                                              '    ' Debug.Print(ClsSpeed & " " & ClsSpeed * (Ball(i).Mass / 2) & " " & Ball(X).Mass ^ 10)
 
-                                                                                              '    V1x = Ball(i).SpeedX
-                                                                                              '    V1y = Ball(i).SpeedY
-                                                                                              '    V2x = Ball(X).SpeedX
-                                                                                              '    V2y = Ball(X).SpeedY
 
-                                                                                              '    M1 = Ball(i).Mass / 1000 ' * 4 '^ 2
-                                                                                              '    M2 = Ball(X).Mass / 1000 ' * 4 '^ 2
+                                                            Else
+                                                                If Ball(A).Origin <> B Then
+                                                                    Ball(A).Flags = Replace$(Ball(A).Flags, "R", "")
+                                                                    Ball(B).SpeedX = Ball(B).SpeedX + (U2 - V2) * VekX
+                                                                    Ball(B).SpeedY = Ball(B).SpeedY + (U2 - V2) * VeKY
 
+                                                                    Area1 = PI * (Ball(B).Size ^ 2)
+                                                                    Area2 = PI * (Ball(A).Size ^ 2)
 
-                                                                                              '    VekX = (Ball(i).LocX - Ball(X).LocX) / 2
-                                                                                              '    VeKY = (Ball(i).LocY - Ball(X).LocY) / 2
+                                                                    Area1 = Area1 + Area2
+                                                                    Ball(B).Size = Sqrt(Area1 / PI)
 
-                                                                                              '    LenG = Sqrt(VeKY * VeKY + VekX * VekX)
 
-                                                                                              '    VekX = VekX / LenG
-                                                                                              '    VeKY = VeKY / LenG
 
-                                                                                              '    V1 = VekX * V1x + VeKY * V1y
-                                                                                              '    V2 = VekX * V2x + VeKY * V2y
+                                                                    Ball(B).Mass = Ball(B).Mass + Ball(A).Mass 'Sqr(Ball(A).Mass)
+                                                                    Ball(A).Visible = False
 
-                                                                                              '    U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-                                                                                              '    U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
+                                                                End If
 
-                                                                                              '    ' Ball(i).SpeedX = Ball(i).SpeedX + (U1 - V1) * VekX
-                                                                                              '    ' Ball(i).SpeedY = Ball(i).SpeedY + (U1 - V1) * VeKY
 
-                                                                                              '    Ball(X).SpeedX = Ball(X).SpeedX + (U1 - V1) * VekX * 0.5
-                                                                                              '    Ball(X).SpeedY = Ball(X).SpeedY + (U1 - V1) * VeKY * 0.5
 
-                                                                                              '    '  FractureBall(i)
-                                                                                              '    FractureBall(X)
-                                                                                              '    'GoTo here
+                                                            End If
 
-                                                                                              'End If
+                                                        End If
 
+                                                        If Ball(A).Mass > 350 Then Ball(A).Color = System.Drawing.Color.Red
 
-                                                                                              If Ball(X).Mass < Ball(i).Mass And ClsForce2 > (Ball(i).Mass) And Ball(i).Size > 1 And Ball(X).Size > 1 Then 'And InStr(1, Ball(i).Flags, "R") = 0 And InStr(1, Ball(i).Flags, "S") = 0
-                                                                                                  Debug.Print(Ball(X).Mass)
-                                                                                                  FractureBall(i)
-                                                                                                  FractureBall(X)
-                                                                                                  GoTo here
 
-                                                                                              End If
 
+                                                        If Ball(A).Mass > 400 Then Ball(A).Color = System.Drawing.Color.Yellow
+                                                        If Ball(A).Mass > 500 Then Ball(A).Color = System.Drawing.Color.White
+                                                        If Ball(A).Mass > 600 Then Ball(A).Color = System.Drawing.Color.LightCyan
+                                                        If Ball(A).Mass > 700 Then Ball(A).Color = System.Drawing.Color.LightBlue
+                                                        'If Ball(A).Mass > 1000 Then
+                                                        '    Ball(A).Color = System.Drawing.Color.Black
+                                                        '    Ball(A).Size = 15
+                                                        '    If InStr(1, Ball(A).Flags, "BH") = 0 Then Ball(A).Flags = Ball(A).Flags + "BH"
+                                                        'End If
 
-                                                                                              If InStr(1, Ball(X).Flags, "R") > 0 And Force < (Ball(i).Mass ^ 3) Or InStr(1, Ball(X).Flags, "R") = 0 Then
-                                                                                                  Dim Area1 As Double, Area2 As Double
+                                                        bolBallsRemoved = True
 
+                                                        '                                                    Else
+                                                        '                                                        'If Ball(A).Flags <> "B" Then
+                                                        '                                                        Ball(A).SpeedX = Ball(A).SpeedX + (U1 - V1) * VekX ' * 0.7
+                                                        '                                                        Ball(A).SpeedY = Ball(A).SpeedY + (U1 - V1) * VeKY ' * 0.7
 
+                                                        '                                                        Ball(B).SpeedX = Ball(B).SpeedX + (U2 - V2) * VekX ' * 0.7
+                                                        '                                                        Ball(B).SpeedY = Ball(B).SpeedY + (U2 - V2) * VeKY ' * 0.7
+                                                        '                                                        ' End If
+                                                        'here:
+                                                        '                                                    End If
+                                                    End If
+                                                End If
 
-                                                                                                  If Ball(i).Mass > Ball(X).Mass Then
+                                            End If
+                                        End If
 
 
 
-                                                                                                      If Ball(X).Origin <> i Then
 
-                                                                                                          Ball(i).Flags = Replace$(Ball(i).Flags, "R", "")
-                                                                                                          Ball(i).SpeedX = Ball(i).SpeedX + (U1 - V1) * VekX
-                                                                                                          Ball(i).SpeedY = Ball(i).SpeedY + (U1 - V1) * VeKY
+                                        '  If Ball(A).Mass > 350 And Ball(A).Visible = True Then 'solar wind
+                                        'If InStr(Ball(A).Flags, "S") = 0 Then Ball(A).Flags = Ball(A).Flags + "S"
+                                        'rc = (Ball(B).Size / 4) + (Ball(A).Size / 4)
+                                        'ry = (Ball(B).LocY - Ball(A).LocY) / 2
+                                        'rx = (Ball(B).LocX - Ball(A).LocX) / 2
+                                        'd = Sqrt(rx * rx + ry * ry)
 
+                                        'If d < 500 Then
 
 
-                                                                                                          Area1 = PI * (Ball(i).Size ^ 2)
-                                                                                                          Area2 = PI * (Ball(X).Size ^ 2)
+                                        '    Dim m As Double, SlX As Double, SlY As Double
+                                        '    Dim VecX As Double, VecY As Double
+                                        '    Dim C As Double, S As Double
+                                        '    Dim Dis As Double, DisSqr As Double, F As Double, Lx As Double, Ly As Double
 
-                                                                                                          Area1 = Area1 + Area2
-                                                                                                          Ball(i).Size = Sqrt(Area1 / PI)
 
+                                        '    SlX = Ball(B).LocX - Ball(A).LocX
+                                        '    SlY = Ball(B).LocY - Ball(A).LocY
 
+                                        '    m = SlY / SlX
 
-                                                                                                          Ball(i).Mass = Ball(i).Mass + Ball(X).Mass 'Sqr(Ball(X).Mass)
-                                                                                                          Ball(X).Visible = False
+                                        '    a = Math.Atan2(Ball(B).LocY - Ball(A).LocY, Ball(B).LocX - Ball(A).LocX)
 
-                                                                                                      End If
+                                        '    C = Cos(a)
+                                        '    S = Sin(a)
 
+                                        '    VecX = (Ball(B).LocX + Ball(B).Size * C) - Ball(B).LocX
+                                        '    VecY = (Ball(B).LocY + Ball(B).Size * S) - Ball(B).LocY
 
 
+                                        '    Lx = Ball(B).LocX - Ball(A).LocX
+                                        '    Ly = Ball(B).LocY - Ball(A).LocY
+                                        '    Dis = (Lx * Lx) + (Ly * Ly)
+                                        '    DisSqr = Sqrt(Dis)
+                                        '    F = (Ball(A).Mass ^ 2) / (Dis * DisSqr)
 
 
+                                        '    Ball(B).SpeedX = Ball(B).SpeedX + F * VecX
+                                        '    Ball(B).SpeedY = Ball(B).SpeedY + F * VecY
 
-                                                                                                  Else
-                                                                                                      If Ball(i).Origin <> X Then
-                                                                                                          Ball(i).Flags = Replace$(Ball(i).Flags, "R", "")
-                                                                                                          Ball(X).SpeedX = Ball(X).SpeedX + (U2 - V2) * VekX
-                                                                                                          Ball(X).SpeedY = Ball(X).SpeedY + (U2 - V2) * VeKY
+                                        'End If
 
-                                                                                                          Area1 = PI * (Ball(X).Size ^ 2)
-                                                                                                          Area2 = PI * (Ball(i).Size ^ 2)
 
-                                                                                                          Area1 = Area1 + Area2
-                                                                                                          Ball(X).Size = Sqrt(Area1 / PI)
+                                        '   End If
 
 
 
-                                                                                                          Ball(X).Mass = Ball(X).Mass + Ball(i).Mass 'Sqr(Ball(i).Mass)
-                                                                                                          Ball(i).Visible = False
 
-                                                                                                      End If
+                                    End If
 
 
+                                End If
 
-                                                                                                  End If
 
-                                                                                              End If
 
-                                                                                              If Ball(i).Mass > 350 Then Ball(i).Color = System.Drawing.Color.Red
 
 
 
-                                                                                              If Ball(i).Mass > 400 Then Ball(i).Color = System.Drawing.Color.Yellow
-                                                                                              If Ball(i).Mass > 500 Then Ball(i).Color = System.Drawing.Color.White
-                                                                                              If Ball(i).Mass > 600 Then Ball(i).Color = System.Drawing.Color.LightCyan
-                                                                                              If Ball(i).Mass > 700 Then Ball(i).Color = System.Drawing.Color.LightBlue
-                                                                                              'If Ball(i).Mass > 1000 Then
-                                                                                              '    Ball(i).Color = System.Drawing.Color.Black
-                                                                                              '    Ball(i).Size = 15
-                                                                                              '    If InStr(1, Ball(i).Flags, "BH") = 0 Then Ball(i).Flags = Ball(i).Flags + "BH"
-                                                                                              'End If
 
-                                                                                              bolBallsRemoved = True
 
-                                                                                          Else
-                                                                                              'If Ball(i).Flags <> "B" Then
-                                                                                              Ball(i).SpeedX = Ball(i).SpeedX + (U1 - V1) * VekX ' * 0.7
-                                                                                              Ball(i).SpeedY = Ball(i).SpeedY + (U1 - V1) * VeKY ' * 0.7
+                            Next B
 
-                                                                                              Ball(X).SpeedX = Ball(X).SpeedX + (U2 - V2) * VekX ' * 0.7
-                                                                                              Ball(X).SpeedY = Ball(X).SpeedY + (U2 - V2) * VeKY ' * 0.7
-                                                                                              ' End If
-here:
-                                                                                          End If
+                            '// Collision with Walls
 
-                                                                                      End If
+                            'If bGrav = 0 Then
+                            '    right_side = Form1.Render.Width - Ball(A).Size
+                            '    bottom_side = Form1.Render.Height - Ball(A).Size
 
-                                                                                  End If
-                                                                              End If
+                            '    If Ball(A).LocY > bottom_side Then
+                            '        Ball(A).LocY = bottom_side
 
+                            '        Ball(A).SpeedY = Ball(A).SpeedY * -1
 
 
+                            '    ElseIf Ball(A).LocY < Ball(A).Size Then
 
-                                                                              If Ball(i).Mass > 350 And Ball(i).Visible = True Then 'solar wind
-                                                                                  If InStr(Ball(i).Flags, "S") = 0 Then Ball(i).Flags = Ball(i).Flags + "S"
-                                                                                  'rc = (Ball(X).Size / 4) + (Ball(i).Size / 4)
-                                                                                  'ry = (Ball(X).LocY - Ball(i).LocY) / 2
-                                                                                  'rx = (Ball(X).LocX - Ball(i).LocX) / 2
-                                                                                  'd = Sqrt(rx * rx + ry * ry)
+                            '        Ball(A).LocY = Ball(A).Size
+                            '        Ball(A).SpeedY = Ball(A).SpeedY * -1
 
-                                                                                  'If d < 500 Then
 
+                            '    End If
 
-                                                                                  '    Dim m As Double, SlX As Double, SlY As Double
-                                                                                  '    Dim VecX As Double, VecY As Double
-                                                                                  '    Dim C As Double, S As Double
-                                                                                  '    Dim Dis As Double, DisSqr As Double, F As Double, Lx As Double, Ly As Double
+                            '    If Ball(A).LocX > right_side Then
+                            '        Ball(A).LocX = right_side
+                            '        Ball(A).SpeedX = Ball(A).SpeedX * -1
+                            '    ElseIf Ball(A).LocX < Ball(A).Size Then
+                            '        Ball(A).LocX = Ball(A).Size
+                            '        Ball(A).SpeedX = Ball(A).SpeedX * -1
+                            '    End If
+                            'End If
 
+                        End If
 
-                                                                                  '    SlX = Ball(X).LocX - Ball(i).LocX
-                                                                                  '    SlY = Ball(X).LocY - Ball(i).LocY
+                    End If
 
-                                                                                  '    m = SlY / SlX
+                    Ball(A).LocX = Ball(A).LocX + (Ball(A).SpeedX * StepMulti)
+                    Ball(A).LocY = Ball(A).LocY + (Ball(A).SpeedY * StepMulti)
 
-                                                                                  '    a = Math.Atan2(Ball(X).LocY - Ball(i).LocY, Ball(X).LocX - Ball(i).LocX)
-
-                                                                                  '    C = Cos(a)
-                                                                                  '    S = Sin(a)
-
-                                                                                  '    VecX = (Ball(X).LocX + Ball(X).Size * C) - Ball(X).LocX
-                                                                                  '    VecY = (Ball(X).LocY + Ball(X).Size * S) - Ball(X).LocY
-
-
-                                                                                  '    Lx = Ball(X).LocX - Ball(i).LocX
-                                                                                  '    Ly = Ball(X).LocY - Ball(i).LocY
-                                                                                  '    Dis = (Lx * Lx) + (Ly * Ly)
-                                                                                  '    DisSqr = Sqrt(Dis)
-                                                                                  '    F = (Ball(i).Mass ^ 2) / (Dis * DisSqr)
-
-
-                                                                                  '    Ball(X).SpeedX = Ball(X).SpeedX + F * VecX
-                                                                                  '    Ball(X).SpeedY = Ball(X).SpeedY + F * VecY
-
-                                                                                  'End If
-
-
-                                                                              End If
-
-
-
-
-                                                                          End If
-
-
-                                                                      End If
-
-
-
-
-
-
-
-
-                                                                  Next X
-
-                                                                  '// Collision with Walls
-
-                                                                  'If bGrav = 0 Then
-                                                                  '    right_side = Form1.Render.Width - Ball(i).Size
-                                                                  '    bottom_side = Form1.Render.Height - Ball(i).Size
-
-                                                                  '    If Ball(i).LocY > bottom_side Then
-                                                                  '        Ball(i).LocY = bottom_side
-
-                                                                  '        Ball(i).SpeedY = Ball(i).SpeedY * -1
-
-
-                                                                  '    ElseIf Ball(i).LocY < Ball(i).Size Then
-
-                                                                  '        Ball(i).LocY = Ball(i).Size
-                                                                  '        Ball(i).SpeedY = Ball(i).SpeedY * -1
-
-
-                                                                  '    End If
-
-                                                                  '    If Ball(i).LocX > right_side Then
-                                                                  '        Ball(i).LocX = right_side
-                                                                  '        Ball(i).SpeedX = Ball(i).SpeedX * -1
-                                                                  '    ElseIf Ball(i).LocX < Ball(i).Size Then
-                                                                  '        Ball(i).LocX = Ball(i).Size
-                                                                  '        Ball(i).SpeedX = Ball(i).SpeedX * -1
-                                                                  '    End If
-                                                                  'End If
-
-                                                              End If
-
-                                                          End If
-
-                                                          Ball(i).LocX = Ball(i).LocX + (Ball(i).SpeedX * StepMulti)
-                                                          Ball(i).LocY = Ball(i).LocY + (Ball(i).SpeedY * StepMulti)
-
-                                                      End SyncLock
-                                                  End Sub)
+                    '  End SyncLock
+                    'End Sub)
+                Next A
 
 
 
@@ -814,12 +680,15 @@ here:
                     DiffX = Ball(lngFollowBall).LocX - (Form1.Render.Width / 2) 'FollowX
                     DiffY = Ball(lngFollowBall).LocY - (Form1.Render.Height / 2) 'FollowY
 
-                    For i = 1 To UBound(Ball)
+                    RelBallPosMod.X = Ball(lngFollowBall).LocX - (Form1.Render.Width / 2) 'FollowX
+                    RelBallPosMod.Y = Ball(lngFollowBall).LocY - (Form1.Render.Height / 2) '
 
-                        Ball(i).LocX = Ball(i).LocX - DiffX
-                        Ball(i).LocY = Ball(i).LocY - DiffY
+                    'For A = 1 To UBound(Ball)
 
-                    Next
+                    '    Ball(A).LocX = Ball(A).LocX - DiffX
+                    '    Ball(A).LocY = Ball(A).LocY - DiffY
+
+                    'Next
 
                     FollowX = Ball(lngFollowBall).LocX
                     FollowY = Ball(lngFollowBall).LocY
@@ -831,27 +700,27 @@ here:
 
 
             If Form1.chkTrails.Checked And s.ThreadState <> Threading.ThreadState.Running Then
-                For i = 1 To UBound(Ball)
+                For A = 1 To UBound(Ball)
 
-                    If Ball(i).Visible And Ball(i).LocX > 0 And Ball(i).LocX < Form1.Render.Width And Ball(i).LocY > 0 And Ball(i).LocY < Form1.Render.Height And s.ThreadState <> Threading.ThreadState.Running Then
+                    If Ball(A).Visible And Ball(A).LocX > 0 And Ball(A).LocX < Form1.Render.Width And Ball(A).LocY > 0 And Ball(A).LocY < Form1.Render.Height And s.ThreadState <> Threading.ThreadState.Running Then
                         'g = g + 1
                         ' If g > 4 Then g = 0
 
 
-                        ' e.Graphics.FillEllipse(Brushes.LightBlue, ball_loc_x(i) - 1, ball_loc_y(i) - 1, BallSize(i) + 2, BallSize(i) + 2)
-                        ' e.Graphics.FillEllipse(Brushes.Blue, ball_loc_x(i), ball_loc_y(i), BallSize(i), BallSize(i))
+                        ' e.Graphics.FillEllipse(Brushes.LightBlue, ball_loc_x(A) - 1, ball_loc_y(A) - 1, BallSize(A) + 2, BallSize(A) + 2)
+                        ' e.Graphics.FillEllipse(Brushes.Blue, ball_loc_x(A), ball_loc_y(A), BallSize(A), BallSize(A))
 
-                        ' Dim myBrush As New SolidBrush(Ball(i).Color)
-                        Dim myPen As New Pen(Ball(i).Color)
+                        ' Dim myBrush As New SolidBrush(Ball(A).Color)
+                        Dim myPen As New Pen(Ball(A).Color)
 
                         'Render.CreateGraphics.SmoothingMode = SmoothingMode.AntiAlias
-                        ' Render.CreateGraphics.FillEllipse(Brushes.Black, Ball(i).LocX - Ball(i).Size / 2 - 1, Ball(i).LocY - Ball(i).Size / 2 - 1, Ball(i).Size + 2, Ball(i).Size + 2)
-                        'Render.CreateGraphics.FillEllipse(myBrush, Ball(i).LocX - Ball(i).Size / 2, Ball(i).LocY - Ball(i).Size / 2, Ball(i).Size, Ball(i).Size)
-                        Form1.Render.CreateGraphics.DrawEllipse(myPen, Ball(i).LocX - Ball(i).Size / 2, Ball(i).LocY - Ball(i).Size / 2, Ball(i).Size, Ball(i).Size)
+                        ' Render.CreateGraphics.FillEllipse(Brushes.Black, Ball(A).LocX - Ball(A).Size / 2 - 1, Ball(A).LocY - Ball(A).Size / 2 - 1, Ball(A).Size + 2, Ball(A).Size + 2)
+                        'Render.CreateGraphics.FillEllipse(myBrush, Ball(A).LocX - Ball(A).Size / 2, Ball(A).LocY - Ball(A).Size / 2, Ball(A).Size, Ball(A).Size)
+                        Form1.Render.CreateGraphics.DrawEllipse(myPen, Ball(A).LocX - Ball(A).Size / 2, Ball(A).LocY - Ball(A).Size / 2, Ball(A).Size, Ball(A).Size)
 
                     End If
 
-                Next i
+                Next A
 
             End If
 
@@ -922,6 +791,9 @@ here:
 
 
     End Function
+
+
+
     Public Sub FractureBall(ByVal i As Long)
         Dim NewBallSize As Single
         Dim NewBallMass As Single
@@ -990,6 +862,10 @@ here:
 
             Next h
         End If
+
+
+
+
 
     End Sub
 End Module

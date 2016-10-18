@@ -4,15 +4,15 @@ Imports System.Threading
 Imports System.Drawing.Drawing2D
 Module Render
     Public Sub Drawr(ByVal gr As Graphics)
-        Dim Origin As Point
+        Dim Origin As New SPoint
         If pic_scale <> 1 Then
             '  Origin = New Point(-((Form1.Render.Width / 2)), -((Form1.Render.Height / 2)))
         Else
-            Origin = New Point(0, 0)
+            Origin = New SPoint(0, 0)
         End If
 
         If Not Form1.chkTrails.Checked And Form1.chkDraw.Checked Then
-            For i = 1 To UBound(Ball)
+            For i = 0 To UBound(Ball)
 
                 If Ball(i).Visible Then ' And Ball(i).LocX > 0 And Ball(i).LocX < Render.Width And Ball(i).LocY > 0 And Ball(i).LocY < Render.Height Then
                     'g = g + 1

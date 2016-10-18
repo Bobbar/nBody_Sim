@@ -1795,8 +1795,8 @@ finished:
             Debug.Print("Index: " & UBound(Ball))
 
             Ball(UBound(Ball)).Color = RandomRGBColor()
-            Ball(UBound(Ball)).LocX = ScaleMousePosRelative(e.Location).X - (Ball(UBound(Ball)).Size / 2)  ' ScaleMousePosRelative(e.Location).X - Ball(UBound(Ball)).Size / 2
-            Ball(UBound(Ball)).LocY = ScaleMousePosRelative(e.Location).Y - (Ball(UBound(Ball)).Size / 2)
+            Ball(UBound(Ball)).LocX = ScaleMousePosRelative(New SPoint(e.Location)).X - (Ball(UBound(Ball)).Size / 2)  ' ScaleMousePosRelative(e.Location).X - Ball(UBound(Ball)).Size / 2
+            Ball(UBound(Ball)).LocY = ScaleMousePosRelative(New SPoint(e.Location)).Y - (Ball(UBound(Ball)).Size / 2)
             Ball(UBound(Ball)).SpeedX = 0
             Ball(UBound(Ball)).SpeedY = 0
 
@@ -1834,8 +1834,7 @@ finished:
                     'Debug.Print "LocX: " & Ball(i).LocX & vbCrLf & "LocY: " & Ball(i).LocY & vbCrLf & "SpeedX: " & Ball(i).SpeedX & vbCrLf & "SpeedY: " & Ball(i).SpeedY
 
 
-
-                    If MouseOver(New Point(e.Location), Ball(i)) And Ball(i).Visible Then
+                    If MouseOver(New SPoint(e.Location), Ball(i)) And Ball(i).Visible Then
                         'Debug.Print(Render.PointToClient(New Point(Ball(i).LocX, Ball(i).LocY)).ToString)
                         Debug.Print(Ball(i).LocX & "-" & Ball(i).LocY)
                         If Not bolAltDown And bolShiftDown Then MoV = 1
@@ -1900,7 +1899,7 @@ finished:
                 For i = 0 To UBound(Ball)
 
                     'ScaleMousePos(e.X) > Ball(i).LocX And ScaleMousePos(e.X) < Ball(i).LocX + Ball(i).Size And ScaleMousePos(e.Y) > Ball(i).LocY And ScaleMousePos(e.Y) < Ball(i).LocY + Ball(i).Size And Not bolShiftDown Then
-                    If MouseOver(New Point(e.Location), Ball(i)) And bolShiftDown Then
+                    If MouseOver(New SPoint(e.Location), Ball(i)) And bolShiftDown Then
                         MoV = 1
                         Sel = i
                     End If
@@ -1916,8 +1915,8 @@ finished:
 
 
                 Ball(Sel).MovinG = True
-                Ball(Sel).LocX = ScaleMousePosRelative(e.Location).X
-                Ball(Sel).LocY = ScaleMousePosRelative(e.Location).Y
+                Ball(Sel).LocX = ScaleMousePosRelative(New SPoint(e.Location)).X
+                Ball(Sel).LocY = ScaleMousePosRelative(New SPoint(e.Location)).Y
                 'ax(Sel) = 0
                 'ay(Sel) = 0
                 'bCenterX(Sel) = e.X
@@ -1951,31 +1950,31 @@ finished:
 
                     MouseXDiff = MouseUpX - MouseDnX
                     MouseYDiff = MouseUpY - MouseDnY
-                    Dim MouseDiff As New Point(MouseXDiff, MouseYDiff)
+                    Dim MouseDiff As New SPoint(MouseXDiff, MouseYDiff)
 
                     RelBallPosMod.X = RelBallPosMod.X + ScaleMousePosExact(MouseDiff).X
                     RelBallPosMod.Y = RelBallPosMod.Y + ScaleMousePosExact(MouseDiff).Y
                     MouseDnX = e.X 'ScaleMousePosExact(e.Location).X
                     MouseDnY = e.Y 'ScaleMousePosExact(e.Location).Y
 
-                    Debug.Print(RelBallPosMod.ToString)
+                    ' Debug.Print(RelBallPosMod.ToString)
                 End If
 
 
             End If
         End If
     End Sub
-    Private Function ScaleMousePosRelative(MousePos As Point) As Point
-        Dim CorrectedPos As New Point((MousePos.X / pic_scale) - RelBallPosMod.X, (MousePos.Y / pic_scale) - RelBallPosMod.Y)
+    Private Function ScaleMousePosRelative(MousePos As SPoint) As SPoint
+        Dim CorrectedPos As New SPoint((MousePos.X / pic_scale) - RelBallPosMod.X, (MousePos.Y / pic_scale) - RelBallPosMod.Y)
 
         Return CorrectedPos
     End Function
-    Private Function ScaleMousePosExact(MousePos As Point) As Point
-        Dim CorrectedPos As New Point((MousePos.X / pic_scale), (MousePos.Y / pic_scale))
+    Private Function ScaleMousePosExact(MousePos As SPoint) As SPoint
+        Dim CorrectedPos As New SPoint((MousePos.X / pic_scale), (MousePos.Y / pic_scale))
 
         Return CorrectedPos
     End Function
-    Private Function MouseOver(MousePos As Point, Ball As BallParms) As Boolean
+    Private Function MouseOver(MousePos As SPoint, Ball As BallParms) As Boolean
         'ScaleMousePos(e.X) > Ball(i).LocX And ScaleMousePos(e.X) < Ball(i).LocX + Ball(i).Size And ScaleMousePos(e.Y) > Ball(i).LocY And ScaleMousePos(e.Y) < Ball(i).LocY + Ball(i).Size And Not bolShiftDown Then
         ' MouseOver(New Point(e.Location), New Point(Ball(i).LocX, Ball(i).LocY + Ball(i).Size))
 
@@ -2745,7 +2744,7 @@ finished:
 
 
     End Sub
-    Public BallViewLoc As New Point
+    Public BallViewLoc As New SPoint
     Private Sub Render_MouseWheel(sender As Object, e As MouseEventArgs) Handles Render.MouseWheel
         Dim scale_amount As Single = 0.1
         If e.Delta > 0 Then
@@ -2754,10 +2753,10 @@ finished:
             pic_scale -= scale_amount
         End If
 
-        Dim OffsetValue As Point
+        Dim OffsetValue As New SPoint
         OffsetValue.X = Render.Width / 2 * pic_scale ' RelBallPosMod.X / pic_scale
         OffsetValue.Y = Render.Height / 2 * pic_scale 'RelBallPosMod.Y / pic_scale
-        Dim CentOffset As New Point(RelBallPosMod.X - OffsetValue.X, RelBallPosMod.Y - OffsetValue.Y)
+        Dim CentOffset As New SPoint(RelBallPosMod.X - OffsetValue.X, RelBallPosMod.Y - OffsetValue.Y)
         Dim Dist As Double = Math.Sqrt((0 - Render.Width) ^ 2 + (0 - Render.Height) ^ 2)
         Debug.Print(Dist / 4 * pic_scale)
 
