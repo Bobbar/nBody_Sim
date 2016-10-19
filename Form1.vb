@@ -1741,7 +1741,7 @@ finished:
 
 
         bolStopLoop = True
-        End
+        ' End
 
 
     End Sub
@@ -2396,11 +2396,11 @@ finished:
             Ball(UBound(Ball)).Color = Color.Black 'RandomRGBColor() 'vbWhite
             Ball(UBound(Ball)).Visible = True
 
-            Ball(UBound(Ball)).LocX = GetRandomNumber(1, Render.Width) - ScaleOffset.X
+            Ball(UBound(Ball)).LocX = GetRandomNumber(1, Render.Width) - ScaleOffset.X - RelBallPosMod.X
             'Ball(UBound(Ball)).LocX = CInt(Int((Render.ScaleWidth * Rnd()) + 1))  '((Render2.ScaleWidth) / 2) ' - 10
             'Randomize(Timer)
             'Ball(UBound(Ball)).LocY = CInt(Int((Render.ScaleHeight * Rnd()) + 1)) '((Render2.ScaleHeight) / 2) '+ Ball(UBound(Ball) - 1).LocY + Ball(UBound(Ball) - 1).Size
-            Ball(UBound(Ball)).LocY = GetRandomNumber(1, Render.Height) - ScaleOffset.Y
+            Ball(UBound(Ball)).LocY = GetRandomNumber(1, Render.Height) - ScaleOffset.Y - RelBallPosMod.Y
 
             Ball(UBound(Ball)).SpeedX = 0
             Ball(UBound(Ball)).SpeedY = 0
