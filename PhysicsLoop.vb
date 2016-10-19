@@ -548,16 +548,16 @@ restart:
 
 
 
-                If s.ThreadState <> Threading.ThreadState.Running Then
+            If s.ThreadState <> Threading.ThreadState.Running And Form1.chkDraw.Checked Then
 
-                    Form1.Render.Image = Drawr()
-                End If
-
-
+                Form1.Render.Image = Drawr()
+            End If
 
 
 
-                FPS = FPS + 1
+
+
+            FPS = FPS + 1
 
 
 
@@ -660,6 +660,7 @@ restart:
                 'If Not InStr(1, Ball(i).Flags, "R") Then Ball(u).Flags = Ball(i).Flags + "R"
                 'Ball(u).Flags = Ball(i).Flags + "R"
                 Ball(u).Color = Ball(i).Color 'vbWhite
+                Ball(u).Flags = ""
                 Ball(u).Visible = True
 
 

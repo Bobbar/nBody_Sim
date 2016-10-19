@@ -2426,7 +2426,7 @@ finished:
 
             Ball(UBound(Ball)).SpeedX = 0
             Ball(UBound(Ball)).SpeedY = 0
-
+            Ball(UBound(Ball)).Flags = ""
             Ball(UBound(Ball)).Size = GetRandomNumber(1, 5)
             Ball(UBound(Ball)).Mass = fnMass(Ball(UBound(Ball)).Size) ' * 2
 
