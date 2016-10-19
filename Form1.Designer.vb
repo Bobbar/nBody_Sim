@@ -63,16 +63,18 @@ Partial Class Form1
         '
         'Render
         '
+        Me.Render.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Render.BackColor = System.Drawing.Color.White
-        Me.Render.Location = New System.Drawing.Point(8, 28)
+        Me.Render.Location = New System.Drawing.Point(2, 28)
         Me.Render.Name = "Render"
-        Me.Render.Size = New System.Drawing.Size(1084, 672)
+        Me.Render.Size = New System.Drawing.Size(1105, 708)
         Me.Render.TabIndex = 15
         Me.Render.TabStop = False
         '
         'Timer2
         '
-        Me.Timer2.Enabled = True
         Me.Timer2.Interval = 125
         '
         'Label10
@@ -101,6 +103,7 @@ Partial Class Form1
         Me.Label12.AutoSize = True
         Me.Label12.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.Label12.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label12.ForeColor = System.Drawing.Color.ForestGreen
         Me.Label12.Location = New System.Drawing.Point(989, 6)
         Me.Label12.Name = "Label12"
         Me.Label12.Size = New System.Drawing.Size(56, 20)
@@ -345,13 +348,13 @@ Partial Class Form1
         Me.Controls.Add(Me.txtSpeedY)
         Me.Controls.Add(Me.txtSpeedX)
         Me.Controls.Add(Me.Button3)
-        Me.Controls.Add(Me.Button2)
-        Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.Label10)
-        Me.Controls.Add(Me.Label13)
         Me.Controls.Add(Me.Label12)
         Me.Controls.Add(Me.Render)
         Me.Controls.Add(Me.Label11)
+        Me.Controls.Add(Me.Button2)
+        Me.Controls.Add(Me.Button1)
+        Me.Controls.Add(Me.Label13)
         Me.KeyPreview = True
         Me.Name = "Form1"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen

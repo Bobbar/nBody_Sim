@@ -3,6 +3,9 @@ Imports System.Threading.Tasks
 Imports System.Threading
 Imports System.Drawing.Drawing2D
 Public Module Renderer
+    Public colBackColor As Color = Color.Black
+    Public colDefBodyColor As Color = Color.White
+    Public colControlForeColor As Color = Color.White
     Public ScreenCenterX As Single
     Public ScreenCenterY As Single
     'Public RenderWindowDimsH As Integer
@@ -29,7 +32,7 @@ Public Module Renderer
             Origin = New SPoint(0, 0)
         End If
 
-        If Not Form1.chkTrails.Checked Then gr.Clear(Color.White)
+        If Not Form1.chkTrails.Checked Then gr.Clear(colBackColor)
         gr.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
 
 

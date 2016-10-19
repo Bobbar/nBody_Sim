@@ -1741,9 +1741,9 @@ finished:
 
 
         bolStopLoop = True
-        ' End
 
-
+        Me.Dispose()
+        End
     End Sub
 
     Private Sub Form1_KeyDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles MyBase.KeyDown
@@ -2071,6 +2071,16 @@ finished:
 
         FPS = 0
 
+
+        ScreenCenterX = Me.Render.Width / 2
+        ScreenCenterY = Me.Render.Height / 2
+
+
+
+        ScaleOffset.X = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).X
+        ScaleOffset.Y = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).Y
+
+
         RenderWindowDims.X = CInt(Me.Render.Width)
         RenderWindowDims.Y = CInt(Me.Render.Height)
 
@@ -2095,9 +2105,21 @@ finished:
 
     End Sub
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-
-
+        Me.BackColor = colBackColor
+        For Each ctl As Control In Me.Controls
+            If Not TypeOf ctl Is Label Then
+                ctl.ForeColor = colControlForeColor
+                ctl.BackColor = colBackColor
+            End If
+        Next
         pic_scale = 1
+
+        ScreenCenterX = Me.Render.Width / 2
+        ScreenCenterY = Me.Render.Height / 2
+
+        ScaleOffset.X = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).X
+        ScaleOffset.Y = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).Y
+
 
         intTargetFPS = txtFPS.Text
 
@@ -2157,7 +2179,7 @@ finished:
         't2.Start()
         't3.Start()
         ' butAddBall.PerformClick()
-
+        Timer2.Enabled = True
         MainLoop()
 
 
@@ -2393,7 +2415,7 @@ finished:
 
             ReDim Preserve Ball(UBound(Ball) + 1)
 
-            Ball(UBound(Ball)).Color = Color.Black 'RandomRGBColor() 'vbWhite
+            Ball(UBound(Ball)).Color = RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
 
             Ball(UBound(Ball)).LocX = GetRandomNumber(1, Render.Width) - ScaleOffset.X - RelBallPosMod.X
@@ -2525,8 +2547,10 @@ finished:
 
     Private Sub Form1_Resize(sender As Object, e As EventArgs) Handles Me.Resize
 
-        Render.Width = Me.Width - 30
-        Render.Height = Me.Height - 70
+
+
+        'Render.Width = Me.Width - 30
+        'Render.Height = Me.Height - 70
 
         'If bGrav = 1 Then
         '    RenderWindowDims.X = CInt(Me.Render.Width)
@@ -2691,12 +2715,18 @@ finished:
     End Sub
 
     Private Sub txtFPS_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtFPS.TextChanged
-        If txtFPS.Text = "" Or txtFPS.Text < 0 Then
-            intTargetFPS = 1
-        Else
-            intTargetFPS = txtFPS.Text
-
+        If txtFPS.Text = "" Then
+            intTargetFPS = 10
         End If
+
+        If CInt(txtFPS.Text) < 10 Then
+
+            intTargetFPS = 10
+            Else
+                intTargetFPS = txtFPS.Text
+            End If
+
+
     End Sub
 
     Private Sub Form1_ResizeBegin(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.ResizeBegin
@@ -2767,24 +2797,17 @@ finished:
         End If
         UpdateScale()
         Debug.Print(pic_scale)
+
+
         ScreenCenterX = Me.Render.Width / 2
         ScreenCenterY = Me.Render.Height / 2
 
-        'If bolFollow Then
-        '    Dim DiffX, DiffY As Single
-        '    DiffX = ScreenCenterX - Ball(lngFollowBall).LocX
-        '    DiffY = ScreenCenterY - Ball(lngFollowBall).LocY
-        '    ScaleOffset.X = ScaleMousePosExact(New SPoint(DiffX, DiffY)).X - RelBallPosMod.X
-        '    ScaleOffset.Y = ScaleMousePosExact(New SPoint(DiffX, DiffY)).Y - RelBallPosMod.Y
-
-        'Else
 
 
         ScaleOffset.X = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).X
         ScaleOffset.Y = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).Y
 
 
-        ' End If
 
         Debug.Print("Scale Offset: " + ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).ToString)
 
@@ -2811,6 +2834,14 @@ finished:
     End Sub
 
     Private Sub Render_Move(sender As Object, e As EventArgs) Handles Render.Move
+
+    End Sub
+
+    Private Sub Form1_RightToLeftChanged(sender As Object, e As EventArgs) Handles Me.RightToLeftChanged
+
+    End Sub
+
+    Private Sub Form1_Scroll(sender As Object, e As ScrollEventArgs) Handles Me.Scroll
 
     End Sub
 End Class
