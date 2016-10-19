@@ -104,6 +104,7 @@
     </Compile>
     <Compile Include="Matrix2D.vb" />
     <Compile Include="Matrix3D.vb" />
+    <Compile Include="Functions.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

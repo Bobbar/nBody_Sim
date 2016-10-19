@@ -175,8 +175,8 @@ Public Class Form1
 
                 'DiffX = Ball(lngFollowBall).LocX - (Render.Width / 2) 'FollowX
                 ' DiffY = Ball(lngFollowBall).LocY - (Render.Height / 2) 'FollowY
-                RelBallPosMod.X = Ball(lngFollowBall).LocX - (Render.Width / 2) 'FollowX
-                RelBallPosMod.Y = Ball(lngFollowBall).LocY - (Render.Height / 2) '
+                'RelBallPosMod.X = Ball(lngFollowBall).LocX - (Render.Width / 2) 'FollowX
+                'RelBallPosMod.Y = Ball(lngFollowBall).LocY - (Render.Height / 2) '
 
 
                 'For i = 1 To UBound(Ball)
@@ -1966,16 +1966,7 @@ finished:
             End If
         End If
     End Sub
-    Private Function ScaleMousePosRelative(MousePos As SPoint) As SPoint
-        Dim CorrectedPos As New SPoint((MousePos.X / pic_scale) - RelBallPosMod.X, (MousePos.Y / pic_scale) - RelBallPosMod.Y)
 
-        Return CorrectedPos
-    End Function
-    Private Function ScaleMousePosExact(MousePos As SPoint) As SPoint
-        Dim CorrectedPos As New SPoint((MousePos.X / pic_scale), (MousePos.Y / pic_scale))
-
-        Return CorrectedPos
-    End Function
     Private Function MouseOver(MousePos As SPoint, Ball As BallParms) As Boolean
         'ScaleMousePos(e.X) > Ball(i).LocX And ScaleMousePos(e.X) < Ball(i).LocX + Ball(i).Size And ScaleMousePos(e.Y) > Ball(i).LocY And ScaleMousePos(e.Y) < Ball(i).LocY + Ball(i).Size And Not bolShiftDown Then
         ' MouseOver(New Point(e.Location), New Point(Ball(i).LocX, Ball(i).LocY + Ball(i).Size))
@@ -2028,29 +2019,29 @@ finished:
 
         If bolAltDown And lngFollowBall > 0 Then
 
-            Dim DiffX As Double, DiffY As Double
-            Dim g As Long
+            'Dim DiffX As Double, DiffY As Double
+            'Dim g As Long
 
 
-            FollowX = Ball(lngFollowBall).LocX
-            FollowY = Ball(lngFollowBall).LocY
+            'FollowX = Ball(lngFollowBall).LocX
+            'FollowY = Ball(lngFollowBall).LocY
 
-            DiffX = FollowX - (Render.Size.Width / 2)
-            DiffY = FollowY - (Render.Size.Height / 2)
+            'DiffX = FollowX - (Render.Size.Width / 2)
+            'DiffY = FollowY - (Render.Size.Height / 2)
 
-            For g = 1 To UBound(Ball)
+            'For g = 1 To UBound(Ball)
 
-                Ball(g).LocX = Ball(g).LocX - DiffX
-                Ball(g).LocY = Ball(g).LocY - DiffY
+            '    Ball(g).LocX = Ball(g).LocX - DiffX
+            '    Ball(g).LocY = Ball(g).LocY - DiffY
 
-            Next g
+            'Next g
 
-            FollowX = Ball(lngFollowBall).LocX
-            FollowY = Ball(lngFollowBall).LocY
+            'FollowX = Ball(lngFollowBall).LocX
+            'FollowY = Ball(lngFollowBall).LocY
             bolFollow = True
 
-            tmrFollow.Enabled = True
-            Render.Refresh()
+            'tmrFollow.Enabled = True
+            'Render.Refresh()
         End If
     End Sub
 
@@ -2767,7 +2758,7 @@ finished:
     End Sub
     Public BallViewLoc As New SPoint
     Private Sub Render_MouseWheel(sender As Object, e As MouseEventArgs) Handles Render.MouseWheel
-        Dim scale_amount As Single = 0.03 * pic_scale
+        Dim scale_amount As Single = 0.05 * pic_scale
 
         If e.Delta > 0 Then
             pic_scale += scale_amount
@@ -2776,20 +2767,33 @@ finished:
         End If
         UpdateScale()
         Debug.Print(pic_scale)
-        Dim X As Single = Me.Render.Width / 2
-        Dim Y As Single = Me.Render.Height / 2
-        ScaleOffset.X = ScaleMousePosExact(New SPoint(X, Y)).X
-        ScaleOffset.Y = ScaleMousePosExact(New SPoint(X, Y)).Y
+        ScreenCenterX = Me.Render.Width / 2
+        ScreenCenterY = Me.Render.Height / 2
+
+        'If bolFollow Then
+        '    Dim DiffX, DiffY As Single
+        '    DiffX = ScreenCenterX - Ball(lngFollowBall).LocX
+        '    DiffY = ScreenCenterY - Ball(lngFollowBall).LocY
+        '    ScaleOffset.X = ScaleMousePosExact(New SPoint(DiffX, DiffY)).X - RelBallPosMod.X
+        '    ScaleOffset.Y = ScaleMousePosExact(New SPoint(DiffX, DiffY)).Y - RelBallPosMod.Y
+
+        'Else
 
 
-        Debug.Print("Scale Offset: " + ScaleMousePosExact(New SPoint(X, Y)).ToString)
+        ScaleOffset.X = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).X
+        ScaleOffset.Y = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).Y
 
 
-        Dim OffsetValue As New SPoint
-        OffsetValue.X = Render.Width / 2 * pic_scale ' RelBallPosMod.X / pic_scale
-        OffsetValue.Y = Render.Height / 2 * pic_scale 'RelBallPosMod.Y / pic_scale
-        Dim CentOffset As New SPoint(RelBallPosMod.X - OffsetValue.X, RelBallPosMod.Y - OffsetValue.Y)
-        Dim Dist As Double = Math.Sqrt((0 - Render.Width) ^ 2 + (0 - Render.Height) ^ 2)
+        ' End If
+
+        Debug.Print("Scale Offset: " + ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).ToString)
+
+
+        'Dim OffsetValue As New SPoint
+        'OffsetValue.X = Render.Width / 2 * pic_scale ' RelBallPosMod.X / pic_scale
+        'OffsetValue.Y = Render.Height / 2 * pic_scale 'RelBallPosMod.Y / pic_scale
+        'Dim CentOffset As New SPoint(RelBallPosMod.X - OffsetValue.X, RelBallPosMod.Y - OffsetValue.Y)
+        'Dim Dist As Double = Math.Sqrt((0 - Render.Width) ^ 2 + (0 - Render.Height) ^ 2)
         'Debug.Print(Dist / 4 * pic_scale)
 
         '  RelBallPosMod = RelBallPosMod - CentOffset
@@ -2806,5 +2810,7 @@ finished:
         Debug.Print(RelBallPosMod.ToString)
     End Sub
 
+    Private Sub Render_Move(sender As Object, e As EventArgs) Handles Render.Move
 
+    End Sub
 End Class

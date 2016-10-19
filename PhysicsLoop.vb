@@ -675,27 +675,14 @@ restart:
 
 
             If bolFollow Then
-                '  Dim DiffX As Double, DiffY As Double
+
 
                 If Ball(lngFollowBall).LocX <> FollowX Or Ball(lngFollowBall).LocY <> FollowY Then
 
-                    'DiffX = Ball(lngFollowBall).LocX - (Form1.Render.Width / 2) 'FollowX
-                    'DiffY = Ball(lngFollowBall).LocY - (Form1.Render.Height / 2) 'FollowY
 
-                    RelBallPosMod.X = -(Ball(lngFollowBall).LocX - (Form1.Render.Width / 2)) 'FollowX
-                    RelBallPosMod.Y = -(Ball(lngFollowBall).LocY - (Form1.Render.Height / 2)) '
+                    RelBallPosMod.X = -Ball(lngFollowBall).LocX '-ScaleMousePosExact(New SPoint(DiffX, DiffY)).X
+                    RelBallPosMod.Y = -Ball(lngFollowBall).LocY '-ScaleMousePosExact(New SPoint(DiffX, DiffY)).Y
 
-
-
-                    'For A = 1 To UBound(Ball)
-
-                    '    Ball(A).LocX = Ball(A).LocX - DiffX
-                    '    Ball(A).LocY = Ball(A).LocY - DiffY
-
-                    'Next
-
-                    FollowX = Ball(lngFollowBall).LocX
-                    FollowY = Ball(lngFollowBall).LocY
 
                 End If
 

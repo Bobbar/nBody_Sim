@@ -3,7 +3,8 @@ Imports System.Threading.Tasks
 Imports System.Threading
 Imports System.Drawing.Drawing2D
 Public Module Renderer
-
+    Public ScreenCenterX As Single
+    Public ScreenCenterY As Single
     'Public RenderWindowDimsH As Integer
     'Public RenderWindowDimsW As Integer
     Public RenderWindowDims As New Point(Form1.Render.Width, Form1.Render.Height)
@@ -65,10 +66,10 @@ Public Module Renderer
                         '  Dim myPen As New Pen(Color.Red)
                         Dim myBrush As New SolidBrush(Ball(i).Color)
                         Dim myBrush2 As New SolidBrush(Color.Red)
-                        gr.FillEllipse(myBrush, Ball(i).LocX - Ball(i).Size / 2 + RelBallPosMod.X + ScaleOffset.X, Ball(i).LocY - Ball(i).Size / 2 + RelBallPosMod.Y + ScaleOffset.Y, Ball(i).Size, Ball(i).Size)
+                        gr.FillEllipse(myBrush, Ball(i).LocX - Ball(i).Size / 2 + FinalOffset.X, Ball(i).LocY - Ball(i).Size / 2 + FinalOffset.Y, Ball(i).Size, Ball(i).Size)
 
 
-                        gr.FillEllipse(myBrush2, Origin.X, Origin.Y, 5, 5)
+                        'gr.FillEllipse(myBrush2, Convert.ToInt32(ScaleMousePosExact(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).X), Convert.ToInt32(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).Y), 5, 5)
                         'Else
                         '    Dim myPen As New Pen(Ball(i).Color)
 
@@ -90,5 +91,9 @@ Public Module Renderer
     End Function
     Public Function ScaledPoint(Point As Point, Origin As Point, Optional Scale As Double = 1.0) As Point
         Return New Point(Origin.X + Point.X * Scale, Origin.Y + Point.Y * Scale)
+    End Function
+    Public Function FinalOffset() As SPoint
+
+        Return New SPoint(RelBallPosMod.X + ScaleOffset.X, RelBallPosMod.Y + ScaleOffset.Y)
     End Function
 End Module
