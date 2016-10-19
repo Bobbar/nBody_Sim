@@ -23,7 +23,6 @@ Partial Class Form1
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.Render = New System.Windows.Forms.PictureBox()
         Me.Timer2 = New System.Windows.Forms.Timer(Me.components)
         Me.Label10 = New System.Windows.Forms.Label()
@@ -53,13 +52,12 @@ Partial Class Form1
         Me.txtFPS = New System.Windows.Forms.TextBox()
         Me.chkDraw = New System.Windows.Forms.CheckBox()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.PhysicsWorker = New System.ComponentModel.BackgroundWorker()
+        Me.tmrRender = New System.Windows.Forms.Timer(Me.components)
+        Me.lblDelay = New System.Windows.Forms.Label()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
-        '
-        'Timer1
-        '
-        Me.Timer1.Interval = 1
         '
         'Render
         '
@@ -324,12 +322,34 @@ Partial Class Form1
         Me.ToolTip1.ReshowDelay = 100
         Me.ToolTip1.ShowAlways = True
         '
+        'PhysicsWorker
+        '
+        Me.PhysicsWorker.WorkerReportsProgress = True
+        Me.PhysicsWorker.WorkerSupportsCancellation = True
+        '
+        'tmrRender
+        '
+        Me.tmrRender.Interval = 1
+        '
+        'lblDelay
+        '
+        Me.lblDelay.AutoSize = True
+        Me.lblDelay.BackColor = System.Drawing.Color.Black
+        Me.lblDelay.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblDelay.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.lblDelay.Location = New System.Drawing.Point(10, 63)
+        Me.lblDelay.Name = "lblDelay"
+        Me.lblDelay.Size = New System.Drawing.Size(45, 16)
+        Me.lblDelay.TabIndex = 48
+        Me.lblDelay.Text = "Delay:"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
         Me.ClientSize = New System.Drawing.Size(1108, 737)
+        Me.Controls.Add(Me.lblDelay)
         Me.Controls.Add(Me.chkDraw)
         Me.Controls.Add(Me.txtFPS)
         Me.Controls.Add(Me.chkShadow)
@@ -365,7 +385,6 @@ Partial Class Form1
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents Timer1 As System.Windows.Forms.Timer
     Friend WithEvents Render As System.Windows.Forms.PictureBox
     Friend WithEvents Timer2 As System.Windows.Forms.Timer
     Friend WithEvents Label10 As System.Windows.Forms.Label
@@ -395,4 +414,7 @@ Partial Class Form1
     Friend WithEvents txtFPS As System.Windows.Forms.TextBox
     Friend WithEvents chkDraw As CheckBox
     Friend WithEvents ToolTip1 As ToolTip
+    Friend WithEvents PhysicsWorker As System.ComponentModel.BackgroundWorker
+    Friend WithEvents tmrRender As Timer
+    Friend WithEvents lblDelay As Label
 End Class

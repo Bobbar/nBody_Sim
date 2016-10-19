@@ -516,11 +516,12 @@ restart:
 
                 End If
 
-                Application.DoEvents()
+            Application.DoEvents()
 
 
 
-                If UBound(Ball) > 5000 And bolBallsRemoved Then
+
+            If UBound(Ball) > 5000 And bolBallsRemoved Then
                     s = New Threading.Thread(AddressOf Form1.ShrinkBallArray)
                     s.Start()
                     s.Join()
