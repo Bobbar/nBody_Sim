@@ -234,7 +234,7 @@ restart:
                                                                       For B = 1 To BUB
                                                                           If Ball(B).Visible Then
 
-                                                                              If Form1.chkShadow.Checked Then
+                                                                              If bolShawdow Then
                                                                                   If InStr(1, Ball(A).Flags, "S") Then
                                                                                       Dim m As Double, SlX As Double, SlY As Double
                                                                                       SlX = Ball(B).LocX - Ball(A).LocX
@@ -552,10 +552,10 @@ restart:
 
 
 
-            If s.ThreadState <> Threading.ThreadState.Running And Form1.chkDraw.Checked Then
+            'If s.ThreadState <> Threading.ThreadState.Running And Form1.chkDraw.Checked Then
 
-                Form1.Render.Image = Drawr()
-            End If
+            '    Form1.Render.Image = Drawr()
+            'End If
 
 
 

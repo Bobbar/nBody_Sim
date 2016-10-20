@@ -15,12 +15,13 @@ Public Module Renderer
     Public bm As New Bitmap(Form1.Render.Width, Form1.Render.Height) '(CInt(pic_scale * Render.Width), CInt(pic_scale * Render.Height))
     Public gr As Graphics = Graphics.FromImage(bm)
     Public Sub UpdateScale()
-        gr.ResetTransform()
-        gr.ScaleTransform(pic_scale, pic_scale)
+        Debug.Print("Scale Update")
         If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
             bm = New Bitmap(RenderWindowDims.X, RenderWindowDims.Y)
             gr = Graphics.FromImage(bm)
         End If
+        gr.ResetTransform()
+        gr.ScaleTransform(pic_scale, pic_scale)
     End Sub
     Public Function Drawr() As Bitmap
         If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
@@ -28,25 +29,32 @@ Public Module Renderer
         End If
 
         Dim myPen As New Pen(Color.Red)
-        If Not Form1.chkTrails.Checked Then gr.Clear(colBackColor)
-        gr.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
+        If Not bolTrails Then gr.Clear(colBackColor)
+        If bolAntiAliasing Then
+            gr.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
+        Else
+            gr.SmoothingMode = Drawing2D.SmoothingMode.None
+        End If
 
-
-        If Form1.chkDraw.Checked Then
+        Dim myBrush As SolidBrush '(Ball(i).Color)
+        If bolDraw Then
             For i = 0 To UBound(Ball)
 
                 If Ball(i).Visible Then 'And Ball(i).LocX > 0 And Ball(i).LocX < Form1.Render.Width And Ball(i).LocY > 0 And Ball(i).LocY < Form1.Render.Height Then
-                    'g = g + 1
-                    ' If g > 4 Then g = 0
 
 
-                    ' e.Graphics.FillEllipse(Brushes.LightBlue, ball_loc_x(i) - 1, ball_loc_y(i) - 1, BallSize(i) + 2, BallSize(i) + 2)
-                    ' e.Graphics.FillEllipse(Brushes.Blue, ball_loc_x(i), ball_loc_y(i), BallSize(i), BallSize(i))
+                    If bolInvert Then
+                        myBrush = New SolidBrush(Color.Black)
+                    Else
+                        myBrush = New SolidBrush(Ball(i).Color)
+                    End If
+
+
 
 
                     'If Ball(i).Flags.IndexOf("S") < 1 And Ball(i).ShadAngle <> 0 And Ball(i).Flags.IndexOf("R") < 1 And Form1.chkShadow.Checked Then
 
-                    If Form1.chkShadow.Checked Then
+                    If bolShawdow Then
 
                         If InStr(1, Ball(i).Flags, "S") = False And Ball(i).ShadAngle <> 0 And InStr(1, Ball(i).Flags, "R") = False Then
                             Dim Bx1 As Single, Bx2 As Single, By1 As Single, By2 As Single
@@ -69,7 +77,7 @@ Public Module Renderer
                         'If Not Form1.chkTrails.Checked Then
                         '  E.Graphics.ScaleTransform(pic_scale, pic_scale)
                         '  Dim myPen As New Pen(Color.Red)
-                        Dim myBrush As New SolidBrush(Ball(i).Color)
+                        ' Dim myBrush As New SolidBrush(Ball(i).Color)
                         '    Dim myBrush2 As New SolidBrush(Color.Red)
                         gr.FillEllipse(myBrush, Ball(i).LocX - Ball(i).Size / 2 + FinalOffset.X, Ball(i).LocY - Ball(i).Size / 2 + FinalOffset.Y, Ball(i).Size, Ball(i).Size)
                         If InStr(1, Ball(i).Flags, "BH") > 0 Then
@@ -81,32 +89,35 @@ Public Module Renderer
                             If lngFollowBall = i Then
 
                                 'gr.DrawEllipse(myPen, Ball(lngFollowBall).LocX - Ball(i).Size / 2 + FinalOffset.X - ScaleMousePosExact(New SPoint(10000, 10000)).X, Ball(lngFollowBall).LocY - Ball(i).Size / 2 + FinalOffset.Y - ScaleMousePosExact(New SPoint(10000, 10000)).Y, 10000, 10000)
-                                gr.DrawEllipse(myPen, Ball(lngFollowBall).LocX - Ball(i).Size / 2 + FinalOffset.X - (CircleOInfluence), Ball(lngFollowBall).LocY - Ball(i).Size / 2 + FinalOffset.Y - (CircleOInfluence), CircleOInfluence * 2, CircleOInfluence * 2)
-
-                                For b As Integer = 0 To UBound(Ball)
-                                    If Ball(b).Visible Then
-                                        Dim myPen2 As New Pen(Color.DarkGreen)
-                                        myPen2.Width = 0.5
-                                        gr.DrawLine(myPen2, Ball(lngFollowBall).LocX + FinalOffset.X, Ball(lngFollowBall).LocY + FinalOffset.Y, Ball(b).LocX + FinalOffset.X, Ball(b).LocY + FinalOffset.Y)
-                                    End If
-                                Next
+                                If bolSOI Then
+                                    gr.DrawEllipse(myPen, Ball(lngFollowBall).LocX - Ball(i).Size / 2 + FinalOffset.X - (CircleOInfluence), Ball(lngFollowBall).LocY - Ball(i).Size / 2 + FinalOffset.Y - (CircleOInfluence), CircleOInfluence * 2, CircleOInfluence * 2)
+                                End If
+                                If bolLines Then
+                                    For b As Integer = 0 To UBound(Ball)
+                                        If Ball(b).Visible And GetDistanceOfBalls(Ball(b), Ball(i)) < CircleOInfluence Then
+                                            Dim myPen2 As New Pen(Color.DarkGreen)
+                                            myPen2.Width = 0.5
+                                            gr.DrawLine(myPen2, Ball(lngFollowBall).LocX + FinalOffset.X, Ball(lngFollowBall).LocY + FinalOffset.Y, Ball(b).LocX + FinalOffset.X, Ball(b).LocY + FinalOffset.Y)
+                                        End If
+                                    Next
+                                End If
 
                             End If
 
-                        End If
-                            'gr.FillEllipse(myBrush2, Convert.ToInt32(ScaleMousePosExact(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).X), Convert.ToInt32(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).Y), 5, 5)
-                            'Else
-                            '    Dim myPen As New Pen(Ball(i).Color)
+                            End If
+                        'gr.FillEllipse(myBrush2, Convert.ToInt32(ScaleMousePosExact(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).X), Convert.ToInt32(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).Y), 5, 5)
+                        'Else
+                        '    Dim myPen As New Pen(Ball(i).Color)
 
-                            '    Form1.Render.CreateGraphics.DrawEllipse(myPen, Ball(i).LocX - Ball(i).Size / 2 + RelBallPosMod.X, Ball(i).LocY - Ball(i).Size / 2 + RelBallPosMod.Y, Ball(i).Size, Ball(i).Size)
-                            'End If
-
-                        End If
-                        'e.Graphics.FillEllipse(Brushes.Black, Ball(i).LocX - Ball(i).Size / 2 - 1, Ball(i).LocY - Ball(i).Size / 2 - 1, Ball(i).Size + 2, Ball(i).Size + 2)
-
-
+                        '    Form1.Render.CreateGraphics.DrawEllipse(myPen, Ball(i).LocX - Ball(i).Size / 2 + RelBallPosMod.X, Ball(i).LocY - Ball(i).Size / 2 + RelBallPosMod.Y, Ball(i).Size, Ball(i).Size)
+                        'End If
 
                     End If
+                    'e.Graphics.FillEllipse(Brushes.Black, Ball(i).LocX - Ball(i).Size / 2 - 1, Ball(i).LocY - Ball(i).Size / 2 - 1, Ball(i).Size + 2, Ball(i).Size + 2)
+
+
+
+                End If
 
             Next
 

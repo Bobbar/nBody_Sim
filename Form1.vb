@@ -6,6 +6,7 @@ Imports System.Threading.Tasks
 Imports System.Threading
 Imports System.Drawing.Drawing2D
 Imports System.ComponentModel
+Imports System.IO
 
 Public Class Form1
 
@@ -124,46 +125,46 @@ Public Class Form1
         '  t.Start()
 
     End Sub
-    Public Sub DrawLoop()
+    'Public Sub DrawLoop()
 
-        On Error Resume Next
+    '    On Error Resume Next
 
-        Do Until bolStopLoop
-            'If Not bolStop Then Matrix.RunWorkerAsync()
+    '    Do Until bolStopLoop
+    '        'If Not bolStop Then Matrix.RunWorkerAsync()
 
-            If chkTrails.Checked Then
-                For i = 1 To UBound(Ball)
+    '        If chkTrails.Checked Then
+    '            For i = 1 To UBound(Ball)
 
-                    If Ball(i).Visible And Ball(i).LocX > 0 And Ball(i).LocX < Render.Width And Ball(i).LocY > 0 And Ball(i).LocY < Render.Height Then
-                        'g = g + 1
-                        ' If g > 4 Then g = 0
+    '                If Ball(i).Visible And Ball(i).LocX > 0 And Ball(i).LocX < Render.Width And Ball(i).LocY > 0 And Ball(i).LocY < Render.Height Then
+    '                    'g = g + 1
+    '                    ' If g > 4 Then g = 0
 
 
-                        ' e.Graphics.FillEllipse(Brushes.LightBlue, ball_loc_x(i) - 1, ball_loc_y(i) - 1, BallSize(i) + 2, BallSize(i) + 2)
-                        ' e.Graphics.FillEllipse(Brushes.Blue, ball_loc_x(i), ball_loc_y(i), BallSize(i), BallSize(i))
+    '                    ' e.Graphics.FillEllipse(Brushes.LightBlue, ball_loc_x(i) - 1, ball_loc_y(i) - 1, BallSize(i) + 2, BallSize(i) + 2)
+    '                    ' e.Graphics.FillEllipse(Brushes.Blue, ball_loc_x(i), ball_loc_y(i), BallSize(i), BallSize(i))
 
-                        Dim myBrush As New SolidBrush(Ball(i).Color)
-                        Render.CreateGraphics.SmoothingMode = SmoothingMode.AntiAlias
-                        ' Render.CreateGraphics.FillEllipse(Brushes.Black, Ball(i).LocX - Ball(i).Size / 2 - 1, Ball(i).LocY - Ball(i).Size / 2 - 1, Ball(i).Size + 2, Ball(i).Size + 2)
-                        Render.CreateGraphics.FillEllipse(myBrush, Ball(i).LocX - Ball(i).Size / 2, Ball(i).LocY - Ball(i).Size / 2, Ball(i).Size, Ball(i).Size)
+    '                    Dim myBrush As New SolidBrush(Ball(i).Color)
+    '                    Render.CreateGraphics.SmoothingMode = SmoothingMode.AntiAlias
+    '                    ' Render.CreateGraphics.FillEllipse(Brushes.Black, Ball(i).LocX - Ball(i).Size / 2 - 1, Ball(i).LocY - Ball(i).Size / 2 - 1, Ball(i).Size + 2, Ball(i).Size + 2)
+    '                    Render.CreateGraphics.FillEllipse(myBrush, Ball(i).LocX - Ball(i).Size / 2, Ball(i).LocY - Ball(i).Size / 2, Ball(i).Size, Ball(i).Size)
 
-                    End If
+    '                End If
 
-                Next
+    '            Next
 
-            End If
+    '        End If
 
-            'If bolBallsRemoved Then ShrinkBallArray()
-            If Not chkTrails.Checked Then
-                If chkDraw.Checked Then
-                    Render.Refresh()
-                Else
-                    'Render.e
-                End If
-            End If
-            'Application.DoEvents()
-        Loop
-    End Sub
+    '        'If bolBallsRemoved Then ShrinkBallArray()
+    '        If Not chkTrails.Checked Then
+    '            If chkDraw.Checked Then
+    '                Render.Refresh()
+    '            Else
+    '                'Render.e
+    '            End If
+    '        End If
+    '        'Application.DoEvents()
+    '    Loop
+    'End Sub
 
     Public Function SegmentsIntersect(ByVal X1 As Double,
     ByVal Y1 As Double, ByVal X2 As Double, ByVal Y2 As _
@@ -295,41 +296,7 @@ Public Class Form1
 
     End Sub
 
-    Private Sub Matrix_RunWorkerCompleted(ByVal sender As Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs)
-        FPS = FPS + 1
 
-
-
-
-        If bolFollow Then
-            Dim DiffX As Double, DiffY As Double
-
-            If Ball(lngFollowBall).LocX <> FollowX Or Ball(lngFollowBall).LocY <> FollowY Then
-
-                DiffX = Ball(lngFollowBall).LocX - FollowX
-                DiffY = Ball(lngFollowBall).LocY - FollowY
-
-                For i = 1 To UBound(Ball)
-
-                    Ball(i).LocX = Ball(i).LocX - DiffX
-                    Ball(i).LocY = Ball(i).LocY - DiffY
-
-                Next
-
-                FollowX = Ball(lngFollowBall).LocX
-                FollowY = Ball(lngFollowBall).LocY
-
-            End If
-
-        End If
-
-        'If bolBallsRemoved Then ShrinkBallArray()
-
-        ' Render.Refresh()
-
-
-
-    End Sub
 
     Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
         ' t.Abort()
@@ -423,11 +390,11 @@ Public Class Form1
             End If
 
 
-            For i = 1 To UBound(Ball)
-                Ball(i).Old_LocX = Ball(i).LocX
-                Ball(i).Old_LocY = Ball(i).LocY
+            'For i = 1 To UBound(Ball)
+            '    Ball(i).Old_LocX = Ball(i).LocX
+            '    Ball(i).Old_LocY = Ball(i).LocY
 
-            Next
+            'Next
             If Sel = -1 Then
                 For i = 1 To UBound(Ball)
                     'Debug.Print "LocX: " & Ball(i).LocX & vbCrLf & "LocY: " & Ball(i).LocY & vbCrLf & "SpeedX: " & Ball(i).SpeedX & vbCrLf & "SpeedY: " & Ball(i).SpeedY
@@ -491,11 +458,11 @@ Public Class Form1
 
 
 
-            For i = 0 To UBound(Ball)
-                Ball(i).Old_LocX = Ball(i).LocX
-                Ball(i).Old_LocY = Ball(i).LocY
+            'For i = 0 To UBound(Ball)
+            '    Ball(i).Old_LocX = Ball(i).LocX
+            '    Ball(i).Old_LocY = Ball(i).LocY
 
-            Next
+            'Next
             If Sel = -1 Then
                 For i = 0 To UBound(Ball)
 
@@ -676,17 +643,19 @@ Public Class Form1
         ScreenCenterX = Me.Render.Width / 2
         ScreenCenterY = Me.Render.Height / 2
 
-
-
         ScaleOffset.X = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).X
         ScaleOffset.Y = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).Y
-
 
         RenderWindowDims.X = CInt(Me.Render.Width)
         RenderWindowDims.Y = CInt(Me.Render.Height)
 
+
+        'If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
+        '    UpdateScale()
+        'End If
+
         Application.DoEvents()
-        'condense array by removing invisible balls
+
     End Sub
     Private Function VisibleBalls() As Integer
         Dim tot As Integer = 0
@@ -712,13 +681,8 @@ Public Class Form1
 
     End Sub
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        Me.BackColor = colBackColor
-        For Each ctl As Control In Me.Controls
-            If Not TypeOf ctl Is Label Then
-                ctl.ForeColor = colControlForeColor
-                ctl.BackColor = colBackColor
-            End If
-        Next
+
+        SetColors(Me)
         pic_scale = 1
 
         ScreenCenterX = Me.Render.Width / 2
@@ -790,129 +754,7 @@ Public Class Form1
 
 
     End Sub
-    Public Sub MasterLoop()
-        'On Error Resume Next
-        'Dim OddEven As Integer
 
-        ' OddEven = 0
-
-
-        Do Until bolStopLoop '
-
-            If Thread2Done And Thread3Done Then
-
-
-
-
-                For i = 1 To UBound(Ball)
-
-
-
-
-
-
-
-                    Ball(i).LocX = Ball(i).LocX + (Ball(i).SpeedX * StepMulti)
-                    Ball(i).LocY = Ball(i).LocY + (Ball(i).SpeedY * StepMulti)
-
-
-
-
-
-
-                Next i
-
-
-
-                If bolFollow Then
-                    Dim DiffX As Double, DiffY As Double
-
-                    If Ball(lngFollowBall).LocX <> FollowX Or Ball(lngFollowBall).LocY <> FollowY Then
-
-                        DiffX = Ball(lngFollowBall).LocX - FollowX
-                        DiffY = Ball(lngFollowBall).LocY - FollowY
-
-                        For i = 1 To UBound(Ball)
-
-                            Ball(i).LocX = Ball(i).LocX - DiffX
-                            Ball(i).LocY = Ball(i).LocY - DiffY
-
-                        Next
-
-                        FollowX = Ball(lngFollowBall).LocX
-                        FollowY = Ball(lngFollowBall).LocY
-
-                    End If
-
-                End If
-
-                FPS = FPS + 1
-
-                'If UBound(Ball) > 2000 Then
-                '    s = New Threading.Thread(AddressOf Me.ShrinkBallArray)
-                '    s.Start()
-                '    s.Join()
-
-
-                'End If
-
-                ' If bolBallsRemoved = True Then ShrinkBallArray()
-
-
-                PubIndex = 1
-                wait(intDelay)
-                'bolStart1 = True
-                bolStart2 = True : bolStart3 = True
-
-
-
-
-            End If
-
-
-
-            'tryagain:
-
-            '                If t.ThreadState <> Threading.ThreadState.Running Then
-
-            '                    Loop1I = i
-            '                    t = New Threading.Thread(AddressOf Me.MainLoop)
-            '                    t.Start()
-            '                ElseIf t2.ThreadState <> Threading.ThreadState.Running Then
-
-            '                    Loop2I = i
-            '                    t2 = New Threading.Thread(AddressOf Me.MainLoop)
-            '                    t2.Start()
-
-            '                Else
-            '                    GoTo tryagain
-
-
-            '                End If
-
-
-
-
-
-
-            'OddEven = OddEven + 1
-            'End If
-
-
-        Loop
-
-
-
-
-
-
-
-
-
-
-        ' wait(1)
-
-    End Sub
 
     Private Sub Label1_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs)
         Erase Ball
@@ -1011,8 +853,8 @@ Public Class Form1
             ReDim Preserve Ball(UBound(Ball) + 1)
             Ball(UBound(Ball)).Color = RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
-            Ball(UBound(Ball)).LocX = GetRandomNumber(1, Render.Width) - ScaleOffset.X - RelBallPosMod.X
-            Ball(UBound(Ball)).LocY = GetRandomNumber(1, Render.Height) - ScaleOffset.Y - RelBallPosMod.Y
+            Ball(UBound(Ball)).LocX = GetRandomNumber(1, Render.Width / pic_scale) - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
+            Ball(UBound(Ball)).LocY = GetRandomNumber(1, Render.Height / pic_scale) - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
             Ball(UBound(Ball)).SpeedX = 0
             Ball(UBound(Ball)).SpeedY = 0
             Ball(UBound(Ball)).Flags = ""
@@ -1141,7 +983,7 @@ Public Class Form1
         'Dim cap_image As Image
 
 
-        Me.Render.Image.Save("C:\Imagesss.jpg", System.Drawing.Imaging.ImageFormat.Jpeg)
+        Me.Render.Image.Save(My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\Screenshot-" & Now.ToString("_hhmmss") & ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg)
 
         'opens a save dialog box for saving the settings
         'cap_image = Render.Image
@@ -1201,14 +1043,6 @@ Public Class Form1
             UpDownVal = UpDown1.Value
 
 
-
-
-
-
-
-
-
-
             Ball(lngFollowBall).Flags = Replace$(Ball(lngFollowBall).Flags, "F", "")
 
 
@@ -1251,12 +1085,12 @@ Public Class Form1
             DiffX = FollowX - (Render.Width / 2)
             DiffY = FollowY - (Render.Height / 2)
 
-            For b = 1 To UBound(Ball)
+            'For b = 1 To UBound(Ball)
 
-                Ball(b).LocX = Ball(b).LocX - DiffX
-                Ball(b).LocY = Ball(b).LocY - DiffY
+            '    Ball(b).LocX = Ball(b).LocX - DiffX
+            '    Ball(b).LocY = Ball(b).LocY - DiffY
 
-            Next b
+            'Next b
             FollowX = Ball(lngFollowBall).LocX
             FollowY = Ball(lngFollowBall).LocY
             bolFollow = True
@@ -1298,12 +1132,12 @@ Public Class Form1
             DiffX = FollowX - (Render.Width / 2)
             DiffY = FollowY - (Render.Height / 2)
 
-            For b = 1 To UBound(Ball)
+            'For b = 1 To UBound(Ball)
 
-                Ball(b).LocX = Ball(b).LocX - DiffX
-                Ball(b).LocY = Ball(b).LocY - DiffY
+            '    Ball(b).LocX = Ball(b).LocX - DiffX
+            '    Ball(b).LocY = Ball(b).LocY - DiffY
 
-            Next b
+            'Next b
             FollowX = Ball(lngFollowBall).LocX
             FollowY = Ball(lngFollowBall).LocY
             bolFollow = True
@@ -1315,13 +1149,7 @@ Public Class Form1
 
     End Sub
 
-    Private Sub chkShadow_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkShadow.CheckedChanged
 
-    End Sub
-
-    Private Sub chkTrails_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkTrails.CheckedChanged
-
-    End Sub
 
     Private Sub txtFPS_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtFPS.TextChanged
         If txtFPS.Text = "" Then
@@ -1418,7 +1246,7 @@ Public Class Form1
 
 
 
-        Debug.Print("Scale Offset: " + ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).ToString)
+
 
 
         'Dim OffsetValue As New SPoint
@@ -1522,7 +1350,7 @@ restart:
                                 If Ball(B).Visible Then
                                     If GetDistance(New SPoint(Ball(A).LocX, Ball(A).LocY), New SPoint(Ball(B).LocX, Ball(B).LocY)) < CircleOInfluence Then
 
-                                        If Me.chkShadow.Checked Then
+                                        If bolShawdow Then
                                             If InStr(1, Ball(A).Flags, "S") Then
                                                 Dim m As Double, SlX As Double, SlY As Double
                                                 SlX = Ball(B).LocX - Ball(A).LocX
@@ -1746,7 +1574,7 @@ restart:
     End Sub
 
     Private Sub tmrRender_Tick(sender As Object, e As EventArgs) Handles tmrRender.Tick
-        If chkDraw.Checked Then Me.Render.Image = Drawr()
+        If bolDraw Then Me.Render.Image = Drawr()
         ' Debug.Print(TrueFPS)
         'If TrueFPS > 1 Then
         '    Dim SyncInterval As Integer = Int(1000 / TrueFPS)
@@ -1761,4 +1589,58 @@ restart:
 
     End Sub
 
+    Private Sub TotalMassToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TotalMassToolStripMenuItem.Click
+        Dim TotalMass As Double
+
+        For i = 1 To UBound(Ball)
+            If Ball(i).Visible Then TotalMass = TotalMass + Ball(i).Mass
+
+
+
+
+        Next i
+        Debug.Print("Total Mass: " & TotalMass)
+        MsgBox("Total Mass: " & TotalMass)
+    End Sub
+
+    Private Sub BallLines_Click(sender As Object, e As EventArgs) Handles BallLines.Click
+        bolLines = BallLines.Checked
+    End Sub
+
+    Private Sub FBallSOI_Click(sender As Object, e As EventArgs) Handles FBallSOI.Click
+        bolSOI = FBallSOI.Checked
+    End Sub
+
+    Private Sub Trails_Click(sender As Object, e As EventArgs) Handles Trails.Click
+        bolTrails = Trails.Checked
+    End Sub
+
+    Private Sub Draw_Click(sender As Object, e As EventArgs) Handles Draw.Click
+        bolDraw = Draw.Checked
+    End Sub
+
+    Private Sub AntiA_Click(sender As Object, e As EventArgs) Handles AntiA.Click
+        bolAntiAliasing = AntiA.Checked
+    End Sub
+
+    Private Sub Invert_Click(sender As Object, e As EventArgs) Handles Invert.Click
+        bolInvert = Invert.Checked
+        If bolInvert Then
+            colBackColor = Color.White
+            colControlForeColor = Color.Black
+        Else
+            colBackColor = Color.Black
+            colControlForeColor = Color.White
+        End If
+        SetColors(Me)
+
+        'Me.BackColor = colBackColor
+        'For Each ctl As Control In Me.Controls
+        '    If Not TypeOf ctl Is Label Then
+        '        ctl.ForeColor = colControlForeColor
+        '        ctl.BackColor = colBackColor
+        '    End If
+        'Next
+
+    End Sub
 End Class
