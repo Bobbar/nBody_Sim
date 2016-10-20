@@ -138,15 +138,15 @@ Public Module PhysicsLoop
     Public intTargetFPS As Integer
 
     Public Sub wait(ByVal interval As Integer)
-        'Dim sw As New Stopwatch
-        'sw.Start()
-        'Do While sw.ElapsedMilliseconds < interval
-        '    ' Allows UI to remain responsive
-        '    ' Application.DoEvents()
-        'Loop
-        'sw.Stop()
+        Dim sw As New Stopwatch
+        sw.Start()
+        Do While sw.ElapsedMilliseconds < interval
+            ' Allows UI to remain responsive
+            Application.DoEvents()
+        Loop
+        sw.Stop()
 
-        Thread.Sleep(interval)
+        'Thread.Sleep(interval)
 
     End Sub
     Public Sub MainLoop()

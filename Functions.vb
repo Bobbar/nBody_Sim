@@ -6,6 +6,7 @@
     Public bolAntiAliasing As Boolean = True
     Public bolInvert As Boolean = False
     Public bolShawdow As Boolean = False
+    Public bolStopWorker As Boolean = False
     Public stpw As New Stopwatch
     Public Function ScaleMousePosRelative(MousePos As SPoint) As SPoint
         Dim CorrectedPos As New SPoint((MousePos.X / pic_scale) - RelBallPosMod.X - ScaleOffset.X, (MousePos.Y / pic_scale) - RelBallPosMod.Y - ScaleOffset.Y)

@@ -651,7 +651,9 @@ Public Class Form1
 
 
 
-        If UBound(Ball) > 1 And Not PhysicsWorker.IsBusy Then PhysicsWorker.RunWorkerAsync()
+        If UBound(Ball) > 1 And Not PhysicsWorker.IsBusy And Not bolStopWorker Then
+            PhysicsWorker.RunWorkerAsync()
+        End If
         'If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
         '    UpdateScale()
         'End If
@@ -903,21 +905,33 @@ Public Class Form1
         'm = New Threading.Thread(AddressOf Me.MasterLoop)
         'm.Start()
         ' Else
-        bolStopLoop = True
-        wait(300)
+        bolStopWorker = True
 
 
-        Array.Clear(Ball, 0, Ball.Count)
+        Do Until Not PhysicsWorker.IsBusy
+            wait(300)
 
-        ReDim Ball(0)
-        bolFollow = False
+        Loop
+
+        If Not PhysicsWorker.IsBusy Then
 
 
-        ' End If
+
+            Array.Clear(Ball, 0, Ball.Count)
+            Render.Image = Nothing
+            ReDim Ball(0)
+            bolFollow = False
 
 
-        bolStopLoop = False
-        MainLoop()
+            ' End If
+
+
+            bolStopWorker = False
+
+            '   PhysicsWorker.RunWorkerAsync()
+        End If
+
+        'MainLoop()
 
         'Erase Ball
 
@@ -1334,11 +1348,12 @@ Public Class Form1
         ' Dim i As Integer
         ' i = Loop1I
 restart:
-        Do Until 1 = 2 'bolStopLoop
+        Do Until bolStopWorker
             Do While bolStopLoop
                 Thread.Sleep(100)
             Loop
-            wait(intDelay)
+            'wait(intDelay)
+            Thread.Sleep(intDelay)
             If UBound(Ball) > 1 Then
                 BUB = UBound(Ball)
                 'Parallel.For(1, BUB + 1, options, Sub(A)
