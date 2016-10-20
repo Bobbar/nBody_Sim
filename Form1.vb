@@ -650,11 +650,13 @@ Public Class Form1
         RenderWindowDims.Y = CInt(Me.Render.Height)
 
 
+
+        If UBound(Ball) > 1 And Not PhysicsWorker.IsBusy Then PhysicsWorker.RunWorkerAsync()
         'If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
         '    UpdateScale()
         'End If
 
-        Application.DoEvents()
+        '  Application.DoEvents()
 
     End Sub
     Private Function VisibleBalls() As Integer
@@ -746,8 +748,8 @@ Public Class Form1
         PubIndex = 1
 
         Timer2.Enabled = True
-        tmrRender.Enabled = True
-        PhysicsWorker.RunWorkerAsync()
+        ' tmrRender.Enabled = True
+        '   PhysicsWorker.RunWorkerAsync()
         'MainLoop()
 
 
@@ -818,7 +820,7 @@ Public Class Form1
             ' t3.Resume()
 
             bolStopLoop = False
-            MainLoop()
+            '  MainLoop()
 
 
         End If
@@ -1560,32 +1562,30 @@ restart:
                 's.Join()
                 ShrinkBallArray()
             End If
-            If bolFollow Then
-                '  If Ball(lngFollowBall).LocX <> FollowX Or Ball(lngFollowBall).LocY <> FollowY Then
-                RelBallPosMod.X = -Ball(lngFollowBall).LocX
-                RelBallPosMod.Y = -Ball(lngFollowBall).LocY
-                ' End If
-            End If
+            'If bolFollow Then
+
+            '    RelBallPosMod.X = -Ball(lngFollowBall).LocX
+            '    RelBallPosMod.Y = -Ball(lngFollowBall).LocY
+
+            'End If
             'If s.ThreadState <> Threading.ThreadState.Running And Me.chkDraw.Checked Then
             '    Me.Render.Image = Drawr()
             'End If
             FPS = FPS + 1
+            PhysicsWorker.ReportProgress(1, Ball)
+
         Loop
     End Sub
+    Private Sub PhysicsWorker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles PhysicsWorker.ProgressChanged
+        ' Debug.Print("Render complete " & Now.Ticks)
 
+        Dim PassBall() As BallParms = e.UserState
+        If bolDraw Then Me.Render.Image = Drawr(PassBall)
+
+    End Sub
     Private Sub tmrRender_Tick(sender As Object, e As EventArgs) Handles tmrRender.Tick
-        If bolDraw Then Me.Render.Image = Drawr()
-        ' Debug.Print(TrueFPS)
-        'If TrueFPS > 1 Then
-        '    Dim SyncInterval As Integer = Int(1000 / TrueFPS)
-        '    If SyncInterval > 1 And SyncInterval < 1000 Then
-        '        tmrRender.Interval = SyncInterval
-        '    Else
-        '        If SyncInterval < 1 Then SyncInterval = 1
-        '        If SyncInterval > 1000 Then SyncInterval = 1000
-        '        tmrRender.Interval = SyncInterval
-        '    End If
-        'End If
+        ' If bolDraw Then Me.Render.Image = Drawr()
+
 
     End Sub
 
@@ -1643,4 +1643,6 @@ restart:
         'Next
 
     End Sub
+
+
 End Class
