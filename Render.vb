@@ -8,6 +8,7 @@ Public Module Renderer
     Public colControlForeColor As Color = Color.White
     Public ScreenCenterX As Single
     Public ScreenCenterY As Single
+    Public CircleOInfluence As Single = 10000
     'Public RenderWindowDimsH As Integer
     'Public RenderWindowDimsW As Integer
     Public RenderWindowDims As New Point(Form1.Render.Width, Form1.Render.Height)
@@ -26,7 +27,7 @@ Public Module Renderer
             UpdateScale()
         End If
 
-
+        Dim myPen As New Pen(Color.Red)
         If Not Form1.chkTrails.Checked Then gr.Clear(colBackColor)
         gr.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
 
@@ -71,8 +72,28 @@ Public Module Renderer
                         Dim myBrush As New SolidBrush(Ball(i).Color)
                         '    Dim myBrush2 As New SolidBrush(Color.Red)
                         gr.FillEllipse(myBrush, Ball(i).LocX - Ball(i).Size / 2 + FinalOffset.X, Ball(i).LocY - Ball(i).Size / 2 + FinalOffset.Y, Ball(i).Size, Ball(i).Size)
+                        If InStr(1, Ball(i).Flags, "BH") > 0 Then
+                            ' Dim myPen As New Pen(Color.Red)
+                            gr.DrawEllipse(myPen, Ball(i).LocX - Ball(i).Size / 2 + FinalOffset.X, Ball(i).LocY - Ball(i).Size / 2 + FinalOffset.Y, Ball(i).Size, Ball(i).Size)
+                        End If
 
+                        If bolFollow Then
+                            If lngFollowBall = i Then
 
+                                'gr.DrawEllipse(myPen, Ball(lngFollowBall).LocX - Ball(i).Size / 2 + FinalOffset.X - ScaleMousePosExact(New SPoint(10000, 10000)).X, Ball(lngFollowBall).LocY - Ball(i).Size / 2 + FinalOffset.Y - ScaleMousePosExact(New SPoint(10000, 10000)).Y, 10000, 10000)
+                                gr.DrawEllipse(myPen, Ball(lngFollowBall).LocX - Ball(i).Size / 2 + FinalOffset.X - (CircleOInfluence), Ball(lngFollowBall).LocY - Ball(i).Size / 2 + FinalOffset.Y - (CircleOInfluence), CircleOInfluence * 2, CircleOInfluence * 2)
+
+                                For b As Integer = 0 To UBound(Ball)
+                                    If Ball(b).Visible Then
+                                        Dim myPen2 As New Pen(Color.DarkGreen)
+                                        myPen2.Width = 0.5
+                                        gr.DrawLine(myPen2, Ball(lngFollowBall).LocX + FinalOffset.X, Ball(lngFollowBall).LocY + FinalOffset.Y, Ball(b).LocX + FinalOffset.X, Ball(b).LocY + FinalOffset.Y)
+                                    End If
+                                Next
+
+                            End If
+
+                        End If
                             'gr.FillEllipse(myBrush2, Convert.ToInt32(ScaleMousePosExact(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).X), Convert.ToInt32(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).Y), 5, 5)
                             'Else
                             '    Dim myPen As New Pen(Ball(i).Color)

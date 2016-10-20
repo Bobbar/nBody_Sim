@@ -26,7 +26,7 @@ Public Module PhysicsLoop
         End Function
     End Class
 
-    Public pic_scale As Single
+    Public pic_scale As Double
     Public RelBallPosMod As New SPoint
     Public ScaleOffset As New SPoint
 
@@ -110,11 +110,11 @@ Public Module PhysicsLoop
 
     Public bolStopLoop As Boolean
 
-    Public t As Threading.Thread
-    Public t2 As Threading.Thread
-    Public t3 As Threading.Thread
+    'Public t As Threading.Thread
+    'Public t2 As Threading.Thread
+    'Public t3 As Threading.Thread
     Public s As Threading.Thread
-    Public m As Threading.Thread
+    'Public m As Threading.Thread
 
     Public objRandom As New System.Random(CType(System.DateTime.Now.Ticks Mod System.Int32.MaxValue, Integer))
     Public DistanceX As Single, DistanceY As Single
@@ -138,13 +138,16 @@ Public Module PhysicsLoop
     Public intTargetFPS As Integer
 
     Public Sub wait(ByVal interval As Integer)
-        Dim sw As New Stopwatch
-        sw.Start()
-        Do While sw.ElapsedMilliseconds < interval
-            ' Allows UI to remain responsive
-            ' Application.DoEvents()
-        Loop
-        sw.Stop()
+        'Dim sw As New Stopwatch
+        'sw.Start()
+        'Do While sw.ElapsedMilliseconds < interval
+        '    ' Allows UI to remain responsive
+        '    ' Application.DoEvents()
+        'Loop
+        'sw.Stop()
+
+        Thread.Sleep(interval)
+
     End Sub
     Public Sub MainLoop()
 
@@ -522,12 +525,12 @@ restart:
 
 
             If UBound(Ball) > 5000 And bolBallsRemoved Then
-                    s = New Threading.Thread(AddressOf Form1.ShrinkBallArray)
-                    s.Start()
-                    s.Join()
+                s = New Threading.Thread(AddressOf Form1.ShrinkBallArray)
+                s.Start()
+                s.Join()
 
 
-                End If
+            End If
 
 
 
@@ -603,9 +606,6 @@ restart:
 
 
     End Function
-
-
-
     Public Sub FractureBall(ByVal i As Long)
         Dim NewBallSize As Single
         Dim NewBallMass As Single

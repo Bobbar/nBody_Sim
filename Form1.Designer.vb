@@ -55,6 +55,8 @@ Partial Class Form1
         Me.PhysicsWorker = New System.ComponentModel.BackgroundWorker()
         Me.tmrRender = New System.Windows.Forms.Timer(Me.components)
         Me.lblDelay = New System.Windows.Forms.Label()
+        Me.lblVisBalls = New System.Windows.Forms.Label()
+        Me.lblScale = New System.Windows.Forms.Label()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -242,7 +244,7 @@ Partial Class Form1
         Me.lblBalls.BackColor = System.Drawing.Color.Black
         Me.lblBalls.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblBalls.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
-        Me.lblBalls.Location = New System.Drawing.Point(9, 47)
+        Me.lblBalls.Location = New System.Drawing.Point(9, 63)
         Me.lblBalls.Name = "lblBalls"
         Me.lblBalls.Size = New System.Drawing.Size(41, 16)
         Me.lblBalls.TabIndex = 38
@@ -337,11 +339,35 @@ Partial Class Form1
         Me.lblDelay.BackColor = System.Drawing.Color.Black
         Me.lblDelay.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblDelay.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
-        Me.lblDelay.Location = New System.Drawing.Point(10, 63)
+        Me.lblDelay.Location = New System.Drawing.Point(9, 47)
         Me.lblDelay.Name = "lblDelay"
         Me.lblDelay.Size = New System.Drawing.Size(45, 16)
         Me.lblDelay.TabIndex = 48
         Me.lblDelay.Text = "Delay:"
+        '
+        'lblVisBalls
+        '
+        Me.lblVisBalls.AutoSize = True
+        Me.lblVisBalls.BackColor = System.Drawing.Color.Black
+        Me.lblVisBalls.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblVisBalls.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.lblVisBalls.Location = New System.Drawing.Point(9, 79)
+        Me.lblVisBalls.Name = "lblVisBalls"
+        Me.lblVisBalls.Size = New System.Drawing.Size(62, 16)
+        Me.lblVisBalls.TabIndex = 49
+        Me.lblVisBalls.Text = "#Visible: "
+        '
+        'lblScale
+        '
+        Me.lblScale.AutoSize = True
+        Me.lblScale.BackColor = System.Drawing.Color.Black
+        Me.lblScale.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblScale.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.lblScale.Location = New System.Drawing.Point(9, 95)
+        Me.lblScale.Name = "lblScale"
+        Me.lblScale.Size = New System.Drawing.Size(45, 16)
+        Me.lblScale.TabIndex = 50
+        Me.lblScale.Text = "Scale:"
         '
         'Form1
         '
@@ -349,6 +375,8 @@ Partial Class Form1
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
         Me.ClientSize = New System.Drawing.Size(1108, 737)
+        Me.Controls.Add(Me.lblScale)
+        Me.Controls.Add(Me.lblVisBalls)
         Me.Controls.Add(Me.lblDelay)
         Me.Controls.Add(Me.chkDraw)
         Me.Controls.Add(Me.txtFPS)
@@ -417,4 +445,6 @@ Partial Class Form1
     Friend WithEvents PhysicsWorker As System.ComponentModel.BackgroundWorker
     Friend WithEvents tmrRender As Timer
     Friend WithEvents lblDelay As Label
+    Friend WithEvents lblVisBalls As Label
+    Friend WithEvents lblScale As Label
 End Class
