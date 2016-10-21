@@ -1396,17 +1396,22 @@ restart:
                                                 M1 = Ball(A).Mass ^ 2 ' * 2
                                                 M2 = Ball(B).Mass ^ 2 ' * 2
                                                 TotMass = M1 * M2
-                                                LoccX = Ball(B).LocX - Ball(A).LocX
-                                                LoccY = Ball(B).LocY - Ball(A).LocY
-                                                Veck = (LoccX * LoccX) + (LoccY * LoccY)
-                                                VeckSqr = Sqrt(Veck)
-                                                Force = TotMass / (Veck * VeckSqr)
+                                                Dim DistX As Double = Ball(B).LocX - Ball(A).LocX
+                                                Dim DistY As Double = Ball(B).LocY - Ball(A).LocY
+
+                                                Dim Dist As Double = (DistX * DistX) + (DistY * DistY)
+                                                Dim DistSqrt As Double = Sqrt(Dist)
+                                                ' Veck = (LoccX * LoccX) + (LoccY * LoccY)
+                                                ' VeckSqr = Sqrt(Veck)
+                                                Force = TotMass / (Dist * DistSqrt)
+
+                                                '(Veck * VeckSqr)
                                                 'If Double.IsNaN(Force) Then
                                                 '    Debug.Print(Force)
                                                 '    Stop
                                                 'End If
-                                                ForceX = Force * LoccX
-                                                ForceY = Force * LoccY
+                                                ForceX = Force * DistX ' / Dist
+                                                ForceY = Force * DistY ' / Dist
                                                 Ball(A).SpeedX = Ball(A).SpeedX + ForceX / M1
                                                 Ball(A).SpeedY = Ball(A).SpeedY + ForceY / M1
                                                 'If InStr(1, Ball(A).Flags, "P") Then
@@ -1425,8 +1430,8 @@ restart:
                                         ry = (Ball(A).LocY - Ball(B).LocY) / 2
                                         rx = (Ball(A).LocX - Ball(B).LocX) / 2
                                         d = Sqrt(rx * rx + ry * ry)
-                                        Dim Multi As Double
-                                        Multi = 0.7
+                                        'Dim Multi As Double
+                                        'Multi = 0.7
                                         If d < (Ball(A).Size + Ball(B).Size) Then 'Collide
                                             '  Dim BlahX As Double
                                             '    Dim BlahY As Double
