@@ -617,26 +617,26 @@ Public Class Form1
     End Sub
 
     Private Sub Timer2_Tick_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer2.Tick
-        Debug.Print("Timer " + Now.Ticks.ToString)
-        Label10.Text = "FPS: " & FPS * 8
 
+        Label10.Text = "FPS: " & Round(FPS, 0) ' * 8
+        lblDelay.Text = "Delay: " & intDelay
 
         lblBalls.Text = "Balls: " & UBound(Ball)
 
         UpDown1.Maximum = UBound(Ball)
         'TrueFPS = FPS * 8
-        If FPS * 8 > intTargetFPS Then
-            intDelay = intDelay + 1
-        Else
-            If intDelay > 0 Then
-                intDelay = intDelay - 1
-            Else
-                intDelay = 0
-            End If
+        'If FPS * 8 > intTargetFPS Then
+        '    intDelay = intDelay + 1
+        'Else
+        '    If intDelay > 0 Then
+        '        intDelay = intDelay - 1
+        '    Else
+        '        intDelay = 0
+        '    End If
 
-        End If
-        lblDelay.Text = "Delay: " & intDelay
-        FPS = 0
+        'End If
+        '  
+        ' FPS = 0
 
         lblVisBalls.Text = "Visible: " & VisibleBalls()
         lblScale.Text = "Scale: " & Round(pic_scale, 2)
@@ -1171,14 +1171,19 @@ Public Class Form1
     Private Sub txtFPS_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtFPS.TextChanged
         If txtFPS.Text = "" Then
             intTargetFPS = 10
-        End If
+        Else
+            If CInt(txtFPS.Text) < 10 Then
 
-        If CInt(txtFPS.Text) < 10 Then
+                intTargetFPS = 10
+            ElseIf CInt(txtFPS.Text) > 250 Then
+                intTargetFPS = 250
 
-            intTargetFPS = 10
             Else
                 intTargetFPS = txtFPS.Text
             End If
+        End If
+
+
 
 
     End Sub
@@ -1338,6 +1343,8 @@ Public Class Form1
         Dim VeckSqr As Double
         Dim Force As Double
         Dim BUB As Long
+        Dim StartTick, EndTick, ElapTick As Long
+
         'Dim B As Long
         'Dim options As New ParallelOptions
         'Dim Tasker As TaskScheduler
@@ -1354,7 +1361,9 @@ restart:
                 Thread.Sleep(100)
             Loop
             'wait(intDelay)
+            StartTick = Now.Ticks
             Thread.Sleep(intDelay)
+
             If UBound(Ball) > 1 Then
                 BUB = UBound(Ball)
                 'Parallel.For(1, BUB + 1, options, Sub(A)
@@ -1571,7 +1580,7 @@ restart:
                     'End Sub)
                 Next A
             End If
-            '  Application.DoEvents()
+
             If UBound(Ball) > 5000 And bolBallsRemoved Then
                 's = New Threading.Thread(AddressOf Me.ShrinkBallArray)
                 's.Start()
@@ -1587,9 +1596,21 @@ restart:
             'If s.ThreadState <> Threading.ThreadState.Running And Me.chkDraw.Checked Then
             '    Me.Render.Image = Drawr()
             'End If
-            FPS = FPS + 1
+            'FPS = FPS + 1
             PhysicsWorker.ReportProgress(1, Ball)
-            Debug.Print(Timer2.Enabled.ToString)
+            EndTick = Now.Ticks
+            ElapTick = EndTick - StartTick
+            FPS = 10000000 / ElapTick
+            If FPS > intTargetFPS Then
+                intDelay = intDelay + 1
+            Else
+                If intDelay > 0 Then
+                    intDelay = intDelay - 1
+                Else
+                    intDelay = 0
+                End If
+            End If
+
         Loop
     End Sub
     Private Sub PhysicsWorker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles PhysicsWorker.ProgressChanged

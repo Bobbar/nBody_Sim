@@ -60,10 +60,10 @@ Partial Class Form1
         Me.FBallSOI = New System.Windows.Forms.ToolStripMenuItem()
         Me.Trails = New System.Windows.Forms.ToolStripMenuItem()
         Me.Draw = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Tools = New System.Windows.Forms.ToolStripMenuItem()
-        Me.TotalMassToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AntiA = New System.Windows.Forms.ToolStripMenuItem()
         Me.Invert = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Tools = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TotalMassToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Panel1 = New System.Windows.Forms.Panel()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -86,7 +86,6 @@ Partial Class Form1
         '
         'Timer2
         '
-        Me.Timer2.Interval = 125
         '
         'Label10
         '
@@ -395,19 +394,6 @@ Partial Class Form1
         Me.Draw.Size = New System.Drawing.Size(161, 22)
         Me.Draw.Text = "Draw"
         '
-        'Tools
-        '
-        Me.Tools.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TotalMassToolStripMenuItem})
-        Me.Tools.Name = "Tools"
-        Me.Tools.Size = New System.Drawing.Size(47, 20)
-        Me.Tools.Text = "Tools"
-        '
-        'TotalMassToolStripMenuItem
-        '
-        Me.TotalMassToolStripMenuItem.Name = "TotalMassToolStripMenuItem"
-        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
-        Me.TotalMassToolStripMenuItem.Text = "Total Mass"
-        '
         'AntiA
         '
         Me.AntiA.Checked = True
@@ -423,6 +409,19 @@ Partial Class Form1
         Me.Invert.Name = "Invert"
         Me.Invert.Size = New System.Drawing.Size(161, 22)
         Me.Invert.Text = "Invert Colors"
+        '
+        'Tools
+        '
+        Me.Tools.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TotalMassToolStripMenuItem})
+        Me.Tools.Name = "Tools"
+        Me.Tools.Size = New System.Drawing.Size(47, 20)
+        Me.Tools.Text = "Tools"
+        '
+        'TotalMassToolStripMenuItem
+        '
+        Me.TotalMassToolStripMenuItem.Name = "TotalMassToolStripMenuItem"
+        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.TotalMassToolStripMenuItem.Text = "Total Mass"
         '
         'Panel1
         '
