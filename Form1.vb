@@ -617,13 +617,14 @@ Public Class Form1
     End Sub
 
     Private Sub Timer2_Tick_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer2.Tick
+        Debug.Print("Timer " + Now.Ticks.ToString)
         Label10.Text = "FPS: " & FPS * 8
 
 
         lblBalls.Text = "Balls: " & UBound(Ball)
 
         UpDown1.Maximum = UBound(Ball)
-        TrueFPS = FPS * 8
+        'TrueFPS = FPS * 8
         If FPS * 8 > intTargetFPS Then
             intDelay = intDelay + 1
         Else
@@ -1588,7 +1589,7 @@ restart:
             'End If
             FPS = FPS + 1
             PhysicsWorker.ReportProgress(1, Ball)
-
+            Debug.Print(Timer2.Enabled.ToString)
         Loop
     End Sub
     Private Sub PhysicsWorker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles PhysicsWorker.ProgressChanged

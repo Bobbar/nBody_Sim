@@ -130,7 +130,7 @@ Public Module PhysicsLoop
 
     Public LoopLockObject As New Object
     Public Thread1Done As Boolean, Thread2Done As Boolean, Thread3Done As Boolean, bolStart1 As Boolean, bolStart2 As Boolean, bolStart3 As Boolean
-    Public intDelay As Integer
+    Public intDelay As Integer = 10
     Public Time As Long
     Public TestCount As Long
 
