@@ -1,11 +1,9 @@
 Imports System
-
 Namespace GeomLib
     ' the 3d matrix class
     Public Class Matrix3D
         ' storing the members of the matrix as array
         Public matrix As Array
-
         ' constructor - create instance of the array variable and
         ' and fill with values of a idendity matrix
         Public Sub New()
@@ -22,7 +20,6 @@ Namespace GeomLib
             matrix.SetValue(1, 2, 2)
             matrix.SetValue(1, 3, 3)
         End Sub
-
         ' copy constructor
         Public Sub New(ByVal Mat As Matrix3D)
             matrix.CreateInstance(GetType(Double), 4, 4)
@@ -34,7 +31,6 @@ Namespace GeomLib
                 Next j
             Next i
         End Sub
-
         ' set the current matrix to identity matrix
         Public Sub SetToIdentity()
             Dim i As Integer
@@ -49,7 +45,6 @@ Namespace GeomLib
             matrix.SetValue(1, 2, 2)
             matrix.SetValue(1, 3, 3)
         End Sub
-
         ' rotate the current matrix along the axis specified
         Public Sub SetToRotation(ByVal Angle As Double, ByVal Axis As Vector3D)
             Dim SinAng As Double = Math.Sin(Angle)
@@ -73,21 +68,18 @@ Namespace GeomLib
                 matrix.SetValue(CosAng, 2, 2)
             End If
         End Sub
-
         ' scale the current matrix
         Public Sub SetToScaling(ByVal ScaleFac As Double)
             matrix.SetValue(ScaleFac, 0, 0)
             matrix.SetValue(ScaleFac, 1, 1)
             matrix.SetValue(ScaleFac, 2, 2)
         End Sub
-
         ' translate the current matrix
         Public Sub SetToTranslation(ByVal TransVec As Vector3D)
             matrix.SetValue(TransVec.X, 0, 3)
             matrix.SetValue(TransVec.Y, 1, 3)
             matrix.SetValue(TransVec.Z, 2, 3)
         End Sub
-
         ' multiply matrix 1 and 2 and return the resultant matrix
         Private Function Multiply(ByVal Mat1 As Matrix3D, ByVal Mat2 As Matrix3D) As Matrix3D
             Dim Mat = New Matrix3D
@@ -106,12 +98,10 @@ Namespace GeomLib
             Next ii
             Return Mat
         End Function
-
         ' find the determinant of the current matrix
         Public Function Determinant() As Double
             Dim det As Double = 0.0
             Dim m = New Matrix2D
-
             For j1 As Integer = 0 To 3
                 For i As Integer = 1 To 3
                     Dim j2 As Integer = 0
@@ -129,13 +119,11 @@ Namespace GeomLib
             m = Nothing
             Return det
         End Function
-
         ' find the transpose
         Public Sub Transpose()
             Dim i As Integer = 0
             Dim j As Integer = 0
             Dim tmp As Double = 0.0
-
             For i = 1 To 3
                 For j = 0 To i
                     tmp = matrix.GetValue(i, j)
@@ -144,14 +132,12 @@ Namespace GeomLib
                 Next j
             Next i
         End Sub
-
         ' find the cofactor matrix and return the same
         Public Function CoFactor() As Matrix3D
             Dim i, j, ii, jj, i1, j1 As Integer
             Dim det As Double
             Dim m = New Matrix3D
             Dim CMat = New Matrix3D
-
             For j = 0 To 3
                 For i = 0 To 3
                     i1 = 0
@@ -174,7 +160,6 @@ Namespace GeomLib
             m = Nothing
             Return CMat
         End Function
-
         ' multiply the currnet matrix with the parameter
         Public Sub PreMultiplyBy(ByVal Mat As Matrix3D)
             Dim ThisMat = New Matrix3D
@@ -185,7 +170,6 @@ Namespace GeomLib
             ThisMat = Nothing
             CMat = Nothing
         End Sub
-
         ' multiply the currnet matrix with the parameter
         Public Sub PostMultiplyBY(ByVal Mat As Matrix3D)
             Dim Thismat = New Matrix3D
@@ -196,7 +180,6 @@ Namespace GeomLib
             Thismat = Nothing
             CMat = Nothing
         End Sub
-
         ' get the inverse matrix of the current matrix and return it
         Public Function GetInverse() As Matrix3D
             Dim NewMatrix As Matrix3D
@@ -204,7 +187,6 @@ Namespace GeomLib
             det = 1 / det
             NewMatrix = CoFactor()
             NewMatrix.Transpose()
-
             For i As Integer = 0 To 3
                 For j As Integer = 0 To 3
                     NewMatrix.matrix.SetValue(NewMatrix.matrix.GetValue(i, j) * det, i, j)
@@ -212,7 +194,6 @@ Namespace GeomLib
             Next i
             Return NewMatrix
         End Function
-
         ' find the inverse matrix of the current matrix and set that as current matrix
         Public Sub Invert()
             Dim NewMatrix As Matrix3D
@@ -220,7 +201,6 @@ Namespace GeomLib
             det = 1 / det
             NewMatrix = CoFactor()
             NewMatrix.Transpose()
-
             For i As Integer = 0 To 3
                 For j As Integer = 0 To 3
                     matrix.SetValue(NewMatrix.matrix.GetValue(i, j) * det, i, j)
@@ -228,7 +208,5 @@ Namespace GeomLib
             Next i
             NewMatrix = Nothing
         End Sub
-
     End Class
-
 End Namespace

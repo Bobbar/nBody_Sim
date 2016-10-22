@@ -24,7 +24,6 @@ Public Module Renderer
         gr.ScaleTransform(pic_scale, pic_scale)
     End Sub
     Public Function Drawr(ByVal BallArray() As BallParms) As Bitmap
-
         If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
             UpdateScale()
         End If
@@ -35,40 +34,29 @@ Public Module Renderer
         Else
             gr.SmoothingMode = Drawing2D.SmoothingMode.None
         End If
-
         Dim myBrush As SolidBrush '(BallArray(i).Color)
         If bolDraw Then
             For i = 1 To UBound(BallArray)
-
                 If BallArray(i).Visible Then
                     If BallArray(i).LocX + FinalOffset.X > 0 And BallArray(i).LocX + FinalOffset.X < Form1.Render.Width / pic_scale And BallArray(i).LocY + FinalOffset.Y > 0 And BallArray(i).LocY + FinalOffset.Y < Form1.Render.Height / pic_scale Then
-
-
                         If bolInvert Then
                             myBrush = New SolidBrush(Color.Black)
                         Else
                             myBrush = New SolidBrush(BallArray(i).Color)
                         End If
-
                         'If BallArray(i).Flags.IndexOf("S") < 1 And BallArray(i).ShadAngle <> 0 And BallArray(i).Flags.IndexOf("R") < 1 And Form1.chkShadow.Checked Then
-
                         If bolShawdow Then
-
                             If InStr(1, BallArray(i).Flags, "S") = False And BallArray(i).ShadAngle <> 0 And InStr(1, BallArray(i).Flags, "R") = False Then
                                 Dim Bx1 As Single, Bx2 As Single, By1 As Single, By2 As Single
-
                                 Bx1 = BallArray(i).LocX + (BallArray(i).Size * 2) * Cos(BallArray(i).ShadAngle)
                                 By1 = BallArray(i).LocY + (BallArray(i).Size * 2) * Sin(BallArray(i).ShadAngle)
                                 Bx2 = BallArray(i).LocX + (BallArray(i).Size / 2) * Cos(BallArray(i).ShadAngle) '(BallArray(i).Size * Cos(BallArray(i).ShadAngle * PI / 180)) + BallArray(i).LocX 'BallArray(i).LocX + (BallArray(i).Size * 2) * Cos(BallArray(i).ShadAngle)
                                 By2 = BallArray(i).LocY + (BallArray(i).Size / 2) * Sin(BallArray(i).ShadAngle) '(BallArray(i).Size * Sin(BallArray(i).ShadAngle * PI / 180)) + BallArray(i).LocY 'BallArray(i).LocY + (BallArray(i).Size * 2) * Sin(BallArray(i).ShadAngle)
                                 'Debug.Print(BallArray(i).Flags)
-
                                 Dim myBrush2 As New LinearGradientBrush(New Point(Bx1, By1), New Point(Bx2, By2), Color.FromArgb(26, 26, 26, 1), BallArray(i).Color) 'SolidBrush(BallArray(i).Color)
                                 gr.FillEllipse(myBrush2, BallArray(i).LocX - BallArray(i).Size / 2 + RelBallPosMod.X, BallArray(i).LocY - BallArray(i).Size / 2 + RelBallPosMod.Y, BallArray(i).Size, BallArray(i).Size)
                                 gr.ScaleTransform(pic_scale, pic_scale)
-
                             End If
-
                         Else
                             'If Not Form1.chkTrails.Checked Then
                             '  E.Graphics.ScaleTransform(pic_scale, pic_scale)
@@ -84,11 +72,8 @@ Public Module Renderer
                                 ' Dim myPen As New Pen(Color.Red)
                                 gr.DrawEllipse(myPen, BallArray(i).LocX - BallArray(i).Size / 2 + FinalOffset.X, BallArray(i).LocY - BallArray(i).Size / 2 + FinalOffset.Y, BallArray(i).Size, BallArray(i).Size)
                             End If
-
                             If bolFollow Then
                                 If lngFollowBall = i Then
-
-
                                     '  End If
                                     'gr.DrawEllipse(myPen, BallArray(lngFollowBall).LocX - BallArray(i).Size / 2 + FinalOffset.X - ScaleMousePosExact(New SPoint(10000, 10000)).X, BallArray(lngFollowBall).LocY - BallArray(i).Size / 2 + FinalOffset.Y - ScaleMousePosExact(New SPoint(10000, 10000)).Y, 10000, 10000)
                                     If bolSOI Then
@@ -103,37 +88,25 @@ Public Module Renderer
                                             End If
                                         Next
                                     End If
-
                                 End If
-
                             End If
                             'gr.FillEllipse(myBrush2, Convert.ToInt32(ScaleMousePosExact(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).X), Convert.ToInt32(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).Y), 5, 5)
                             'Else
                             '    Dim myPen As New Pen(BallArray(i).Color)
-
                             '    Form1.Render.CreateGraphics.DrawEllipse(myPen, BallArray(i).LocX - BallArray(i).Size / 2 + RelBallPosMod.X, BallArray(i).LocY - BallArray(i).Size / 2 + RelBallPosMod.Y, BallArray(i).Size, BallArray(i).Size)
                             'End If
-
                         End If
                         'e.Graphics.FillEllipse(Brushes.Black, BallArray(i).LocX - BallArray(i).Size / 2 - 1, BallArray(i).LocY - BallArray(i).Size / 2 - 1, BallArray(i).Size + 2, BallArray(i).Size + 2)
-
                     End If
-
                 End If
-
             Next
-
         End If
-
-
         Return bm
-
     End Function
     Public Function ScaledPoint(Point As Point, Origin As Point, Optional Scale As Double = 1.0) As Point
         Return New Point(Origin.X + Point.X * Scale, Origin.Y + Point.Y * Scale)
     End Function
     Public Function FinalOffset() As SPoint
-
         Return New SPoint(RelBallPosMod.X + ScaleOffset.X, RelBallPosMod.Y + ScaleOffset.Y)
     End Function
 End Module

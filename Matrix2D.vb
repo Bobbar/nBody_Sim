@@ -1,12 +1,9 @@
 Imports System
-
 Namespace GeomLib
     ' the 2d matrix class
     Public Class Matrix2D
-
         ' storing the members of the matrix as array
         Public matrix As Array
-
         ' constructor - create instance of the array variable and
         ' and fill with values of a idendity matrix
         Public Sub New()
@@ -22,7 +19,6 @@ Namespace GeomLib
             matrix.SetValue(1, 1, 1)
             matrix.SetValue(1, 2, 2)
         End Sub
-
         ' copy constructor
         Public Sub New(ByVal Mat As Matrix2D)
             matrix.CreateInstance(GetType(Double), 3, 3)
@@ -34,7 +30,6 @@ Namespace GeomLib
                 Next j
             Next i
         End Sub
-
         ' set the current matrix to identity matrix
         Public Sub SetToIdentity()
             Dim i As Integer
@@ -48,7 +43,6 @@ Namespace GeomLib
             matrix.SetValue(1, 1, 1)
             matrix.SetValue(1, 2, 2)
         End Sub
-
         ' rotate the current matrix
         Public Sub SetToRotation(ByVal Angle As Double)
             Dim SinAng As Double = Math.Sin(Angle)
@@ -58,19 +52,16 @@ Namespace GeomLib
             matrix.SetValue(SinAng, 1, 0)
             matrix.SetValue(CosAng, 1, 1)
         End Sub
-
         ' scale the current matrix
         Public Sub SetToScaling(ByVal ScaleFac As Double)
             matrix.SetValue(ScaleFac, 0, 0)
             matrix.SetValue(ScaleFac, 1, 1)
         End Sub
-
         ' translate the current matrix
         Public Sub SetToTranslation(ByVal TransVec As Vector2D)
             matrix.SetValue(TransVec.X, 0, 2)
             matrix.SetValue(TransVec.Y, 1, 2)
         End Sub
-
         ' multiply matrix 1 and 2 and return the resultant matrix
         Private Function Multiply(ByVal Mat1 As Matrix2D, ByVal Mat2 As Matrix2D) As Matrix2D
             Dim Mat = New Matrix2D
@@ -89,7 +80,6 @@ Namespace GeomLib
             Next ii
             Return Mat
         End Function
-
         ' find the determinant of the current matrix
         Public Function Determinant() As Double
             Dim det As Double = 0.0
@@ -101,13 +91,11 @@ Namespace GeomLib
                   - matrix.GetValue(2, 0) * matrix.GetValue(1, 1)))
             Return det
         End Function
-
         ' find the transpose
         Public Sub Transpose()
             Dim i As Integer = 0
             Dim j As Integer = 0
             Dim tmp As Double = 0.0
-
             For i = 1 To 2
                 For j = 0 To i
                     tmp = matrix.GetValue(i, j)
@@ -116,14 +104,12 @@ Namespace GeomLib
                 Next j
             Next i
         End Sub
-
         ' find the cofactor matrix and return the same
         Public Function CoFactor() As Matrix2D
             Dim i, j, ii, jj, i1, j1 As Integer
             Dim det As Double
             Dim m = New Matrix2D
             Dim CMat = New Matrix2D
-
             For j = 0 To 2
                 For i = 0 To 2
                     i1 = 0
@@ -146,7 +132,6 @@ Namespace GeomLib
             m = Nothing
             Return CMat
         End Function
-
         ' multiply the currnet matrix with the parameter
         Public Sub PreMultiplyBy(ByVal Mat As Matrix2D)
             Dim ThisMat = New Matrix2D
@@ -157,7 +142,6 @@ Namespace GeomLib
             ThisMat = Nothing
             CMat = Nothing
         End Sub
-
         ' multiply the currnet matrix with the parameter
         Public Sub PostMultiplyBY(ByVal Mat As Matrix2D)
             Dim Thismat = New Matrix2D
@@ -168,7 +152,6 @@ Namespace GeomLib
             Thismat = Nothing
             CMat = Nothing
         End Sub
-
         ' get the inverse matrix of the current matrix and return it
         Public Function GetInverse() As Matrix2D
             Dim NewMatrix As Matrix2D
@@ -176,7 +159,6 @@ Namespace GeomLib
             det = 1 / det
             NewMatrix = CoFactor()
             NewMatrix.Transpose()
-
             For i As Integer = 0 To 2
                 For j As Integer = 0 To 2
                     NewMatrix.matrix.SetValue(NewMatrix.matrix.GetValue(i, j) * det, i, j)
@@ -191,7 +173,6 @@ Namespace GeomLib
             det = 1 / det
             NewMatrix = CoFactor()
             NewMatrix.Transpose()
-
             For i As Integer = 0 To 2
                 For j As Integer = 0 To 2
                     matrix.SetValue(NewMatrix.matrix.GetValue(i, j) * det, i, j)
@@ -199,7 +180,5 @@ Namespace GeomLib
             Next i
             NewMatrix = Nothing
         End Sub
-
     End Class
-
 End Namespace
