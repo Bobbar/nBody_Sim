@@ -227,7 +227,7 @@ Partial Class Form1
         Me.txtStep.Name = "txtStep"
         Me.txtStep.Size = New System.Drawing.Size(44, 20)
         Me.txtStep.TabIndex = 35
-        Me.txtStep.Text = "0.001"
+        Me.txtStep.Text = "0.0005"
         Me.ToolTip1.SetToolTip(Me.txtStep, "Time Step")
         '
         'butRemoveBalls
