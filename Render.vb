@@ -38,7 +38,7 @@ Public Module Renderer
 
         Dim myBrush As SolidBrush '(BallArray(i).Color)
         If bolDraw Then
-            For i = 0 To UBound(BallArray)
+            For i = 1 To UBound(BallArray)
 
                 If BallArray(i).Visible Then
                     If BallArray(i).LocX + FinalOffset.X > 0 And BallArray(i).LocX + FinalOffset.X < Form1.Render.Width / pic_scale And BallArray(i).LocY + FinalOffset.Y > 0 And BallArray(i).LocY + FinalOffset.Y < Form1.Render.Height / pic_scale Then
