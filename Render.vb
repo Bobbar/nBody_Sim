@@ -46,7 +46,7 @@ Public Module Renderer
                         End If
                         'If BallArray(i).Flags.IndexOf("S") < 1 And BallArray(i).ShadAngle <> 0 And BallArray(i).Flags.IndexOf("R") < 1 And Form1.chkShadow.Checked Then
                         If bolShawdow Then
-                            If InStr(1, BallArray(i).Flags, "S") = False And BallArray(i).ShadAngle <> 0 And InStr(1, BallArray(i).Flags, "R") = False Then
+                            If InStr(1, BallArray(i).Flags, "S") = False And BallArray(i).ShadAngle <> 0 Then
                                 Dim Bx1 As Single, Bx2 As Single, By1 As Single, By2 As Single
                                 Bx1 = BallArray(i).LocX + (BallArray(i).Size * 2) * Cos(BallArray(i).ShadAngle)
                                 By1 = BallArray(i).LocY + (BallArray(i).Size * 2) * Sin(BallArray(i).ShadAngle)

@@ -402,7 +402,7 @@ Public Class Form1
         ScaleOffset.Y = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).Y
         RenderWindowDims.X = CInt(Me.Render.Width)
         RenderWindowDims.Y = CInt(Me.Render.Height)
-        If UBound(Ball) > 1 And Not PhysicsWorker.IsBusy And Not bolStopWorker Then
+        If UBound(Ball) > 0 And Not PhysicsWorker.IsBusy And Not bolStopWorker Then
             PhysicsWorker.RunWorkerAsync()
         End If
         'If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
@@ -663,8 +663,8 @@ Public Class Form1
             UpDownVal = UpDown1.Value
             Ball(lngFollowBall).Flags = Replace$(Ball(lngFollowBall).Flags, "F", "")
             Sel = UpDown1.Value
-            If Ball(Sel).Visible = False Or InStr(1, Ball(Sel).Flags, "P") > 0 Or InStr(1, Ball(Sel).Flags, "R") > 0 Then
-                Do Until Ball(Sel).Visible And InStr(1, Ball(Sel).Flags, "P") = 0 And InStr(1, Ball(Sel).Flags, "R") = 0 Or Sel = UpDown1.Minimum
+            If Ball(Sel).Visible = False Or InStr(1, Ball(Sel).Flags, "P") > 0 Then
+                Do Until Ball(Sel).Visible And InStr(1, Ball(Sel).Flags, "P") = 0 Or Sel = UpDown1.Minimum
                     Sel = Sel - 1
                 Loop
             End If
@@ -693,8 +693,8 @@ Public Class Form1
             UpDownVal = UpDown1.Value
             Ball(lngFollowBall).Flags = Replace$(Ball(lngFollowBall).Flags, "F", "")
             Sel = UpDown1.Value
-            If Ball(Sel).Visible = False Or InStr(1, Ball(Sel).Flags, "P") > 0 Or InStr(1, Ball(Sel).Flags, "R") > 0 Then
-                Do Until Ball(Sel).Visible And InStr(1, Ball(Sel).Flags, "P") = 0 And InStr(1, Ball(Sel).Flags, "R") = 0 Or Sel = UpDown1.Maximum
+            If Ball(Sel).Visible = False Or InStr(1, Ball(Sel).Flags, "P") > 0 Then
+                Do Until Ball(Sel).Visible And InStr(1, Ball(Sel).Flags, "P") = 0 Or Sel = UpDown1.Maximum
                     Sel = Sel + 1
                 Loop
             End If
@@ -839,6 +839,8 @@ Public Class Form1
         Dim Dist As Double
         Dim DistSqrt As Double
         Dim Its As Long
+        Dim NewBalls As New List(Of BallParms)
+
         Its = 1
 restart:
         Do Until bolStopWorker
@@ -863,10 +865,15 @@ restart:
                                             Ball(B).ShadAngle = Math.Atan2(Ball(B).LocY - Ball(A).LocY, Ball(B).LocX - Ball(A).LocX)   'Math.Tan(SlX / SlY) 'Math.Atan2(SlY, SlX) * 180 / PI 'Math.Atan(SlX / SlY) * 180 / PI
                                         End If
                                     End If
+                                    'If Ball(B).LocX = Ball(A).LocX And Ball(B).LocY = Ball(A).LocY And B <> A Then
+                                    '    Ball(B).LocX = Ball(B).LocX + Ball(B).Size
+                                    '    Ball(B).LocY = Ball(B).LocY + Ball(B).Size
+                                    'End If
                                     If Ball(B).LocX = Ball(A).LocX And Ball(B).LocY = Ball(A).LocY And B <> A Then
-                                        Ball(B).LocX = Ball(B).LocX + Ball(B).Size
-                                        Ball(B).LocY = Ball(B).LocY + Ball(B).Size
+                                        Ball(A).LocX = Ball(A).LocX + Ball(A).Size
+                                        Ball(A).LocY = Ball(A).LocY + Ball(A).Size
                                     End If
+
                                     '// Collision Reaction (Vektors)
                                     If bGrav = 0 Then
                                     Else
@@ -885,7 +892,7 @@ restart:
                                                 Ball(A).SpeedX = Ball(A).SpeedX + ForceX / M1
                                                 Ball(A).SpeedY = Ball(A).SpeedY + ForceY / M1
                                                 If Force > (Ball(A).Mass ^ 3) And Ball(B).Mass > Ball(A).Mass * 5 And Ball(A).Size > 1 And Ball(A).Visible = True Then
-                                                    FractureBall(A)
+                                                    NewBalls.AddRange(FractureBall(A))
                                                 End If
                                             End If
                                         End If
@@ -896,8 +903,8 @@ restart:
                                             V1y = Ball(A).SpeedY
                                             V2x = Ball(B).SpeedX
                                             V2y = Ball(B).SpeedY
-                                            M1 = Ball(A).Mass ' / 1000 ' * 4 '^ 2
-                                            M2 = Ball(B).Mass ' / 1000 ' * 4 '^ 2
+                                            M1 = Ball(A).Mass / 1000 ' * 4 '^ 2
+                                            M2 = Ball(B).Mass / 1000 ' * 4 '^ 2
                                             VekX = DistX / 2 ' (Ball(A).LocX - Ball(B).LocX) / 2
                                             VeKY = DistY / 2 '(Ball(A).LocY - Ball(B).LocY) / 2
                                             VekX = VekX / (DistSqrt / 2) 'LenG
@@ -906,11 +913,11 @@ restart:
                                             V2 = VekX * V2x + VeKY * V2y
                                             U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
                                             U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
-                                            If InStr(1, Ball(B).Flags, "R") > 0 And Force < (Ball(A).Mass ^ 3) Or InStr(1, Ball(B).Flags, "R") = 0 Then
+                                            If Force < (Ball(A).Mass ^ 3) Then
                                                 Dim Area1 As Double, Area2 As Double
                                                 If Ball(A).Mass > Ball(B).Mass Then
                                                     If Ball(B).Origin <> A Then
-                                                        Ball(A).Flags = Replace$(Ball(A).Flags, "R", "")
+
                                                         Ball(A).SpeedX = Ball(A).SpeedX + (U1 - V1) * VekX
                                                         Ball(A).SpeedY = Ball(A).SpeedY + (U1 - V1) * VeKY
                                                         Area1 = PI * (Ball(A).Size ^ 2)
@@ -922,7 +929,7 @@ restart:
                                                     End If
                                                 Else 'If Ball(A).Mass < Ball(B).Mass Then
                                                     If Ball(A).Origin <> B Then
-                                                        Ball(A).Flags = Replace$(Ball(A).Flags, "R", "")
+
                                                         Ball(B).SpeedX = Ball(B).SpeedX + (U2 - V2) * VekX
                                                         Ball(B).SpeedY = Ball(B).SpeedY + (U2 - V2) * VeKY
                                                         Area1 = PI * (Ball(B).Size ^ 2)
@@ -985,6 +992,7 @@ restart:
             If UBound(Ball) > 5000 And bolBallsRemoved Then
                 ShrinkBallArray()
             End If
+            If NewBalls.Count > 0 Then AddNewBalls(NewBalls)
             PhysicsWorker.ReportProgress(1, Ball)
             EndTick = Now.Ticks
             ElapTick = EndTick - StartTick
@@ -998,8 +1006,24 @@ restart:
                     intDelay = 0
                 End If
             End If
+
         Loop
     End Sub
+    Private Sub AddNewBalls(ByRef NewBalls As List(Of BallParms))
+
+        For Each AddBall As BallParms In NewBalls
+            ReDim Preserve Ball(UBound(Ball) + 1)
+            Dim u As Integer = UBound(Ball)
+
+            Ball(u) = AddBall
+
+
+
+        Next
+
+        NewBalls.Clear()
+    End Sub
+
     Private Sub PhysicsWorker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles PhysicsWorker.ProgressChanged
         ' Debug.Print("Render complete " & Now.Ticks)
         Dim PassBall() As BallParms = e.UserState

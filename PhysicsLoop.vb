@@ -382,7 +382,7 @@ restart:
         fnRadius = 0
         fnRadius = Sqrt(Area / PI)
     End Function
-    Public Sub FractureBall(ByVal i As Long)
+    Public Function FractureBall(ByVal i As Long) As List(Of BallParms)
         Dim NewBallSize As Single
         Dim NewBallMass As Single
         Dim Divisor As Single
@@ -390,9 +390,11 @@ restart:
         Dim PrevMass As Single
         Dim TotBMass As Double
         Dim Area As Double
+        Dim tmpBallList As New List(Of BallParms)
+
         Dim RadUPX As Double, RadDNX As Double, RadUPY As Double, RadDNY As Double
         ' i = UBound(Ball)
-        If Ball(i).Visible = True And Ball(i).Size > 1 And InStr(1, Ball(i).Flags, "R") = 0 Then
+        If Ball(i).Visible = True And Ball(i).Size > 1 Then
             Divisor = Int(Ball(i).Size)
             If Divisor <= 1 Then Divisor = 2
             PrevSize = Ball(i).Size
@@ -413,22 +415,26 @@ restart:
             RadDNY = (Ball(i).LocY) - PrevSize / 2 + Ball(i).SpeedY * StepMulti
             Dim u As Long
             For h = 1 To Divisor
-                ReDim Preserve Ball(UBound(Ball) + 1)
-                u = UBound(Ball)
-                Ball(u).Size = NewBallSize '(2 * Rnd()) + 0.2
-                Ball(u).Mass = NewBallMass
+                Dim tmpBall As BallParms
+                ' ReDim Preserve Ball(UBound(Ball) + 1)
+                '  u = UBound(Ball)
+
+                tmpBall.Size = NewBallSize '(2 * Rnd()) + 0.2
+                tmpBall.Mass = NewBallMass
                 TotBMass = TotBMass + NewBallMass
-                Ball(u).SpeedX = Ball(i).SpeedX
-                Ball(u).SpeedY = Ball(i).SpeedY
+                tmpBall.SpeedX = Ball(i).SpeedX
+                tmpBall.SpeedY = Ball(i).SpeedY
                 'If Not InStr(1, Ball(i).Flags, "R") Then Ball(u).Flags = Ball(i).Flags + "R"
                 'Ball(u).Flags = Ball(i).Flags + "R"
-                Ball(u).Color = Ball(i).Color 'vbWhite
-                Ball(u).Flags = ""
-                Ball(u).Visible = True
+                tmpBall.Color = Ball(i).Color 'vbWhite
+                tmpBall.Flags = ""
+                tmpBall.Visible = True
                 '  Ball(u).LocY = Ball(i).LocY + Ball(u).Size * 2
-                Ball(u).LocX = GetRandomNumber((RadDNX), RadUPX)
-                Ball(u).LocY = GetRandomNumber((RadDNY), RadUPY)
+                tmpBall.LocX = GetRandomNumber((RadDNX), RadUPX)
+                tmpBall.LocY = GetRandomNumber((RadDNY), RadUPY)
+                tmpBallList.Add(tmpBall)
             Next h
         End If
-    End Sub
+        Return tmpBallList
+    End Function
 End Module
