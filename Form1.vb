@@ -377,8 +377,8 @@ Public Class Form1
         If gravity = 0.5 Then gravity = 0 : Exit Sub
         gravity = 0.5
     End Sub
-    Private Sub Timer2_Tick_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer2.Tick
-        Label10.Text = "FPS: " & Round(FPS, 0) ' * 8
+    Private Sub Timer2_Tick_1(ByVal sender As System.Object, ByVal e As System.EventArgs)
+        lblFPS.Text = "FPS: " & Round(FPS, 0) ' * 8
         lblDelay.Text = "Delay: " & intDelay
         lblBalls.Text = "Balls: " & UBound(Ball)
         UpDown1.Maximum = UBound(Ball)
@@ -467,7 +467,7 @@ Public Class Form1
         bolStart2 = False
         bolStart3 = False
         PubIndex = 1
-        Timer2.Enabled = True
+        UI_Worker.RunWorkerAsync()
         ' tmrRender.Enabled = True
         '   PhysicsWorker.RunWorkerAsync()
         'MainLoop()
@@ -502,7 +502,7 @@ Public Class Form1
         bolStop = Not bolStop
         If bolStop Then
             Button3.Text = "Start"
-            Timer2.Enabled = False
+
             tmrFollow.Enabled = False
             't.Suspend()
             ' t2.Suspend()
@@ -510,7 +510,7 @@ Public Class Form1
             bolStopLoop = True
         Else
             Button3.Text = "Stop"
-            Timer2.Enabled = True
+
             tmrFollow.Enabled = True
             ' t.Resume()
             '  t2.Resume()
@@ -1072,5 +1072,71 @@ restart:
         '        ctl.BackColor = colBackColor
         '    End If
         'Next
+    End Sub
+    Private Sub UI_Worker_DoWork(sender As Object, e As DoWorkEventArgs) Handles UI_Worker.DoWork
+        Do Until bolStopWorker
+            Thread.Sleep(100)
+            Do While bolStopLoop
+                Thread.Sleep(100)
+            Loop
+
+            UI_Worker.ReportProgress(1)
+
+
+        Loop
+
+
+
+
+    End Sub
+    Private Sub UI_Worker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles UI_Worker.ProgressChanged
+        SetUIInfo()
+    End Sub
+    Private Sub SetUIInfo()
+
+        'If Me.lblFPS.InvokeRequired Then
+        '    Dim d As New SetTextCallback(AddressOf SetUIInfo)
+        '    Me.Invoke(d, New Object() {Round(FPS, 0)})
+        'Else
+        lblFPS.Text = "FPS: " & Round(FPS, 0)
+        ' End If
+
+
+        'lblFPS.Text = "FPS: " & Round(FPS, 0) ' * 8
+        lblDelay.Text = "Delay: " & intDelay
+        lblBalls.Text = "Balls: " & UBound(Ball)
+        UpDown1.Maximum = UBound(Ball)
+        'TrueFPS = FPS * 8
+        'If FPS * 8 > intTargetFPS Then
+        '    intDelay = intDelay + 1
+        'Else
+        '    If intDelay > 0 Then
+        '        intDelay = intDelay - 1
+        '    Else
+        '        intDelay = 0
+        '    End If
+        'End If
+        '  
+        ' FPS = 0
+        lblVisBalls.Text = "Visible: " & VisibleBalls()
+        lblScale.Text = "Scale: " & Round(pic_scale, 2)
+
+
+
+
+
+
+        ScreenCenterX = Me.Render.Width / 2
+        ScreenCenterY = Me.Render.Height / 2
+        ScaleOffset.X = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).X
+        ScaleOffset.Y = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).Y
+        RenderWindowDims.X = CInt(Me.Render.Width)
+        RenderWindowDims.Y = CInt(Me.Render.Height)
+        If UBound(Ball) > 0 And Not PhysicsWorker.IsBusy And Not bolStopWorker Then
+            PhysicsWorker.RunWorkerAsync()
+        End If
+
+
+
     End Sub
 End Class

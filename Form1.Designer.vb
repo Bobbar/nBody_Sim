@@ -21,8 +21,7 @@ Partial Class Form1
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Me.Render = New System.Windows.Forms.PictureBox()
-        Me.Timer2 = New System.Windows.Forms.Timer(Me.components)
-        Me.Label10 = New System.Windows.Forms.Label()
+        Me.lblFPS = New System.Windows.Forms.Label()
         Me.Label11 = New System.Windows.Forms.Label()
         Me.Label12 = New System.Windows.Forms.Label()
         Me.Label13 = New System.Windows.Forms.Label()
@@ -62,6 +61,7 @@ Partial Class Form1
         Me.Tools = New System.Windows.Forms.ToolStripMenuItem()
         Me.TotalMassToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.UI_Worker = New System.ComponentModel.BackgroundWorker()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MenuStrip1.SuspendLayout()
@@ -81,20 +81,17 @@ Partial Class Form1
         Me.Render.TabIndex = 15
         Me.Render.TabStop = False
         '
-        'Timer2
+        'lblFPS
         '
-        '
-        'Label10
-        '
-        Me.Label10.AutoSize = True
-        Me.Label10.BackColor = System.Drawing.Color.Black
-        Me.Label10.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label10.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
-        Me.Label10.Location = New System.Drawing.Point(11, 64)
-        Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(42, 16)
-        Me.Label10.TabIndex = 18
-        Me.Label10.Text = "FPS: "
+        Me.lblFPS.AutoSize = True
+        Me.lblFPS.BackColor = System.Drawing.Color.Black
+        Me.lblFPS.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblFPS.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.lblFPS.Location = New System.Drawing.Point(11, 64)
+        Me.lblFPS.Name = "lblFPS"
+        Me.lblFPS.Size = New System.Drawing.Size(42, 16)
+        Me.lblFPS.TabIndex = 18
+        Me.lblFPS.Text = "FPS: "
         '
         'Label11
         '
@@ -442,6 +439,11 @@ Partial Class Form1
         Me.Panel1.Size = New System.Drawing.Size(976, 30)
         Me.Panel1.TabIndex = 52
         '
+        'UI_Worker
+        '
+        Me.UI_Worker.WorkerReportsProgress = True
+        Me.UI_Worker.WorkerSupportsCancellation = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -453,7 +455,7 @@ Partial Class Form1
         Me.Controls.Add(Me.lblVisBalls)
         Me.Controls.Add(Me.lblDelay)
         Me.Controls.Add(Me.lblBalls)
-        Me.Controls.Add(Me.Label10)
+        Me.Controls.Add(Me.lblFPS)
         Me.Controls.Add(Me.Render)
         Me.Controls.Add(Me.Label11)
         Me.Controls.Add(Me.Button2)
@@ -474,10 +476,10 @@ Partial Class Form1
         Me.Panel1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
+
     End Sub
     Friend WithEvents Render As System.Windows.Forms.PictureBox
-    Friend WithEvents Timer2 As System.Windows.Forms.Timer
-    Friend WithEvents Label10 As System.Windows.Forms.Label
+    Friend WithEvents lblFPS As System.Windows.Forms.Label
     Friend WithEvents Label11 As System.Windows.Forms.Label
     Friend WithEvents Label12 As System.Windows.Forms.Label
     Friend WithEvents Label13 As System.Windows.Forms.Label
@@ -517,4 +519,5 @@ Partial Class Form1
     Friend WithEvents AntiA As ToolStripMenuItem
     Friend WithEvents Invert As ToolStripMenuItem
     Friend WithEvents Panel1 As Panel
+    Friend WithEvents UI_Worker As System.ComponentModel.BackgroundWorker
 End Class
