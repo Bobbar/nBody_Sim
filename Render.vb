@@ -9,6 +9,7 @@ Public Module Renderer
     Public ScreenCenterX As Single
     Public ScreenCenterY As Single
     Public CircleOInfluence As Single = 10000
+    Public bolDrawing As Boolean = False
     'Public RenderWindowDimsH As Integer
     'Public RenderWindowDimsW As Integer
     Public RenderWindowDims As New Point(Form1.Render.Width, Form1.Render.Height)
@@ -24,6 +25,7 @@ Public Module Renderer
         gr.ScaleTransform(pic_scale, pic_scale)
     End Sub
     Public Function Drawr(ByVal BallArray() As BallParms) As Bitmap
+        bolDrawing = True
         If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
             UpdateScale()
         End If
@@ -101,6 +103,7 @@ Public Module Renderer
                 End If
             Next
         End If
+        bolDrawing = False
         Return bm
     End Function
     Public Function ScaledPoint(Point As Point, Origin As Point, Optional Scale As Double = 1.0) As Point
