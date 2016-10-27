@@ -39,6 +39,7 @@ Public Module Renderer
         Dim myBrush As SolidBrush '(BallArray(i).Color)
         If bolDraw Then
             For i = 1 To UBound(BallArray)
+
                 If BallArray(i).Visible Then
                     If BallArray(i).LocX + FinalOffset.X > 0 And BallArray(i).LocX + FinalOffset.X < Form1.Render.Width / pic_scale And BallArray(i).LocY + FinalOffset.Y > 0 And BallArray(i).LocY + FinalOffset.Y < Form1.Render.Height / pic_scale Then
                         If bolInvert Then
@@ -78,6 +79,7 @@ Public Module Renderer
                                 If lngFollowBall = i Then
                                     '  End If
                                     'gr.DrawEllipse(myPen, BallArray(lngFollowBall).LocX - BallArray(i).Size / 2 + FinalOffset.X - ScaleMousePosExact(New SPoint(10000, 10000)).X, BallArray(lngFollowBall).LocY - BallArray(i).Size / 2 + FinalOffset.Y - ScaleMousePosExact(New SPoint(10000, 10000)).Y, 10000, 10000)
+
                                     If bolSOI Then
                                         gr.DrawEllipse(myPen, BallArray(lngFollowBall).LocX - BallArray(i).Size / 2 + FinalOffset.X - (CircleOInfluence), BallArray(lngFollowBall).LocY - BallArray(i).Size / 2 + FinalOffset.Y - (CircleOInfluence), CircleOInfluence * 2, CircleOInfluence * 2)
                                     End If

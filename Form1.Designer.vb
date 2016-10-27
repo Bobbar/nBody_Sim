@@ -62,6 +62,7 @@ Partial Class Form1
         Me.TotalMassToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.UI_Worker = New System.ComponentModel.BackgroundWorker()
+        Me.cmdTrails = New System.Windows.Forms.Button()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MenuStrip1.SuspendLayout()
@@ -265,7 +266,7 @@ Partial Class Form1
         '
         'Button5
         '
-        Me.Button5.Location = New System.Drawing.Point(877, 7)
+        Me.Button5.Location = New System.Drawing.Point(961, 5)
         Me.Button5.Name = "Button5"
         Me.Button5.Size = New System.Drawing.Size(77, 20)
         Me.Button5.TabIndex = 43
@@ -419,6 +420,7 @@ Partial Class Form1
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.cmdTrails)
         Me.Panel1.Controls.Add(Me.butAddBall)
         Me.Panel1.Controls.Add(Me.Label12)
         Me.Panel1.Controls.Add(Me.Button3)
@@ -436,13 +438,22 @@ Partial Class Form1
         Me.Panel1.Controls.Add(Me.butRemoveBalls)
         Me.Panel1.Location = New System.Drawing.Point(3, 27)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(976, 30)
+        Me.Panel1.Size = New System.Drawing.Size(1051, 30)
         Me.Panel1.TabIndex = 52
         '
         'UI_Worker
         '
         Me.UI_Worker.WorkerReportsProgress = True
         Me.UI_Worker.WorkerSupportsCancellation = True
+        '
+        'cmdTrails
+        '
+        Me.cmdTrails.Location = New System.Drawing.Point(870, 5)
+        Me.cmdTrails.Name = "cmdTrails"
+        Me.cmdTrails.Size = New System.Drawing.Size(68, 19)
+        Me.cmdTrails.TabIndex = 47
+        Me.cmdTrails.Text = "Trails"
+        Me.cmdTrails.UseVisualStyleBackColor = True
         '
         'Form1
         '
@@ -520,4 +531,5 @@ Partial Class Form1
     Friend WithEvents Invert As ToolStripMenuItem
     Friend WithEvents Panel1 As Panel
     Friend WithEvents UI_Worker As System.ComponentModel.BackgroundWorker
+    Friend WithEvents cmdTrails As Button
 End Class

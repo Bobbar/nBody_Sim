@@ -369,10 +369,17 @@ restart:
         fnMass = 0
         fnMass = Sqrt(PI * (Radius ^ 2))
     End Function
+    Private myRandom As New Random
     Public Function GetRandomNumber(ByVal Low As Double, ByVal High As Double) As Double
         ' Returns a random number,
         ' between the optional Low and High parameters
+
+        'Dim number As Double = myRandom.NextDouble() * (High - Low) + Low
+        'Return number
+
+
         Return objRandom.Next(Low, High + 1)
+
     End Function
     Public Function GetRandom(ByVal Min As Integer, ByVal Max As Integer) As Integer
         Dim Generator As System.Random = New System.Random()
@@ -403,6 +410,7 @@ restart:
             Area = PI * (Ball(i).Size ^ 2)
             Area = Area / Divisor
             NewBallSize = fnRadius(Area)  'fnRadius(fnArea(Ball(i).Size) / 2)  'Sqr(Area / pi) 'ball(i).Size / Divisor
+
             NewBallMass = PrevMass / Divisor  '(Ball(i).Mass / Divisor)
             Ball(i).Visible = False
             '
@@ -413,6 +421,14 @@ restart:
             RadDNX = (Ball(i).LocX) - PrevSize / 2 + Ball(i).SpeedX * StepMulti
             RadUPY = (Ball(i).LocY) + PrevSize / 2 + Ball(i).SpeedY * StepMulti
             RadDNY = (Ball(i).LocY) - PrevSize / 2 + Ball(i).SpeedY * StepMulti
+
+            'RadUPX = (Ball(i).LocX) + PrevSize + Ball(i).SpeedX * StepMulti
+            'RadDNX = (Ball(i).LocX) - PrevSize + Ball(i).SpeedX * StepMulti
+            'RadUPY = (Ball(i).LocY) + PrevSize + Ball(i).SpeedY * StepMulti
+            'RadDNY = (Ball(i).LocY) - PrevSize + Ball(i).SpeedY * StepMulti
+
+
+            Dim CenterPoint As New Point(Ball(i).LocX, Ball(i).LocY)
             Dim u As Long
             For h = 1 To Divisor
                 Dim tmpBall As BallParms
@@ -430,11 +446,61 @@ restart:
                 tmpBall.Flags = ""
                 tmpBall.Visible = True
                 '  Ball(u).LocY = Ball(i).LocY + Ball(u).Size * 2
+
+
                 tmpBall.LocX = GetRandomNumber((RadDNX), RadUPX)
                 tmpBall.LocY = GetRandomNumber((RadDNY), RadUPY)
+
+
+
+                If DupLoc(tmpBallList, tmpBall) Then
+                    Debug.Print("Dup failure")
+                    Do Until Not DupLoc(tmpBallList, tmpBall)
+
+
+                        tmpBall.LocX = GetRandomNumber((RadDNX), RadUPX)
+                        tmpBall.LocY = GetRandomNumber((RadDNY), RadUPY)
+
+                    Loop
+
+
+                End If
+
+
+                'Dim tmpLoc As New Point(GetRandomNumber((RadDNX), RadUPX), GetRandomNumber((RadDNY), RadUPY))
+                'Dim DistX As Double = CenterPoint.X - tmpLoc.X
+                'Dim DistY As Double = CenterPoint.Y - tmpLoc.Y
+                'Dim Dist As Double = (DistX * DistX) + (DistY * DistY)
+                'Dim DistSqrt = Sqrt(Dist)
+
+                'Do Until DistSqrt <= PrevSize * 2 And DistSqrt <> 0
+                '    tmpLoc = New Point(GetRandomNumber((RadDNX), RadUPX), GetRandomNumber((RadDNY), RadUPY))
+                '    DistX = CenterPoint.X - tmpLoc.X
+                '    DistY = CenterPoint.Y - tmpLoc.Y
+                '    Dist = (DistX * DistX) + (DistY * DistY)
+                '    DistSqrt = Sqrt(Dist)
+
+                '    'If DistSqrt < PrevSize / 2 And DistSqrt <> 0 Then
+
+
+
+                '    'End If
+                'Loop
+                'tmpBall.LocX = tmpLoc.X
+                'tmpBall.LocY = tmpLoc.Y
                 tmpBallList.Add(tmpBall)
+
+
             Next h
         End If
         Return tmpBallList
+    End Function
+    Private Function DupLoc(LstBodies As List(Of BallParms), Body As BallParms) As Boolean
+        If LstBodies.Count < 1 Then Return False
+        For Each bdy As BallParms In LstBodies
+            If Body.LocX = bdy.LocX And Body.LocY = bdy.LocY Then Return True
+        Next
+
+        Return False
     End Function
 End Module
