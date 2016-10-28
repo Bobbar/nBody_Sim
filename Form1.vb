@@ -557,6 +557,7 @@ Err:
         'm.Start()
         ' Else
         bolStopWorker = True
+
         Do Until Not PhysicsWorker.IsBusy
             wait(300)
         Loop
@@ -847,7 +848,8 @@ restart:
                                         End If
 
                                         If Ball(B).LocX = Ball(A).LocX And Ball(B).LocY = Ball(A).LocY And B <> A Then
-                                            Debug.Print("Dup loc  " & Now.Ticks)
+                                            '   Debug.Print("Dup loc  " & Now.Ticks)
+                                            CollideBodies(Ball(B), Ball(A))
                                             'Ball(A).LocX = Ball(A).LocX + Ball(A).Size
                                             'Ball(A).LocY = Ball(A).LocY + Ball(A).Size
                                         End If
@@ -866,59 +868,61 @@ restart:
                                                 DistY = Ball(B).LocY - Ball(A).LocY
                                                 Dist = (DistX * DistX) + (DistY * DistY)
                                                 DistSqrt = Sqrt(Dist)
-                                                Force = TotMass / (Dist * DistSqrt)
-                                                ForceX = Force * DistX
-                                                ForceY = Force * DistY
-                                                Ball(A).SpeedX = Ball(A).SpeedX + ForceX / M1
-                                                Ball(A).SpeedY = Ball(A).SpeedY + ForceY / M1
-                                                If Force > (Ball(A).Mass ^ 3) And Ball(B).Mass > Ball(A).Mass * 5 And Ball(A).Size > 1 Then
-                                                    NewBalls.AddRange(FractureBall(A))
+                                                If DistSqrt > 0 Then
+                                                    Force = TotMass / (Dist * DistSqrt)
+                                                    ForceX = Force * DistX
+                                                    ForceY = Force * DistY
+                                                    Ball(A).SpeedX = Ball(A).SpeedX + ForceX / M1
+                                                    Ball(A).SpeedY = Ball(A).SpeedY + ForceY / M1
+                                                    If Force > (Ball(A).Mass ^ 3) And Ball(B).Mass > Ball(A).Mass * 5 And Ball(A).Size > 1 Then
+                                                        NewBalls.AddRange(FractureBall(A))
+                                                    End If
                                                 End If
-                                                'End If
                                             End If
-                                            'End If
-                                            ' If A <> B And Ball(A).Visible = True Then
-                                            If DistSqrt < (Ball(A).Size / 2) + (Ball(B).Size / 2) And DistSqrt <> 0 Then
-                                                V1x = Ball(A).SpeedX
-                                                V1y = Ball(A).SpeedY
-                                                V2x = Ball(B).SpeedX
-                                                V2y = Ball(B).SpeedY
-                                                M1 = Ball(A).Mass / 1000 ' * 4 '^ 2
-                                                M2 = Ball(B).Mass / 1000 ' * 4 '^ 2
-                                                VekX = DistX / 2 ' (Ball(A).LocX - Ball(B).LocX) / 2
-                                                VeKY = DistY / 2 '(Ball(A).LocY - Ball(B).LocY) / 2
-                                                VekX = VekX / (DistSqrt / 2) 'LenG
-                                                VeKY = VeKY / (DistSqrt / 2) 'LenG
-                                                V1 = VekX * V1x + VeKY * V1y
-                                                V2 = VekX * V2x + VeKY * V2y
-                                                U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-                                                U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
+                                                'End If
+                                                ' If A <> B And Ball(A).Visible = True Then
+                                                If DistSqrt < (Ball(A).Size / 2) + (Ball(B).Size / 2) And DistSqrt > 0 Then
+                                                'V1x = Ball(A).SpeedX
+                                                'V1y = Ball(A).SpeedY
+                                                'V2x = Ball(B).SpeedX
+                                                'V2y = Ball(B).SpeedY
+                                                'M1 = Ball(A).Mass / 1000 ' * 4 '^ 2
+                                                'M2 = Ball(B).Mass / 1000 ' * 4 '^ 2
+                                                'VekX = DistX / 2 ' (Ball(A).LocX - Ball(B).LocX) / 2
+                                                'VeKY = DistY / 2 '(Ball(A).LocY - Ball(B).LocY) / 2
+                                                'VekX = VekX / (DistSqrt / 2) 'LenG
+                                                'VeKY = VeKY / (DistSqrt / 2) 'LenG
+                                                'V1 = VekX * V1x + VeKY * V1y
+                                                'V2 = VekX * V2x + VeKY * V2y
+                                                'U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
+                                                'U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
                                                 If Force < (Ball(A).Mass ^ 3) Then
-                                                    Dim Area1 As Double, Area2 As Double
+                                                    'Dim Area1 As Double, Area2 As Double
                                                     If Ball(A).Mass > Ball(B).Mass Then
-                                                        ' If Ball(B).Origin <> A Then
 
-                                                        Ball(A).SpeedX = Ball(A).SpeedX + (U1 - V1) * VekX
-                                                        Ball(A).SpeedY = Ball(A).SpeedY + (U1 - V1) * VeKY
-                                                        Area1 = PI * (Ball(A).Size ^ 2)
-                                                        Area2 = PI * (Ball(B).Size ^ 2)
-                                                        Area1 = Area1 + Area2
-                                                        Ball(A).Size = Sqrt(Area1 / PI)
-                                                        Ball(A).Mass = Ball(A).Mass + Ball(B).Mass 'Sqr(Ball(B).Mass)
-                                                        Ball(B).Visible = False
-                                                        ' End If
+
+                                                        'Ball(A).SpeedX = Ball(A).SpeedX + (U1 - V1) * VekX
+                                                        'Ball(A).SpeedY = Ball(A).SpeedY + (U1 - V1) * VeKY
+                                                        'Area1 = PI * (Ball(A).Size ^ 2)
+                                                        'Area2 = PI * (Ball(B).Size ^ 2)
+                                                        'Area1 = Area1 + Area2
+                                                        'Ball(A).Size = Sqrt(Area1 / PI)
+                                                        'Ball(A).Mass = Ball(A).Mass + Ball(B).Mass 'Sqr(Ball(B).Mass)
+                                                        'Ball(B).Visible = False
+                                                        CollideBodies(Ball(A), Ball(B))
+
                                                     Else 'If Ball(A).Mass < Ball(B).Mass Then
-                                                        ' If Ball(A).Origin <> B Then
 
-                                                        Ball(B).SpeedX = Ball(B).SpeedX + (U2 - V2) * VekX
-                                                        Ball(B).SpeedY = Ball(B).SpeedY + (U2 - V2) * VeKY
-                                                        Area1 = PI * (Ball(B).Size ^ 2)
-                                                        Area2 = PI * (Ball(A).Size ^ 2)
-                                                        Area1 = Area1 + Area2
-                                                        Ball(B).Size = Sqrt(Area1 / PI)
-                                                        Ball(B).Mass = Ball(B).Mass + Ball(A).Mass 'Sqr(Ball(A).Mass)
-                                                        Ball(A).Visible = False
-                                                        'End If
+                                                        CollideBodies(Ball(B), Ball(A))
+                                                        'Ball(B).SpeedX = Ball(B).SpeedX + (U2 - V2) * VekX
+                                                        'Ball(B).SpeedY = Ball(B).SpeedY + (U2 - V2) * VeKY
+                                                        'Area1 = PI * (Ball(B).Size ^ 2)
+                                                        'Area2 = PI * (Ball(A).Size ^ 2)
+                                                        'Area1 = Area1 + Area2
+                                                        'Ball(B).Size = Sqrt(Area1 / PI)
+                                                        'Ball(B).Mass = Ball(B).Mass + Ball(A).Mass 'Sqr(Ball(A).Mass)
+                                                        'Ball(A).Visible = False
+
                                                     End If
                                                 End If
                                                 ' StartTimer()
@@ -995,7 +999,7 @@ restart:
         End Try
 
     End Sub
-    Private Sub CollideBodyies(ByRef Master As BallParms, ByRef Slave As BallParms)
+    Private Sub CollideBodies(ByRef Master As BallParms, ByRef Slave As BallParms)
         Dim VeKY As Double
         Dim VekX As Double
         Dim V1x As Double
@@ -1014,48 +1018,74 @@ restart:
         Dim U1 As Double
         Dim DistX As Double
         Dim DistY As Double
+        Dim Dist As Double
         Dim DistSqrt As Double
-
-        'DistX = Slave.LocX - Master.LocX
-        'DistY = Slave.LocY - Master.LocY
-
-        'V1x = Master.SpeedX
-        'V1y = Master.SpeedY
-        'V2x = Slave.SpeedX
-        'V2y = Slave.SpeedY
-
-        'M1 = Master.Mass ' / 1000 ' * 4 '^ 2
-        'M2 = Slave.Mass ' / 1000 ' * 4 '^ 2
-
-        'VekX = DistX / 2 ' (Ball(A).LocX - Ball(B).LocX) / 2
-        'VeKY = DistY / 2 '(Ball(A).LocY - Ball(B).LocY) / 2
-
-        'VekX = VekX / (DistSqrt / 2) 'LenG
-        'VeKY = VeKY / (DistSqrt / 2) 'LenG
-
-        'V1 = VekX * V1x + VeKY * V1y
-        'V2 = VekX * V2x + VeKY * V2y
-
-        'U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-        'U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
-
-
-        NewVelX1 = (Master.SpeedX * (Master.Mass - Slave.Mass) + (2 * Slave.Mass * Slave.SpeedX)) / (Master.Mass + Slave.Mass)
-        NewVelY1 = (Master.SpeedY * (Master.Mass - Slave.Mass) + (2 * Slave.Mass * Slave.SpeedY)) / (Master.Mass + Slave.Mass)
-        '  NewVelX2 = (Master.SpeedX * (Master.Mass - Slave.Mass) + (2 * Slave.Mass * Slave.SpeedX)) / (Master.Mass + Slave.Mass)
 
 
         Dim Area1 As Double, Area2 As Double
 
+        DistX = Slave.LocX - Master.LocX
+        DistY = Slave.LocY - Master.LocY
+        Dist = (DistX * DistX) + (DistY * DistY)
+        DistSqrt = Sqrt(Dist)
+        ' Debug.Print("Col dist:" & DistSqrt)
+        If DistSqrt > 0 Then
+            V1x = Master.SpeedX
+            V1y = Master.SpeedY
+            V2x = Slave.SpeedX
+            V2y = Slave.SpeedY
 
-        Master.SpeedX = Master.SpeedX + NewVelX1 '+ (U1 - V1) * VekX
-        Master.SpeedY = Master.SpeedY + NewVelY1 '+ (U1 - V1) * VeKY
-        Area1 = PI * (Master.Size ^ 2)
-        Area2 = PI * (Slave.Size ^ 2)
-        Area1 = Area1 + Area2
-        Master.Size = Sqrt(Area1 / PI)
-        Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
-        Slave.Visible = False
+            M1 = Master.Mass
+            M2 = Slave.Mass
+
+            VekX = DistX / 2 ' (Ball(A).LocX - Ball(B).LocX) / 2
+            VeKY = DistY / 2 '(Ball(A).LocY - Ball(B).LocY) / 2
+
+            VekX = VekX / (DistSqrt / 2) 'LenG
+            VeKY = VeKY / (DistSqrt / 2) 'LenG
+
+            V1 = VekX * V1x + VeKY * V1y
+            V2 = VekX * V2x + VeKY * V2y
+
+            U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
+            '   U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
+
+
+
+
+
+            Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+            Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+            Area1 = PI * (Master.Size ^ 2)
+            Area2 = PI * (Slave.Size ^ 2)
+            Area1 = Area1 + Area2
+            Master.Size = Sqrt(Area1 / PI)
+            Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+            Slave.Visible = False
+        Else ' if bodies are at exact same position
+
+            'Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+            ' Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+
+            If Master.Mass > Slave.Mass Then
+
+                Area1 = PI * (Master.Size ^ 2)
+                Area2 = PI * (Slave.Size ^ 2)
+                Area1 = Area1 + Area2
+                Master.Size = Sqrt(Area1 / PI)
+                Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+                Slave.Visible = False
+            Else
+
+                Area1 = PI * (Master.Size ^ 2)
+                Area2 = PI * (Slave.Size ^ 2)
+                Area1 = Area1 + Area2
+                Slave.Size = Sqrt(Area1 / PI)
+                Slave.Mass = Slave.Mass + Master.Mass 'Sqr(Ball(B).Mass)
+                Master.Visible = False
+            End If
+
+        End If
 
 
     End Sub
@@ -1077,7 +1107,7 @@ restart:
     Private Sub PhysicsWorker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles PhysicsWorker.ProgressChanged
         ' Debug.Print("Render complete " & Now.Ticks)
         Dim PassBall() As BallParms = e.UserState
-        If bolDraw And Not bolDrawing Then Me.Render.Image = Drawr(PassBall)
+        If bolDraw And Not bolDrawing Then Drawr(PassBall) '  Me.Render.Image = Drawr(PassBall)
     End Sub
     Private Sub tmrRender_Tick(sender As Object, e As EventArgs) Handles tmrRender.Tick
         ' If bolDraw Then Me.Render.Image = Drawr()

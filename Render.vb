@@ -24,7 +24,7 @@ Public Module Renderer
         gr.ResetTransform()
         gr.ScaleTransform(pic_scale, pic_scale)
     End Sub
-    Public Function Drawr(ByVal BallArray() As BallParms) As Bitmap
+    Public Sub Drawr(ByVal BallArray() As BallParms) ' As Bitmap
         bolDrawing = True
         If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
             UpdateScale()
@@ -39,7 +39,7 @@ Public Module Renderer
         Dim myBrush As SolidBrush '(BallArray(i).Color)
         If bolDraw Then
             For i = 1 To UBound(BallArray)
-
+                If bolStopWorker Then Exit Sub
                 If BallArray(i).Visible Then
                     If BallArray(i).LocX + FinalOffset.X > 0 And BallArray(i).LocX + FinalOffset.X < Form1.Render.Width / pic_scale And BallArray(i).LocY + FinalOffset.Y > 0 And BallArray(i).LocY + FinalOffset.Y < Form1.Render.Height / pic_scale Then
                         If bolInvert Then
@@ -69,6 +69,7 @@ Public Module Renderer
                             If bolFollow Then
                                 RelBallPosMod.X = -BallArray(lngFollowBall).LocX
                                 RelBallPosMod.Y = -BallArray(lngFollowBall).LocY
+                                ' If BallArray(lngFollowBall).LocY <> Ball(lngFollowBall).LocY Then Debug.Print("Loc ERROR")
                             End If
                             gr.FillEllipse(myBrush, BallArray(i).LocX - BallArray(i).Size / 2 + FinalOffset.X, BallArray(i).LocY - BallArray(i).Size / 2 + FinalOffset.Y, BallArray(i).Size, BallArray(i).Size)
                             If InStr(1, BallArray(i).Flags, "BH") > 0 Then
@@ -103,11 +104,13 @@ Public Module Renderer
                         'e.Graphics.FillEllipse(Brushes.Black, BallArray(i).LocX - BallArray(i).Size / 2 - 1, BallArray(i).LocY - BallArray(i).Size / 2 - 1, BallArray(i).Size + 2, BallArray(i).Size + 2)
                     End If
                 End If
+
             Next
         End If
         bolDrawing = False
-        Return bm
-    End Function
+        Form1.Render.Image = bm
+        '   Return bm
+    End Sub
     Public Function ScaledPoint(Point As Point, Origin As Point, Optional Scale As Double = 1.0) As Point
         Return New Point(Origin.X + Point.X * Scale, Origin.Y + Point.Y * Scale)
     End Function

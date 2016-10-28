@@ -454,7 +454,7 @@ restart:
 
 
                 If DupLoc(tmpBallList, tmpBall) Then
-                    Debug.Print("Dup failure")
+                    ' Debug.Print("Dup failure")
                     Do Until Not DupLoc(tmpBallList, tmpBall)
 
 
