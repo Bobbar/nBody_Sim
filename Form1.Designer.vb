@@ -61,8 +61,8 @@ Partial Class Form1
         Me.Tools = New System.Windows.Forms.ToolStripMenuItem()
         Me.TotalMassToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Panel1 = New System.Windows.Forms.Panel()
-        Me.UI_Worker = New System.ComponentModel.BackgroundWorker()
         Me.cmdTrails = New System.Windows.Forms.Button()
+        Me.UI_Worker = New System.ComponentModel.BackgroundWorker()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MenuStrip1.SuspendLayout()
@@ -441,19 +441,19 @@ Partial Class Form1
         Me.Panel1.Size = New System.Drawing.Size(1051, 30)
         Me.Panel1.TabIndex = 52
         '
-        'UI_Worker
-        '
-        Me.UI_Worker.WorkerReportsProgress = True
-        Me.UI_Worker.WorkerSupportsCancellation = True
-        '
         'cmdTrails
         '
         Me.cmdTrails.Location = New System.Drawing.Point(870, 5)
         Me.cmdTrails.Name = "cmdTrails"
-        Me.cmdTrails.Size = New System.Drawing.Size(68, 19)
+        Me.cmdTrails.Size = New System.Drawing.Size(68, 20)
         Me.cmdTrails.TabIndex = 47
         Me.cmdTrails.Text = "Trails"
         Me.cmdTrails.UseVisualStyleBackColor = True
+        '
+        'UI_Worker
+        '
+        Me.UI_Worker.WorkerReportsProgress = True
+        Me.UI_Worker.WorkerSupportsCancellation = True
         '
         'Form1
         '

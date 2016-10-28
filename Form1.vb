@@ -1186,5 +1186,11 @@ Err:
 
     Private Sub cmdTrails_Click(sender As Object, e As EventArgs) Handles cmdTrails.Click
         bolTrails = Not bolTrails
+        Select Case bolTrails
+            Case True
+                cmdTrails.BackColor = Color.DarkGreen
+            Case False
+                cmdTrails.BackColor = Color.DarkRed
+        End Select
     End Sub
 End Class
