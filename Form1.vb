@@ -868,39 +868,6 @@ Err:
                                             End If
                                             ' StartTimer()
 
-                                            Select Case Ball(A).Mass
-                                                Case > 350
-                                                    Ball(A).Color = System.Drawing.Color.Red
-                                                Case > 400
-                                                    Ball(A).Color = System.Drawing.Color.Yellow
-                                                Case > 500
-                                                    Ball(A).Color = System.Drawing.Color.White
-                                                Case > 600
-                                                    Ball(A).Color = System.Drawing.Color.LightCyan
-                                                Case > 700
-                                                    Ball(A).Color = System.Drawing.Color.LightBlue
-                                                Case > 1000
-                                                    Ball(A).Color = Color.Black
-                                                    Ball(A).Size = 20
-                                                    If InStr(1, Ball(A).Flags, "BH") = 0 Then Ball(A).Flags = Ball(A).Flags + "BH"
-
-                                            End Select
-
-
-
-
-
-
-                                            'If Ball(A).Mass > 350 Then Ball(A).Color = System.Drawing.Color.Red
-                                            'If Ball(A).Mass > 400 Then Ball(A).Color = System.Drawing.Color.Yellow
-                                            'If Ball(A).Mass > 500 Then Ball(A).Color = System.Drawing.Color.White
-                                            'If Ball(A).Mass > 600 Then Ball(A).Color = System.Drawing.Color.LightCyan
-                                            'If Ball(A).Mass > 700 Then Ball(A).Color = System.Drawing.Color.LightBlue
-                                            'If Ball(A).Mass > 1000 Then
-                                            '    Ball(A).Color = Color.Black
-                                            '    Ball(A).Size = 20
-                                            '    If InStr(1, Ball(A).Flags, "BH") = 0 Then Ball(A).Flags = Ball(A).Flags + "BH"
-                                            'End If
                                             '  StopTimer()
 
                                             'End If
@@ -984,7 +951,7 @@ Err:
         Dim DistY As Double
         Dim Dist As Double
         Dim DistSqrt As Double
-
+        Dim PrevSpdX, PrevSpdY As Double
 
         Dim Area1 As Double, Area2 As Double
 
@@ -1018,13 +985,22 @@ Err:
 
 
 
-            Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
-            Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
             Area1 = PI * (Master.Size ^ 2)
             Area2 = PI * (Slave.Size ^ 2)
             Area1 = Area1 + Area2
             Master.Size = Sqrt(Area1 / PI)
             Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+            PrevSpdX = Master.SpeedX
+            PrevSpdY = Master.SpeedY
+
+
+            Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+            Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+            Debug.Print("Col Bef: " & PrevSpdX & " : " & PrevSpdY)
+            Debug.Print("Col Aft: " & Master.SpeedX & " : " & Master.SpeedY)
+            If CInt(PrevSpdX - Master.SpeedX) > 200 Or CInt(PrevSpdY - Master.SpeedY) > 200 Then
+                Debugger.Break()
+            End If
             Slave.Visible = False
         Else ' if bodies are at exact same position
 
@@ -1048,6 +1024,19 @@ Err:
                 Slave.Mass = Slave.Mass + Master.Mass 'Sqr(Ball(B).Mass)
                 Master.Visible = False
             End If
+
+
+            If Master.Mass > 350 Then Master.Color = System.Drawing.Color.Red
+            If Master.Mass > 400 Then Master.Color = System.Drawing.Color.Yellow
+            If Master.Mass > 500 Then Master.Color = System.Drawing.Color.White
+            If Master.Mass > 600 Then Master.Color = System.Drawing.Color.LightCyan
+            If Master.Mass > 700 Then Master.Color = System.Drawing.Color.LightBlue
+            If Master.Mass > 1000 Then
+                Master.Color = Color.Black
+                Master.Size = 20
+                If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
+            End If
+
 
         End If
 
