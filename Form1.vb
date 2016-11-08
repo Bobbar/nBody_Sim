@@ -841,37 +841,38 @@ Err:
                                             Dist = (DistX * DistX) + (DistY * DistY)
                                             DistSqrt = Sqrt(Dist)
                                             If DistSqrt > 0 Then 'Gravity reaction
+                                                If DistSqrt < (Ball(A).Size / 2) + (Ball(B).Size / 2) Then DistSqrt = (Ball(A).Size / 2) + (Ball(B).Size / 2)
                                                 Force = TotMass / (Dist * DistSqrt)
                                                 'Ball(A).ForceX = Force * DistX
                                                 'Ball(A).ForceY = Force * DistY
 
                                                 ForceX = Force * DistX
-                                                ForceY = Force * DistY
+                                                    ForceY = Force * DistY
 
-                                                Ball(A).SpeedX += StepMulti * ForceX / M1
-                                                Ball(A).SpeedY += StepMulti * ForceY / M1
+                                                    Ball(A).SpeedX += StepMulti * ForceX / M1
+                                                    Ball(A).SpeedY += StepMulti * ForceY / M1
 
 
-                                                If DistSqrt < 100 Then
-                                                    If Force > Ball(A).Mass / 2 And Ball(B).Mass > Ball(A).Mass * 5 Then
-                                                        bolRocheLimit = True
-                                                    Else
-                                                        bolRocheLimit = False
-                                                    End If
-                                                    If bolRocheLimit And Ball(A).Size > 1 Then
-                                                        NewBalls.AddRange(FractureBall(A))
-                                                    End If
-                                                    If DistSqrt <= (Ball(A).Size / 2) + (Ball(B).Size / 2) Then 'Collision reaction
-                                                        If Not bolRocheLimit Then
-                                                            If Ball(A).Mass > Ball(B).Mass Then
-                                                                CollideBodies(Ball(A), Ball(B))
-                                                            Else
-                                                                CollideBodies(Ball(B), Ball(A))
+                                                    If DistSqrt < 100 Then
+                                                        If Force > Ball(A).Mass / 2 And Ball(B).Mass > Ball(A).Mass * 5 Then
+                                                            bolRocheLimit = True
+                                                        Else
+                                                            bolRocheLimit = False
+                                                        End If
+                                                        If bolRocheLimit And Ball(A).Size > 1 Then
+                                                            NewBalls.AddRange(FractureBall(A))
+                                                        End If
+                                                        If DistSqrt <= (Ball(A).Size / 2) + (Ball(B).Size / 2) Then 'Collision reaction
+                                                            If Not bolRocheLimit Then
+                                                                If Ball(A).Mass > Ball(B).Mass Then
+                                                                    CollideBodies(Ball(A), Ball(B))
+                                                                Else
+                                                                    CollideBodies(Ball(B), Ball(A))
+                                                                End If
                                                             End If
                                                         End If
                                                     End If
-                                                End If
-                                            Else
+                                                Else
                                                     '   Debugger.Break()
                                                 End If
                                             ' StartTimer()
