@@ -266,10 +266,10 @@ Public Class Form1
                 'ay(Sel) = 0
                 'bCenterX(Sel) = e.X
                 'bCenterY(Sel) = e.Y
-                If Ball(Sel).Old_LocX < Ball(Sel).LocX - Ball(Sel).Size / 2 Then Ball(Sel).SpeedX = (Ball(Sel).LocX - Ball(Sel).Old_LocX) / 2 'To the right
-                If Ball(Sel).Old_LocX > Ball(Sel).LocX - Ball(Sel).Size / 2 Then Ball(Sel).SpeedX = (Ball(Sel).LocX - Ball(Sel).Old_LocX) / 2 'To the left
-                If Ball(Sel).Old_LocY < Ball(Sel).LocY - Ball(Sel).Size / 2 Then Ball(Sel).SpeedY = (Ball(Sel).LocY - Ball(Sel).Old_LocY) / 2 'Up
-                If Ball(Sel).Old_LocY > Ball(Sel).LocY - Ball(Sel).Size / 2 Then Ball(Sel).SpeedY = (Ball(Sel).LocY - Ball(Sel).Old_LocY) / 2 'Down
+                'If Ball(Sel).Old_LocX < Ball(Sel).LocX - Ball(Sel).Size / 2 Then Ball(Sel).SpeedX = (Ball(Sel).LocX - Ball(Sel).Old_LocX) / 2 'To the right
+                'If Ball(Sel).Old_LocX > Ball(Sel).LocX - Ball(Sel).Size / 2 Then Ball(Sel).SpeedX = (Ball(Sel).LocX - Ball(Sel).Old_LocX) / 2 'To the left
+                'If Ball(Sel).Old_LocY < Ball(Sel).LocY - Ball(Sel).Size / 2 Then Ball(Sel).SpeedY = (Ball(Sel).LocY - Ball(Sel).Old_LocY) / 2 'Up
+                'If Ball(Sel).Old_LocY > Ball(Sel).LocY - Ball(Sel).Size / 2 Then Ball(Sel).SpeedY = (Ball(Sel).LocY - Ball(Sel).Old_LocY) / 2 'Down
             Else
                 If e.Button = Windows.Forms.MouseButtons.Left Then
                     'Dim StartPos As New Point(MouseDnX, MouseDnY)
@@ -851,8 +851,8 @@ Err:
                                                 Force = TotMass / (Dist * DistSqrt)
                                                 ForceX = Force * DistX
                                                 ForceY = Force * DistY
-                                                Ball(A).SpeedX = Ball(A).SpeedX + ForceX / M1
-                                                Ball(A).SpeedY = Ball(A).SpeedY + ForceY / M1
+                                                Ball(A).SpeedX += ForceX / M1
+                                                Ball(A).SpeedY += ForceY / M1
                                                 If Force > (Ball(A).Mass ^ 3) And Ball(B).Mass > Ball(A).Mass * 5 And Ball(A).Size > 1 Then
                                                     NewBalls.AddRange(FractureBall(A))
                                                 End If
@@ -940,12 +940,12 @@ Err:
         Dim V1y As Double
         Dim V2y As Double
 
-        Dim NewVelX1, NewVelY1, NewVelX2, NewVelY2 As Double
+        ' Dim NewVelX1, NewVelY1, NewVelX2, NewVelY2 As Double
 
 
         Dim V1 As Double
         Dim V2 As Double
-        Dim U2 As Double
+        ' Dim U2 As Double
         Dim U1 As Double
         Dim DistX As Double
         Dim DistY As Double
@@ -996,11 +996,11 @@ Err:
 
             Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
             Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
-            Debug.Print("Col Bef: " & PrevSpdX & " : " & PrevSpdY)
-            Debug.Print("Col Aft: " & Master.SpeedX & " : " & Master.SpeedY)
-            If CInt(PrevSpdX - Master.SpeedX) > 200 Or CInt(PrevSpdY - Master.SpeedY) > 200 Then
-                Debugger.Break()
-            End If
+            'Debug.Print("Col Bef: " & PrevSpdX & " : " & PrevSpdY)
+            'Debug.Print("Col Aft: " & Master.SpeedX & " : " & Master.SpeedY)
+            'If CInt(PrevSpdX - Master.SpeedX) > 200 Or CInt(PrevSpdY - Master.SpeedY) > 200 Then
+            '    Debugger.Break()
+            'End If
             Slave.Visible = False
         Else ' if bodies are at exact same position
 
