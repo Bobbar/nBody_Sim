@@ -44,6 +44,8 @@ Public Module PhysicsLoop
         Public SpeedY As Single
         Public PrevSpeedX As Single
         Public PrevSpeedY As Single
+        Public ForceX As Single
+        Public ForceY As Single
         Public PrevLocX As Single
         Public PrevLocY As Single
         Public GravX As Single

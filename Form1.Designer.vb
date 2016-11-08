@@ -36,7 +36,6 @@ Partial Class Form1
         Me.txtMass = New System.Windows.Forms.TextBox()
         Me.txtFlag = New System.Windows.Forms.TextBox()
         Me.butAddBall = New System.Windows.Forms.Button()
-        Me.txtStep = New System.Windows.Forms.TextBox()
         Me.butRemoveBalls = New System.Windows.Forms.Button()
         Me.butUpdate = New System.Windows.Forms.Button()
         Me.lblBalls = New System.Windows.Forms.Label()
@@ -45,6 +44,7 @@ Partial Class Form1
         Me.UpDown1 = New System.Windows.Forms.NumericUpDown()
         Me.txtFPS = New System.Windows.Forms.TextBox()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.TimeStep = New System.Windows.Forms.NumericUpDown()
         Me.PhysicsWorker = New System.ComponentModel.BackgroundWorker()
         Me.tmrRender = New System.Windows.Forms.Timer(Me.components)
         Me.lblDelay = New System.Windows.Forms.Label()
@@ -65,6 +65,7 @@ Partial Class Form1
         Me.UI_Worker = New System.ComponentModel.BackgroundWorker()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MenuStrip1.SuspendLayout()
         Me.Panel1.SuspendLayout()
         Me.SuspendLayout()
@@ -216,15 +217,6 @@ Partial Class Form1
         Me.butAddBall.Text = "Add Bodies"
         Me.butAddBall.UseVisualStyleBackColor = False
         '
-        'txtStep
-        '
-        Me.txtStep.Location = New System.Drawing.Point(239, 6)
-        Me.txtStep.Name = "txtStep"
-        Me.txtStep.Size = New System.Drawing.Size(44, 20)
-        Me.txtStep.TabIndex = 35
-        Me.txtStep.Text = "0.0005"
-        Me.ToolTip1.SetToolTip(Me.txtStep, "Time Step")
-        '
         'butRemoveBalls
         '
         Me.butRemoveBalls.Location = New System.Drawing.Point(84, 4)
@@ -297,6 +289,19 @@ Partial Class Form1
         Me.ToolTip1.IsBalloon = True
         Me.ToolTip1.ReshowDelay = 100
         Me.ToolTip1.ShowAlways = True
+        '
+        'TimeStep
+        '
+        Me.TimeStep.DecimalPlaces = 3
+        Me.TimeStep.Increment = New Decimal(New Integer() {1, 0, 0, 196608})
+        Me.TimeStep.Location = New System.Drawing.Point(238, 6)
+        Me.TimeStep.Maximum = New Decimal(New Integer() {10, 0, 0, 0})
+        Me.TimeStep.Minimum = New Decimal(New Integer() {1, 0, 0, 196608})
+        Me.TimeStep.Name = "TimeStep"
+        Me.TimeStep.Size = New System.Drawing.Size(48, 20)
+        Me.TimeStep.TabIndex = 48
+        Me.ToolTip1.SetToolTip(Me.TimeStep, "Follow Ball Index")
+        Me.TimeStep.Value = New Decimal(New Integer() {5, 0, 0, 196608})
         '
         'PhysicsWorker
         '
@@ -420,6 +425,7 @@ Partial Class Form1
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.TimeStep)
         Me.Panel1.Controls.Add(Me.cmdTrails)
         Me.Panel1.Controls.Add(Me.butAddBall)
         Me.Panel1.Controls.Add(Me.Label12)
@@ -433,7 +439,6 @@ Partial Class Form1
         Me.Panel1.Controls.Add(Me.txtMass)
         Me.Panel1.Controls.Add(Me.Button4)
         Me.Panel1.Controls.Add(Me.txtFlag)
-        Me.Panel1.Controls.Add(Me.txtStep)
         Me.Panel1.Controls.Add(Me.butUpdate)
         Me.Panel1.Controls.Add(Me.butRemoveBalls)
         Me.Panel1.Location = New System.Drawing.Point(3, 27)
@@ -475,12 +480,14 @@ Partial Class Form1
         Me.Controls.Add(Me.MenuStrip1)
         Me.KeyPreview = True
         Me.MainMenuStrip = Me.MenuStrip1
+        Me.MinimizeBox = False
         Me.MinimumSize = New System.Drawing.Size(221, 230)
         Me.Name = "Form1"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Gravity Simulator by Bobby Lovell"
         CType(Me.Render, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).EndInit()
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
         Me.Panel1.ResumeLayout(False)
@@ -505,7 +512,6 @@ Partial Class Form1
     Friend WithEvents txtMass As System.Windows.Forms.TextBox
     Friend WithEvents txtFlag As System.Windows.Forms.TextBox
     Friend WithEvents butAddBall As System.Windows.Forms.Button
-    Friend WithEvents txtStep As System.Windows.Forms.TextBox
     Friend WithEvents butRemoveBalls As System.Windows.Forms.Button
     Friend WithEvents butUpdate As System.Windows.Forms.Button
     Friend WithEvents lblBalls As System.Windows.Forms.Label
@@ -532,4 +538,5 @@ Partial Class Form1
     Friend WithEvents Panel1 As Panel
     Friend WithEvents UI_Worker As System.ComponentModel.BackgroundWorker
     Friend WithEvents cmdTrails As Button
+    Friend WithEvents TimeStep As NumericUpDown
 End Class
