@@ -29,6 +29,7 @@ Public Module PhysicsLoop
     Public gravity As Single = 0.0
     Public friction As Single = 0.99
     Public right_side As Integer
+    Public SolarMass As Integer = 2000
     Public bottom_side As Integer
     Public Density As Double = 5.0
     Public g As Integer
@@ -61,6 +62,7 @@ Public Module PhysicsLoop
         Public Visible As Boolean
         Public Mass As Double
         Public Color As Color
+        Public IsFragment As Boolean
         Public Flags As String
     End Structure
     Public Ball() As BallParms
@@ -448,7 +450,8 @@ restart:
                 'If Not InStr(1, Ball(i).Flags, "R") Then Ball(u).Flags = Ball(i).Flags + "R"
                 'Ball(u).Flags = Ball(i).Flags + "R"
                 tmpBall.Color = Ball(i).Color 'vbWhite
-                tmpBall.Flags = "R"
+                tmpBall.Flags = ""
+                tmpBall.IsFragment = True
                 tmpBall.Visible = True
                 '  Ball(u).LocY = Ball(i).LocY + Ball(u).Size * 2
 

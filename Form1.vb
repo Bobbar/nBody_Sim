@@ -191,6 +191,7 @@ Public Class Form1
             Ball(UBound(Ball)).SpeedY = 0
             Ball(UBound(Ball)).Size = 1
             Ball(UBound(Ball)).Flags = ""
+            Ball(UBound(Ball)).IsFragment = False
             Ball(UBound(Ball)).Mass = fnMass(Ball(UBound(Ball)).Size)
             Ball(UBound(Ball)).Visible = True
             '  Ball(UBound(Ball)).Flags = Ball(UBound(Ball)).Flags + "BH"
@@ -841,7 +842,7 @@ Err:
                                             Dist = (DistX * DistX) + (DistY * DistY)
                                             DistSqrt = Sqrt(Dist)
                                             If DistSqrt > 0 Then 'Gravity reaction
-                                                If DistSqrt < (Ball(A).Size / 2) + (Ball(B).Size / 2) Then DistSqrt = (Ball(A).Size / 2) + (Ball(B).Size / 2)
+                                                If DistSqrt < (Ball(A).Size / 2) + (Ball(B).Size / 2) Then DistSqrt = (Ball(A).Size / 2) + (Ball(B).Size / 2) 'prevent screamers
                                                 Force = TotMass / (Dist * DistSqrt)
                                                 'Ball(A).ForceX = Force * DistX
                                                 'Ball(A).ForceY = Force * DistY
@@ -857,8 +858,9 @@ Err:
                                                         If Force > Ball(A).Mass / 2 And Ball(B).Mass > Ball(A).Mass * 5 Then
                                                             bolRocheLimit = True
                                                         Else
-                                                            bolRocheLimit = False
-                                                        End If
+                                                        bolRocheLimit = False
+                                                        ' Ball(A).IsFragment = False
+                                                    End If
                                                         If bolRocheLimit And Ball(A).Size > 1 Then
                                                             NewBalls.AddRange(FractureBall(A))
                                                         End If
@@ -982,10 +984,10 @@ Err:
         DistSqrt = Sqrt(Dist)
         ' Debug.Print("Col dist:" & DistSqrt)
         If DistSqrt > 0 Then
-            If Not Master.Flags.Contains("R") Then
+            If Not Master.IsFragment Then
 
                 Slave.Visible = False
-                Master.Flags = ""
+                ' Master.IsFragment = False
                 V1x = Master.SpeedX
                 V1y = Master.SpeedY
                 V2x = Slave.SpeedX
@@ -1032,12 +1034,24 @@ Err:
 
 
 
-                If Sqrt(Master.Mass) > 350 Then Master.Color = System.Drawing.Color.Red
-                If Sqrt(Master.Mass) > 400 Then Master.Color = System.Drawing.Color.Yellow
-                If Sqrt(Master.Mass) > 500 Then Master.Color = System.Drawing.Color.White
-                If Sqrt(Master.Mass) > 600 Then Master.Color = System.Drawing.Color.LightCyan
-                If Sqrt(Master.Mass) > 700 Then Master.Color = System.Drawing.Color.LightBlue
-                If Sqrt(Master.Mass) > 1000 Then
+                'If Sqrt(Master.Mass) * 3 > 350 Then Master.Color = System.Drawing.Color.Red
+                'If Sqrt(Master.Mass) * 3 > 400 Then Master.Color = System.Drawing.Color.Yellow
+                'If Sqrt(Master.Mass) * 3 > 500 Then Master.Color = System.Drawing.Color.White
+                'If Sqrt(Master.Mass) * 3 > 600 Then Master.Color = System.Drawing.Color.LightCyan
+                'If Sqrt(Master.Mass) * 3 > 700 Then Master.Color = System.Drawing.Color.LightBlue
+                'If Sqrt(Master.Mass) * 3 > 1000 Then
+                '    Master.Color = Color.Black
+                '    Master.Size = 20
+                '    If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
+                'End If
+
+                If Master.Mass >= SolarMass * 0.3 Then Master.Color = System.Drawing.Color.Red
+                If Master.Mass >= SolarMass * 0.8 Then Master.Color = System.Drawing.Color.Gold
+                If Master.Mass >= SolarMass Then Master.Color = System.Drawing.Color.GhostWhite
+                If Master.Mass >= SolarMass * 1.7 Then Master.Color = System.Drawing.Color.CornflowerBlue
+                If Master.Mass >= SolarMass * 3.2 Then Master.Color = System.Drawing.Color.DeepSkyBlue
+
+                If Master.Mass >= SolarMass * 18 Then
                     Master.Color = Color.Black
                     Master.Size = 20
                     If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
