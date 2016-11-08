@@ -2,6 +2,7 @@
 Imports System.Threading.Tasks
 Imports System.Threading
 Imports System.Drawing.Drawing2D
+Imports System.Runtime.CompilerServices
 Public Module PhysicsLoop
     Public Class SPoint
         Public X As Single
@@ -29,6 +30,7 @@ Public Module PhysicsLoop
     Public friction As Single = 0.99
     Public right_side As Integer
     Public bottom_side As Integer
+    Public Density As Double = 5.0
     Public g As Integer
     Public Sel As Integer, MoV As Integer = 0
     Public bGrav As Integer
@@ -368,8 +370,9 @@ restart:
         Return Color.FromArgb(255, objRandom.Next(0, 255), objRandom.Next(0, 255), objRandom.Next(0, 255))
     End Function
     Public Function fnMass(Radius As Double) As Double
-        fnMass = 0
-        fnMass = Sqrt(PI * (Radius ^ 2))
+
+
+        Return Sqrt(PI * (Radius ^ 2)) ^ 2 ' * Density
     End Function
     Private myRandom As New Random
     Public Function GetRandomNumber(ByVal Low As Double, ByVal High As Double) As Double
@@ -445,7 +448,7 @@ restart:
                 'If Not InStr(1, Ball(i).Flags, "R") Then Ball(u).Flags = Ball(i).Flags + "R"
                 'Ball(u).Flags = Ball(i).Flags + "R"
                 tmpBall.Color = Ball(i).Color 'vbWhite
-                tmpBall.Flags = ""
+                tmpBall.Flags = "R"
                 tmpBall.Visible = True
                 '  Ball(u).LocY = Ball(i).LocY + Ball(u).Size * 2
 

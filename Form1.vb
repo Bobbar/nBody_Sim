@@ -190,6 +190,7 @@ Public Class Form1
             Ball(UBound(Ball)).SpeedX = 0
             Ball(UBound(Ball)).SpeedY = 0
             Ball(UBound(Ball)).Size = 1
+            Ball(UBound(Ball)).Flags = ""
             Ball(UBound(Ball)).Mass = fnMass(Ball(UBound(Ball)).Size)
             Ball(UBound(Ball)).Visible = True
             '  Ball(UBound(Ball)).Flags = Ball(UBound(Ball)).Flags + "BH"
@@ -832,8 +833,8 @@ Err:
                                         End If
                                         If bGrav = 0 Then
                                         Else
-                                            M1 = Ball(A).Mass ' ^ 2
-                                            M2 = Ball(B).Mass '^ 2
+                                            M1 = Ball(A).Mass '^ 2
+                                            M2 = Ball(B).Mass ' ^ 2
                                             TotMass = M1 * M2
                                             DistX = Ball(B).LocX - Ball(A).LocX
                                             DistY = Ball(B).LocY - Ball(A).LocY
@@ -850,15 +851,16 @@ Err:
                                                 Ball(A).SpeedX += StepMulti * ForceX / M1
                                                 Ball(A).SpeedY += StepMulti * ForceY / M1
 
-                                                If Force > (Ball(A).Mass / 4) And Ball(B).Mass > Ball(A).Mass * 5 Then
-                                                    bolRocheLimit = True
-                                                Else
-                                                    bolRocheLimit = False
-                                                End If
-                                                If bolRocheLimit And Ball(A).Size > 1 Then
-                                                    NewBalls.AddRange(FractureBall(A))
-                                                End If
+
                                                 If DistSqrt < 100 Then
+                                                    If Force > Ball(A).Mass / 2 And Ball(B).Mass > Ball(A).Mass * 5 Then
+                                                        bolRocheLimit = True
+                                                    Else
+                                                        bolRocheLimit = False
+                                                    End If
+                                                    If bolRocheLimit And Ball(A).Size > 1 Then
+                                                        NewBalls.AddRange(FractureBall(A))
+                                                    End If
                                                     If DistSqrt <= (Ball(A).Size / 2) + (Ball(B).Size / 2) Then 'Collision reaction
                                                         If Not bolRocheLimit Then
                                                             If Ball(A).Mass > Ball(B).Mass Then
@@ -916,7 +918,9 @@ Err:
                 If UBound(Ball) > 5000 Then
                     ShrinkBallArray()
                 End If
-                If NewBalls.Count > 0 Then AddNewBalls(NewBalls)
+                If NewBalls.Count > 0 Then
+                    AddNewBalls(NewBalls)
+                End If
                 PhysicsWorker.ReportProgress(1, Ball)
                 EndTick = Now.Ticks
                 ElapTick = EndTick - StartTick
@@ -977,65 +981,69 @@ Err:
         DistSqrt = Sqrt(Dist)
         ' Debug.Print("Col dist:" & DistSqrt)
         If DistSqrt > 0 Then
-            Slave.Visible = False
+            If Not Master.Flags.Contains("R") Then
 
-            V1x = Master.SpeedX
-            V1y = Master.SpeedY
-            V2x = Slave.SpeedX
-            V2y = Slave.SpeedY
+                Slave.Visible = False
+                Master.Flags = ""
+                V1x = Master.SpeedX
+                V1y = Master.SpeedY
+                V2x = Slave.SpeedX
+                V2y = Slave.SpeedY
 
-            M1 = Master.Mass
-            M2 = Slave.Mass
+                M1 = Master.Mass
+                M2 = Slave.Mass
 
-            VekX = DistX / 2 ' (Ball(A).LocX - Ball(B).LocX) / 2
-            VeKY = DistY / 2 '(Ball(A).LocY - Ball(B).LocY) / 2
+                VekX = DistX / 2 ' (Ball(A).LocX - Ball(B).LocX) / 2
+                VeKY = DistY / 2 '(Ball(A).LocY - Ball(B).LocY) / 2
 
-            VekX = VekX / (DistSqrt / 2) 'LenG
-            VeKY = VeKY / (DistSqrt / 2) 'LenG
+                VekX = VekX / (DistSqrt / 2) 'LenG
+                VeKY = VeKY / (DistSqrt / 2) 'LenG
 
-            V1 = VekX * V1x + VeKY * V1y
-            V2 = VekX * V2x + VeKY * V2y
+                V1 = VekX * V1x + VeKY * V1y
+                V2 = VekX * V2x + VeKY * V2y
 
-            U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-            '   U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
-
-
-            PrevSpdX = Master.SpeedX
-            PrevSpdY = Master.SpeedY
+                U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
+                '   U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
 
 
-            Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
-            Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
-
-            'If Abs(Master.SpeedX - PrevSpdX) > 100 Or Abs(Master.SpeedY - PrevSpdY) > 100 Then
-
-            '    Debugger.Break()
-
-            'End If
+                PrevSpdX = Master.SpeedX
+                PrevSpdY = Master.SpeedY
 
 
-            Area1 = PI * (Master.Size ^ 2)
-            Area2 = PI * (Slave.Size ^ 2)
-            Area1 = Area1 + Area2
-            Master.Size = Sqrt(Area1 / PI)
-            Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+                Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+                Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+
+                'If Abs(Master.SpeedX - PrevSpdX) > 100 Or Abs(Master.SpeedY - PrevSpdY) > 100 Then
+
+                '    Debugger.Break()
+
+                'End If
+
+
+                Area1 = PI * (Master.Size ^ 2)
+                Area2 = PI * (Slave.Size ^ 2)
+                Area1 = Area1 + Area2
+                Master.Size = Sqrt(Area1 / PI)
+                Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
 
 
 
 
 
 
-            If Master.Mass > 350 Then Master.Color = System.Drawing.Color.Red
-                If Master.Mass > 400 Then Master.Color = System.Drawing.Color.Yellow
-                If Master.Mass > 500 Then Master.Color = System.Drawing.Color.White
-                If Master.Mass > 600 Then Master.Color = System.Drawing.Color.LightCyan
-                If Master.Mass > 700 Then Master.Color = System.Drawing.Color.LightBlue
-                If Master.Mass > 1000 Then
+                If Sqrt(Master.Mass) > 350 Then Master.Color = System.Drawing.Color.Red
+                If Sqrt(Master.Mass) > 400 Then Master.Color = System.Drawing.Color.Yellow
+                If Sqrt(Master.Mass) > 500 Then Master.Color = System.Drawing.Color.White
+                If Sqrt(Master.Mass) > 600 Then Master.Color = System.Drawing.Color.LightCyan
+                If Sqrt(Master.Mass) > 700 Then Master.Color = System.Drawing.Color.LightBlue
+                If Sqrt(Master.Mass) > 1000 Then
                     Master.Color = Color.Black
                     Master.Size = 20
                     If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
                 End If
-            Else ' if bodies are at exact same position
+            End If
+
+        Else ' if bodies are at exact same position
 
                 'Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
                 ' Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
@@ -1212,5 +1220,9 @@ Err:
 
     Private Sub tsmCull_Click(sender As Object, e As EventArgs) Handles tsmCull.Click
         bolCulling = tsmCull.Checked
+    End Sub
+
+    Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+        AddNewBalls(FractureBall(lngFollowBall))
     End Sub
 End Class
