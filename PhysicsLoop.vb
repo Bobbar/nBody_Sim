@@ -40,21 +40,21 @@ Public Module PhysicsLoop
         Public Size As Single
         Public LocX As Single
         Public LocY As Single
-        Public SpeedX As Single
-        Public SpeedY As Single
-        Public PrevSpeedX As Single
-        Public PrevSpeedY As Single
-        Public ForceX As Single
-        Public ForceY As Single
-        Public PrevLocX As Single
-        Public PrevLocY As Single
-        Public GravX As Single
-        Public GravY As Single
+        Public SpeedX As Double
+        Public SpeedY As Double
+        'Public PrevSpeedX As Single
+        'Public PrevSpeedY As Single
+        Public ForceX As Double
+        Public ForceY As Double
+        'Public PrevLocX As Single
+        'Public PrevLocY As Single
+        'Public GravX As Single
+        'Public GravY As Single
         Public MovinG As Boolean
-        Public Old_LocX As Single
-        Public Old_LocY As Single
+        'Public Old_LocX As Single
+        'Public Old_LocY As Single
         Public ShadAngle As Single
-        Public Origin As Long
+        'Public Origin As Long
         Public Locked As Boolean
         Public Visible As Boolean
         Public Mass As Double
@@ -266,8 +266,8 @@ restart:
                                                                                               If InStr(1, Ball(B).Flags, "R") > 0 And Force < (Ball(A).Mass ^ 3) Or InStr(1, Ball(B).Flags, "R") = 0 Then
                                                                                                   Dim Area1 As Double, Area2 As Double
                                                                                                   If Ball(A).Mass > Ball(B).Mass Then
-                                                                                                      If Ball(B).Origin <> A Then
-                                                                                                          Ball(A).Flags = Replace$(Ball(A).Flags, "R", "")
+                                                                                                      ' If Ball(B).Origin <> A Then
+                                                                                                      Ball(A).Flags = Replace$(Ball(A).Flags, "R", "")
                                                                                                           Ball(A).SpeedX = Ball(A).SpeedX + (U1 - V1) * VekX
                                                                                                           Ball(A).SpeedY = Ball(A).SpeedY + (U1 - V1) * VeKY
                                                                                                           Area1 = PI * (Ball(A).Size ^ 2)
@@ -276,10 +276,10 @@ restart:
                                                                                                           Ball(A).Size = Sqrt(Area1 / PI)
                                                                                                           Ball(A).Mass = Ball(A).Mass + Ball(B).Mass 'Sqr(Ball(B).Mass)
                                                                                                           Ball(B).Visible = False
-                                                                                                      End If
+                                                                                                      ' End If
                                                                                                   Else
-                                                                                                      If Ball(A).Origin <> B Then
-                                                                                                          Ball(A).Flags = Replace$(Ball(A).Flags, "R", "")
+                                                                                                      '  If Ball(A).Origin <> B Then
+                                                                                                      Ball(A).Flags = Replace$(Ball(A).Flags, "R", "")
                                                                                                           Ball(B).SpeedX = Ball(B).SpeedX + (U2 - V2) * VekX
                                                                                                           Ball(B).SpeedY = Ball(B).SpeedY + (U2 - V2) * VeKY
                                                                                                           Area1 = PI * (Ball(B).Size ^ 2)
@@ -288,7 +288,7 @@ restart:
                                                                                                           Ball(B).Size = Sqrt(Area1 / PI)
                                                                                                           Ball(B).Mass = Ball(B).Mass + Ball(A).Mass 'Sqr(Ball(A).Mass)
                                                                                                           Ball(A).Visible = False
-                                                                                                      End If
+                                                                                                      '   End If
                                                                                                   End If
                                                                                               End If
                                                                                               If Ball(A).Mass > 350 Then Ball(A).Color = System.Drawing.Color.Red

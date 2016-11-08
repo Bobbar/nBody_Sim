@@ -63,6 +63,7 @@ Partial Class Form1
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmdTrails = New System.Windows.Forms.Button()
         Me.UI_Worker = New System.ComponentModel.BackgroundWorker()
+        Me.tsmCull = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -301,7 +302,7 @@ Partial Class Form1
         Me.TimeStep.Size = New System.Drawing.Size(48, 20)
         Me.TimeStep.TabIndex = 48
         Me.ToolTip1.SetToolTip(Me.TimeStep, "Follow Ball Index")
-        Me.TimeStep.Value = New Decimal(New Integer() {5, 0, 0, 196608})
+        Me.TimeStep.Value = New Decimal(New Integer() {5, 0, 0, 131072})
         '
         'PhysicsWorker
         '
@@ -359,7 +360,7 @@ Partial Class Form1
         '
         'Options
         '
-        Me.Options.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BallLines, Me.FBallSOI, Me.Trails, Me.Draw, Me.AntiA, Me.Invert})
+        Me.Options.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BallLines, Me.FBallSOI, Me.Trails, Me.Draw, Me.AntiA, Me.Invert, Me.tsmCull})
         Me.Options.Name = "Options"
         Me.Options.Size = New System.Drawing.Size(61, 20)
         Me.Options.Text = "Options"
@@ -460,6 +461,15 @@ Partial Class Form1
         Me.UI_Worker.WorkerReportsProgress = True
         Me.UI_Worker.WorkerSupportsCancellation = True
         '
+        'tsmCull
+        '
+        Me.tsmCull.Checked = True
+        Me.tsmCull.CheckOnClick = True
+        Me.tsmCull.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.tsmCull.Name = "tsmCull"
+        Me.tsmCull.Size = New System.Drawing.Size(161, 22)
+        Me.tsmCull.Text = "Culling"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -539,4 +549,5 @@ Partial Class Form1
     Friend WithEvents UI_Worker As System.ComponentModel.BackgroundWorker
     Friend WithEvents cmdTrails As Button
     Friend WithEvents TimeStep As NumericUpDown
+    Friend WithEvents tsmCull As ToolStripMenuItem
 End Class

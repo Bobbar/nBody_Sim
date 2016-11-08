@@ -10,6 +10,7 @@ Public Module Renderer
     Public ScreenCenterY As Single
     Public CircleOInfluence As Single = 10000
     Public bolDrawing As Boolean = False
+    Public bolCulling As Boolean = True
     'Public RenderWindowDimsH As Integer
     'Public RenderWindowDimsW As Integer
     Public RenderWindowDims As New Point(Form1.Render.Width, Form1.Render.Height)
@@ -41,7 +42,10 @@ Public Module Renderer
             For i = 1 To UBound(BallArray)
                 If bolStopWorker Then Exit Sub
                 If BallArray(i).Visible Then
-                    If BallArray(i).LocX + FinalOffset.X > 0 And BallArray(i).LocX + FinalOffset.X < Form1.Render.Width / pic_scale And BallArray(i).LocY + FinalOffset.Y > 0 And BallArray(i).LocY + FinalOffset.Y < Form1.Render.Height / pic_scale Then
+                    If bolCulling And BallArray(i).LocX + FinalOffset.X < 0 Or bolCulling And BallArray(i).LocX + FinalOffset.X > Form1.Render.Width / pic_scale Or bolCulling And BallArray(i).LocY + FinalOffset.Y < 0 Or bolCulling And BallArray(i).LocY + FinalOffset.Y > Form1.Render.Height / pic_scale Then
+                    Else
+
+
                         If bolInvert Then
                             myBrush = New SolidBrush(Color.Black)
                         Else
@@ -102,6 +106,7 @@ Public Module Renderer
                             'End If
                         End If
                         'e.Graphics.FillEllipse(Brushes.Black, BallArray(i).LocX - BallArray(i).Size / 2 - 1, BallArray(i).LocY - BallArray(i).Size / 2 - 1, BallArray(i).Size + 2, BallArray(i).Size + 2)
+
                     End If
                 End If
 

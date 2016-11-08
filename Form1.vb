@@ -266,10 +266,10 @@ Public Class Form1
                 'ay(Sel) = 0
                 'bCenterX(Sel) = e.X
                 'bCenterY(Sel) = e.Y
-                If Ball(Sel).Old_LocX < Ball(Sel).LocX - Ball(Sel).Size / 2 Then Ball(Sel).SpeedX = (Ball(Sel).LocX - Ball(Sel).Old_LocX) / 2 'To the right
-                If Ball(Sel).Old_LocX > Ball(Sel).LocX - Ball(Sel).Size / 2 Then Ball(Sel).SpeedX = (Ball(Sel).LocX - Ball(Sel).Old_LocX) / 2 'To the left
-                If Ball(Sel).Old_LocY < Ball(Sel).LocY - Ball(Sel).Size / 2 Then Ball(Sel).SpeedY = (Ball(Sel).LocY - Ball(Sel).Old_LocY) / 2 'Up
-                If Ball(Sel).Old_LocY > Ball(Sel).LocY - Ball(Sel).Size / 2 Then Ball(Sel).SpeedY = (Ball(Sel).LocY - Ball(Sel).Old_LocY) / 2 'Down
+                'If Ball(Sel).Old_LocX < Ball(Sel).LocX - Ball(Sel).Size / 2 Then Ball(Sel).SpeedX = (Ball(Sel).LocX - Ball(Sel).Old_LocX) / 2 'To the right
+                'If Ball(Sel).Old_LocX > Ball(Sel).LocX - Ball(Sel).Size / 2 Then Ball(Sel).SpeedX = (Ball(Sel).LocX - Ball(Sel).Old_LocX) / 2 'To the left
+                'If Ball(Sel).Old_LocY < Ball(Sel).LocY - Ball(Sel).Size / 2 Then Ball(Sel).SpeedY = (Ball(Sel).LocY - Ball(Sel).Old_LocY) / 2 'Up
+                'If Ball(Sel).Old_LocY > Ball(Sel).LocY - Ball(Sel).Size / 2 Then Ball(Sel).SpeedY = (Ball(Sel).LocY - Ball(Sel).Old_LocY) / 2 'Down
             Else
                 If e.Button = Windows.Forms.MouseButtons.Left Then
                     'Dim StartPos As New Point(MouseDnX, MouseDnY)
@@ -833,7 +833,7 @@ Err:
                                         If bGrav = 0 Then
                                         Else
                                             M1 = Ball(A).Mass ' ^ 2
-                                            M2 = Ball(B).Mass ' ^ 2
+                                            M2 = Ball(B).Mass '^ 2
                                             TotMass = M1 * M2
                                             DistX = Ball(B).LocX - Ball(A).LocX
                                             DistY = Ball(B).LocY - Ball(A).LocY
@@ -847,29 +847,31 @@ Err:
                                                 ForceX = Force * DistX
                                                 ForceY = Force * DistY
 
-                                                Ball(A).SpeedX = Ball(A).SpeedX + StepMulti * ForceX / M1
-                                                Ball(A).SpeedY = Ball(A).SpeedY + StepMulti * ForceY / M1
+                                                Ball(A).SpeedX += StepMulti * ForceX / M1
+                                                Ball(A).SpeedY += StepMulti * ForceY / M1
 
-                                                If Force > (Ball(A).Mass ^ 3) Then
+                                                If Force > (Ball(A).Mass / 4) And Ball(B).Mass > Ball(A).Mass * 5 Then
                                                     bolRocheLimit = True
                                                 Else
                                                     bolRocheLimit = False
                                                 End If
-
-
-                                                If bolRocheLimit And Ball(B).Mass > Ball(A).Mass * 5 And Ball(A).Size > 1 Then
+                                                If bolRocheLimit And Ball(A).Size > 1 Then
                                                     NewBalls.AddRange(FractureBall(A))
                                                 End If
-                                                If DistSqrt < (Ball(A).Size / 2) + (Ball(B).Size / 2) Then 'Collision reaction
-                                                    If Not bolRocheLimit Then
-                                                        If Ball(A).Mass > Ball(B).Mass Then
-                                                            CollideBodies(Ball(A), Ball(B))
-                                                        Else
-                                                            CollideBodies(Ball(B), Ball(A))
+                                                If DistSqrt < 100 Then
+                                                    If DistSqrt <= (Ball(A).Size / 2) + (Ball(B).Size / 2) Then 'Collision reaction
+                                                        If Not bolRocheLimit Then
+                                                            If Ball(A).Mass > Ball(B).Mass Then
+                                                                CollideBodies(Ball(A), Ball(B))
+                                                            Else
+                                                                CollideBodies(Ball(B), Ball(A))
+                                                            End If
                                                         End If
                                                     End If
                                                 End If
-                                            End If
+                                            Else
+                                                    '   Debugger.Break()
+                                                End If
                                             ' StartTimer()
 
                                             '  StopTimer()
@@ -907,10 +909,6 @@ Err:
                                 Next B
                             End If
                         End If
-
-
-
-
                         Ball(A).LocX = Ball(A).LocX + (StepMulti * Ball(A).SpeedX)
                         Ball(A).LocY = Ball(A).LocY + (StepMulti * Ball(A).SpeedY)
                     Next A
@@ -958,7 +956,7 @@ Err:
         Dim V1y As Double
         Dim V2y As Double
 
-        Dim NewVelX1, NewVelY1, NewVelX2, NewVelY2 As Double
+        ' Dim NewVelX1, NewVelY1, NewVelX2, NewVelY2 As Double
 
 
         Dim V1 As Double
@@ -979,6 +977,8 @@ Err:
         DistSqrt = Sqrt(Dist)
         ' Debug.Print("Col dist:" & DistSqrt)
         If DistSqrt > 0 Then
+            Slave.Visible = False
+
             V1x = Master.SpeedX
             V1y = Master.SpeedY
             V2x = Slave.SpeedX
@@ -1000,14 +1000,6 @@ Err:
             '   U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
 
 
-
-
-
-            Area1 = PI * (Master.Size ^ 2)
-            Area2 = PI * (Slave.Size ^ 2)
-            Area1 = Area1 + Area2
-            Master.Size = Sqrt(Area1 / PI)
-            Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
             PrevSpdX = Master.SpeedX
             PrevSpdY = Master.SpeedY
 
@@ -1015,24 +1007,40 @@ Err:
             Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
             Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
 
-            Slave.Visible = False
+            'If Abs(Master.SpeedX - PrevSpdX) > 100 Or Abs(Master.SpeedY - PrevSpdY) > 100 Then
+
+            '    Debugger.Break()
+
+            'End If
+
+
+            Area1 = PI * (Master.Size ^ 2)
+            Area2 = PI * (Slave.Size ^ 2)
+            Area1 = Area1 + Area2
+            Master.Size = Sqrt(Area1 / PI)
+            Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+
+
+
+
+
 
             If Master.Mass > 350 Then Master.Color = System.Drawing.Color.Red
-            If Master.Mass > 400 Then Master.Color = System.Drawing.Color.Yellow
-            If Master.Mass > 500 Then Master.Color = System.Drawing.Color.White
-            If Master.Mass > 600 Then Master.Color = System.Drawing.Color.LightCyan
-            If Master.Mass > 700 Then Master.Color = System.Drawing.Color.LightBlue
-            If Master.Mass > 1000 Then
-                Master.Color = Color.Black
-                Master.Size = 20
-                If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
-            End If
-        Else ' if bodies are at exact same position
+                If Master.Mass > 400 Then Master.Color = System.Drawing.Color.Yellow
+                If Master.Mass > 500 Then Master.Color = System.Drawing.Color.White
+                If Master.Mass > 600 Then Master.Color = System.Drawing.Color.LightCyan
+                If Master.Mass > 700 Then Master.Color = System.Drawing.Color.LightBlue
+                If Master.Mass > 1000 Then
+                    Master.Color = Color.Black
+                    Master.Size = 20
+                    If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
+                End If
+            Else ' if bodies are at exact same position
 
-            'Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
-            ' Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+                'Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+                ' Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
 
-            If Master.Mass > Slave.Mass Then
+                If Master.Mass > Slave.Mass Then
 
                 Area1 = PI * (Master.Size ^ 2)
                 Area2 = PI * (Slave.Size ^ 2)
@@ -1200,5 +1208,9 @@ Err:
 
     Private Sub TimeStep_ValueChanged(sender As Object, e As EventArgs) Handles TimeStep.ValueChanged
         StepMulti = TimeStep.Value
+    End Sub
+
+    Private Sub tsmCull_Click(sender As Object, e As EventArgs) Handles tsmCull.Click
+        bolCulling = tsmCull.Checked
     End Sub
 End Class
