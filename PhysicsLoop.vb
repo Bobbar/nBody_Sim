@@ -29,7 +29,7 @@ Public Module PhysicsLoop
     Public gravity As Single = 0.0
     Public friction As Single = 0.99
     Public right_side As Integer
-    Public SolarMass As Integer = 2000
+    Public TypicalSolarMass As Integer = 2000
     Public bottom_side As Integer
     Public Density As Double = 5.0
     Public g As Integer

@@ -507,43 +507,81 @@ Err:
         'End If
         'If bolBallsRemoved Then ShrinkBallArray()
     End Sub
+    Private solarmass As Double = 5000
     Private Sub butAddBall_Click(sender As Object, e As EventArgs) Handles butAddBall.Click
         On Error Resume Next
-        Const Balls As Long = 100
+        Const Balls As Long = 1000
+        Dim Radius As Double = 1000
+        Dim px, py As Double
+
         Dim i As Long
         For i = 0 To Balls
             ReDim Preserve Ball(UBound(Ball) + 1)
             Ball(UBound(Ball)).Color = RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
-            Ball(UBound(Ball)).LocX = GetRandomNumber(1, Render.Width / pic_scale) - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
-            Ball(UBound(Ball)).LocY = GetRandomNumber(1, Render.Height / pic_scale) - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
-            Ball(UBound(Ball)).SpeedX = 0
-            Ball(UBound(Ball)).SpeedY = 0
+
+            px = GetRandomNumber(1, Render.Width / pic_scale) - ScaleOffset.X - RelBallPosMod.X
+            py = GetRandomNumber(1, Render.Height / pic_scale) - ScaleOffset.Y - RelBallPosMod.Y
+
+            Dim magv As Double = circleV(px, py)
+
+            Dim absangle As Double = Atan(Abs(py / px))
+            Dim thetav As Double = PI / 2 - absangle
+            Dim phiv As Double = Rnd() * PI
+            Dim vx As Double = -1 * Sign(py) * Cos(thetav) * magv
+            Dim vy As Double = Sign(px) * Sin(thetav) * magv
+
+
+            Ball(UBound(Ball)).LocX = px
+            Ball(UBound(Ball)).LocY = py
+
+            Ball(UBound(Ball)).SpeedX = vx
+            Ball(UBound(Ball)).SpeedY = vy
             Ball(UBound(Ball)).Flags = ""
-            Ball(UBound(Ball)).Size = GetRandomNumber(1, 5)
-            Ball(UBound(Ball)).Mass = fnMass(Ball(UBound(Ball)).Size) ' * 2
+            Ball(UBound(Ball)).Size = 1 'GetRandomNumber(1, 2)
+            Ball(UBound(Ball)).Mass = 1 'fnMass(Ball(UBound(Ball)).Size) ' * 2
         Next
-        'ReDim Preserve Ball(UBound(Ball) + 1)
-        'Ball(UBound(Ball)).Color = Color.Red 'RandomRGBColor()
-        'Ball(UBound(Ball)).Visible = True
-        'Ball(UBound(Ball)).LocX = 500 - ScaleOffset.X - RelBallPosMod.X
-        'Ball(UBound(Ball)).LocY = 500 - ScaleOffset.Y - RelBallPosMod.Y
-        'Ball(UBound(Ball)).SpeedX = 0
-        'Ball(UBound(Ball)).SpeedY = 0
-        'Ball(UBound(Ball)).Flags = ""
-        'Ball(UBound(Ball)).Size = 100
-        'Ball(UBound(Ball)).Mass = 4000
-        'ReDim Preserve Ball(UBound(Ball) + 1)
-        'Ball(UBound(Ball)).Color = Color.Red 'RandomRGBColor()
-        'Ball(UBound(Ball)).Visible = True
-        'Ball(UBound(Ball)).LocX = 10500 - ScaleOffset.X - RelBallPosMod.X
-        'Ball(UBound(Ball)).LocY = 400 - ScaleOffset.Y - RelBallPosMod.Y
-        'Ball(UBound(Ball)).SpeedX = 0
-        'Ball(UBound(Ball)).SpeedY = 0
-        'Ball(UBound(Ball)).Flags = ""
-        'Ball(UBound(Ball)).Size = 100
-        'Ball(UBound(Ball)).Mass = 4000
+
+        ReDim Preserve Ball(UBound(Ball) + 1)
+        Ball(UBound(Ball)).Color = Color.Black 'RandomRGBColor() 'colDefBodyColor
+        Ball(UBound(Ball)).Visible = True
+        Ball(UBound(Ball)).LocX = Render.Width / 2 / pic_scale - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
+        Ball(UBound(Ball)).LocY = Render.Height / 2 / pic_scale - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
+        Ball(UBound(Ball)).SpeedX = 0
+        Ball(UBound(Ball)).SpeedY = 0
+        Ball(UBound(Ball)).Flags = "BH"
+        Ball(UBound(Ball)).Size = 15
+        Ball(UBound(Ball)).Mass = solarmass 'fnMass(Ball(UBound(Ball)).Size) ' * 2
+
+
+
+        'For i = 0 To Balls
+        '    ReDim Preserve Ball(UBound(Ball) + 1)
+        '    Ball(UBound(Ball)).Color = RandomRGBColor() 'colDefBodyColor
+        '    Ball(UBound(Ball)).Visible = True
+        '    Ball(UBound(Ball)).LocX = GetRandomNumber(1, Render.Width / pic_scale) - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
+        '    Ball(UBound(Ball)).LocY = GetRandomNumber(1, Render.Height / pic_scale) - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
+        '    Ball(UBound(Ball)).SpeedX = 0
+        '    Ball(UBound(Ball)).SpeedY = 0
+        '    Ball(UBound(Ball)).Flags = ""
+        '    Ball(UBound(Ball)).Size = GetRandomNumber(1, 5)
+        '    Ball(UBound(Ball)).Mass = fnMass(Ball(UBound(Ball)).Size) ' * 2
+        'Next
+
+
+
+
+
+
     End Sub
+    Private Function circleV(rx As Double, ry As Double) As Double
+        ' Dim solarmass As Double = solarmass
+        Dim r2 As Double = Sqrt(rx * rx + ry * ry)
+        Dim numerator As Double = (0.000000867) * 1000000.0 * solarmass
+        Return Sqrt(numerator / r2)
+
+
+    End Function
     Private Sub Render_ParentChanged(sender As Object, e As EventArgs) Handles Render.ParentChanged
     End Sub
     Private Sub butRemoveBalls_Click(sender As Object, e As EventArgs) Handles butRemoveBalls.Click
@@ -1052,17 +1090,20 @@ Err:
                 '    If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
                 'End If
 
-                If Master.Mass >= SolarMass * 0.3 Then Master.Color = System.Drawing.Color.Red
-                If Master.Mass >= SolarMass * 0.8 Then Master.Color = System.Drawing.Color.Gold
-                If Master.Mass >= SolarMass Then Master.Color = System.Drawing.Color.GhostWhite
-                If Master.Mass >= SolarMass * 1.7 Then Master.Color = System.Drawing.Color.CornflowerBlue
-                If Master.Mass >= SolarMass * 3.2 Then Master.Color = System.Drawing.Color.DeepSkyBlue
 
-                If Master.Mass >= SolarMass * 18 Then
+                If Master.Flags.Contains("BH") Or Master.Mass >= TypicalSolarMass * 18 Then
                     Master.Color = Color.Black
-                    Master.Size = 20
+                    Master.Size = 15
                     If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
                 End If
+
+
+                If Master.Mass >= TypicalSolarMass * 0.3 Then Master.Color = System.Drawing.Color.Red
+                If Master.Mass >= TypicalSolarMass * 0.8 Then Master.Color = System.Drawing.Color.Gold
+                If Master.Mass >= TypicalSolarMass Then Master.Color = System.Drawing.Color.GhostWhite
+                If Master.Mass >= TypicalSolarMass * 1.7 Then Master.Color = System.Drawing.Color.CornflowerBlue
+                If Master.Mass >= TypicalSolarMass * 3.2 Then Master.Color = System.Drawing.Color.DeepSkyBlue
+
             End If
 
         Else ' if bodies are at exact same position
