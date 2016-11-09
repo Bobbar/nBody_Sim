@@ -834,18 +834,16 @@ Err:
                                         End If
                                         If bGrav = 0 Then
                                         Else
-
+                                            M1 = Ball(A).Mass '^ 2
+                                            M2 = Ball(B).Mass ' ^ 2
+                                            TotMass = M1 * M2
                                             DistX = Ball(B).LocX - Ball(A).LocX
                                             DistY = Ball(B).LocY - Ball(A).LocY
                                             Dist = (DistX * DistX) + (DistY * DistY)
                                             DistSqrt = Sqrt(Dist)
-                                            Dist = Dist * DistSqrt
                                             If DistSqrt > 0 Then 'Gravity reaction
                                                 If DistSqrt < (Ball(A).Size / 2) + (Ball(B).Size / 2) Then DistSqrt = (Ball(A).Size / 2) + (Ball(B).Size / 2) 'prevent screamers
-                                                M1 = Ball(A).Mass '^ 2
-                                                M2 = Ball(B).Mass ' ^ 2
-                                                TotMass = M1 * M2
-                                                Force = TotMass / Dist '(Dist * DistSqrt)
+                                                Force = TotMass / (Dist * DistSqrt)
                                                 'Ball(A).ForceX = Force * DistX
                                                 'Ball(A).ForceY = Force * DistY
 
@@ -857,35 +855,28 @@ Err:
 
 
                                                 If DistSqrt < 100 Then
-
-                                                    If Ball(B).Mass > Ball(A).Mass * 5 Then
-                                                        Dim RocheDist As Double = TotMass / Force
-                                                        If Dist < RocheDist Then 'Force > Ball(A).Mass / 2 And Ball(B).Mass > Ball(A).Mass * 5 Then
-                                                            bolRocheLimit = True
-                                                            If Ball(A).Size > 1 Then NewBalls.AddRange(FractureBall(A))
-                                                            'ElseIf Dist > RocheDist + Ball(A).Size * 10 Then
-                                                            '    bolRocheLimit = False
-                                                            '  If Ball(A).IsFragment Then Ball(A).IsFragment = False
-                                                        Else
-                                                            bolRocheLimit = False
-                                                        End If
+                                                    If Force > Ball(A).Mass / 2 And Ball(B).Mass > Ball(A).Mass * 5 Then
+                                                        bolRocheLimit = True
                                                     Else
                                                         bolRocheLimit = False
+                                                        ' Ball(A).IsFragment = False
                                                     End If
-
+                                                    If bolRocheLimit And Ball(A).Size > 1 Then
+                                                        NewBalls.AddRange(FractureBall(A))
+                                                    End If
                                                     If DistSqrt <= (Ball(A).Size / 2) + (Ball(B).Size / 2) Then 'Collision reaction
-                                                            If Not bolRocheLimit Then
-                                                                If Ball(A).Mass > Ball(B).Mass Then
-                                                                    CollideBodies(Ball(A), Ball(B))
-                                                                Else
-                                                                    CollideBodies(Ball(B), Ball(A))
-                                                                End If
+                                                        If Not bolRocheLimit Then
+                                                            If Ball(A).Mass > Ball(B).Mass Then
+                                                                CollideBodies(Ball(A), Ball(B))
+                                                            Else
+                                                                CollideBodies(Ball(B), Ball(A))
                                                             End If
                                                         End If
                                                     End If
-                                                Else
-                                                    '   Debugger.Break()
                                                 End If
+                                            Else
+                                                '   Debugger.Break()
+                                            End If
                                             ' StartTimer()
 
                                             '  StopTimer()
