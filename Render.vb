@@ -17,7 +17,7 @@ Public Module Renderer
     Public bm As New Bitmap(Form1.Render.Width, Form1.Render.Height) '(CInt(pic_scale * Render.Width), CInt(pic_scale * Render.Height))
     Public gr As Graphics = Graphics.FromImage(bm)
     Public Sub UpdateScale()
-        Debug.Print("Scale Update")
+        '  Debug.Print("Scale Update")
         If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
             bm = New Bitmap(RenderWindowDims.X, RenderWindowDims.Y)
             gr = Graphics.FromImage(bm)

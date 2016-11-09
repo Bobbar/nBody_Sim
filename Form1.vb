@@ -179,7 +179,7 @@ Public Class Form1
         End If
     End Sub
     Private Sub Render_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Render.MouseDown
-        Debug.Print("RenLoc: " & e.Location.ToString)
+        '  Debug.Print("RenLoc: " & e.Location.ToString)
         If e.Button = Windows.Forms.MouseButtons.Right Then
             bolStopDraw = True
             ReDim Preserve Ball(UBound(Ball) + 1)
@@ -214,7 +214,8 @@ Public Class Form1
                     'Debug.Print "LocX: " & Ball(i).LocX & vbCrLf & "LocY: " & Ball(i).LocY & vbCrLf & "SpeedX: " & Ball(i).SpeedX & vbCrLf & "SpeedY: " & Ball(i).SpeedY
                     If MouseOver(New SPoint(e.Location), Ball(i)) And Ball(i).Visible Then
                         'Debug.Print(Render.PointToClient(New Point(Ball(i).LocX, Ball(i).LocY)).ToString)
-                        Debug.Print("BLoc: " & Ball(i).LocX & "-" & Ball(i).LocY)
+                        ' Debug.Print("BLoc: " & Ball(i).LocX & "-" & Ball(i).LocY)
+
                         If Not bolAltDown And bolShiftDown Then MoV = 1
                         Sel = i
                         If bolShiftDown Then
@@ -327,7 +328,7 @@ Err:
             'MouseYDiff = MouseUpY - MouseDnY
             'RelBallPosMod.X = RelBallPosMod.X + MouseXDiff
             'RelBallPosMod.Y = RelBallPosMod.Y + MouseYDiff
-            Debug.Print(RelBallPosMod.ToString)
+            '   Debug.Print(RelBallPosMod.ToString)
             'For i = 1 To UBound(Ball)
             '    Ball(i).LocX = Ball(i).LocX + MouseXDiff
             '    Ball(i).LocY = Ball(i).LocY + MouseYDiff
@@ -396,11 +397,7 @@ Err:
         Return tot
     End Function
     Private Sub Label12_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label12.Click
-        If bGrav = 1 Then
-            Label12.Text = "G: Off" : bGrav = 0
-        Else
-            Label12.Text = "G: On" : bGrav = 1
-        End If
+
     End Sub
     Private Sub Form1_Leave(sender As Object, e As EventArgs) Handles Me.Leave
     End Sub
@@ -559,6 +556,7 @@ Err:
         'm.Start()
         ' Else
         bolStopWorker = True
+        bolDraw = False
 
         Do Until Not PhysicsWorker.IsBusy
             wait(300)
@@ -570,7 +568,9 @@ Err:
             bolFollow = False
             ' End If
             bolStopWorker = False
-            '   PhysicsWorker.RunWorkerAsync()
+            bolDraw = True
+            PhysicsWorker.RunWorkerAsync()
+            UI_Worker.RunWorkerAsync()
         End If
         'MainLoop()
         'Erase Ball
@@ -599,7 +599,7 @@ Err:
     End Sub
     Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
         'Dim cap_image As Image
-        Me.Render.Image.Save(My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\Screenshot-" & Now.ToString("_hhmmss") & ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg)
+        Me.Render.Image.Save(My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\Screenshot-" & Now.ToString("_hhmmss") & ".bmp", System.Drawing.Imaging.ImageFormat.Bmp)
         'opens a save dialog box for saving the settings
         'cap_image = Render.Image
         'cap_image.Save("C:\Image.jpeg", System.Drawing.Imaging.ImageFormat.Jpeg)
@@ -758,7 +758,7 @@ Err:
             pic_scale -= scale_amount
         End If
         UpdateScale()
-        Debug.Print(pic_scale)
+        ' Debug.Print(pic_scale)
         ScreenCenterX = Me.Render.Width / 2
         ScreenCenterY = Me.Render.Height / 2
         ScaleOffset.X = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).X
@@ -778,7 +778,7 @@ Err:
         'Dim mouse_true As New Point(e.X / pic_scale + BallViewLoc.X, e.Y / pic_scale + BallViewLoc.Y)
         'Dim mouse_relative As New Point(Render.)
         'Debug.Print(pic_scale)
-        Debug.Print(RelBallPosMod.ToString)
+        ' Debug.Print(RelBallPosMod.ToString)
     End Sub
     Private Sub Render_Move(sender As Object, e As EventArgs) Handles Render.Move
     End Sub
@@ -834,15 +834,16 @@ Err:
                                         End If
                                         If bGrav = 0 Then
                                         Else
-                                            M1 = Ball(A).Mass '^ 2
-                                            M2 = Ball(B).Mass ' ^ 2
-                                            TotMass = M1 * M2
+
                                             DistX = Ball(B).LocX - Ball(A).LocX
                                             DistY = Ball(B).LocY - Ball(A).LocY
                                             Dist = (DistX * DistX) + (DistY * DistY)
                                             DistSqrt = Sqrt(Dist)
                                             If DistSqrt > 0 Then 'Gravity reaction
                                                 If DistSqrt < (Ball(A).Size / 2) + (Ball(B).Size / 2) Then DistSqrt = (Ball(A).Size / 2) + (Ball(B).Size / 2) 'prevent screamers
+                                                M1 = Ball(A).Mass '^ 2
+                                                M2 = Ball(B).Mass ' ^ 2
+                                                TotMass = M1 * M2
                                                 Force = TotMass / (Dist * DistSqrt)
                                                 'Ball(A).ForceX = Force * DistX
                                                 'Ball(A).ForceY = Force * DistY
@@ -855,26 +856,32 @@ Err:
 
 
                                                 If DistSqrt < 100 Then
-                                                    If Force > Ball(A).Mass / 2 And Ball(B).Mass > Ball(A).Mass * 5 Then
-                                                        bolRocheLimit = True
+                                                    If Ball(B).Mass > Ball(A).Mass * 5 Then
+                                                        If Force > Ball(A).Mass / 2 Then 'And Ball(B).Mass > Ball(A).Mass * 5 Then
+                                                            bolRocheLimit = True
+                                                        ElseIf (Force * 1.5) < Ball(A).Mass / 2 Then
+                                                            bolRocheLimit = False
+                                                            Ball(A).IsFragment = False
+
+                                                        End If
+                                                        If bolRocheLimit And Ball(A).Size > 1 Then
+                                                            NewBalls.AddRange(FractureBall(A))
+                                                        End If
                                                     Else
                                                         bolRocheLimit = False
-                                                        ' Ball(A).IsFragment = False
                                                     End If
-                                                    If bolRocheLimit And Ball(A).Size > 1 Then
-                                                        NewBalls.AddRange(FractureBall(A))
-                                                    End If
+
                                                     If DistSqrt <= (Ball(A).Size / 2) + (Ball(B).Size / 2) Then 'Collision reaction
-                                                        If Not bolRocheLimit Then
-                                                            If Ball(A).Mass > Ball(B).Mass Then
-                                                                CollideBodies(Ball(A), Ball(B))
-                                                            Else
-                                                                CollideBodies(Ball(B), Ball(A))
+                                                            If Not bolRocheLimit Then
+                                                                If Ball(A).Mass > Ball(B).Mass Then
+                                                                    CollideBodies(Ball(A), Ball(B))
+                                                                Else
+                                                                    CollideBodies(Ball(B), Ball(A))
+                                                                End If
                                                             End If
                                                         End If
                                                     End If
-                                                End If
-                                            Else
+                                                Else
                                                 '   Debugger.Break()
                                             End If
                                             ' StartTimer()
@@ -1237,7 +1244,15 @@ Err:
         bolCulling = tsmCull.Checked
     End Sub
 
-    Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+    Private Sub Button6_Click(sender As Object, e As EventArgs)
         AddNewBalls(FractureBall(lngFollowBall))
+    End Sub
+
+    Private Sub Label12_DoubleClick(sender As Object, e As EventArgs) Handles Label12.DoubleClick
+        If bGrav = 1 Then
+            Label12.Text = "G: Off" : bGrav = 0
+        Else
+            Label12.Text = "G: On" : bGrav = 1
+        End If
     End Sub
 End Class

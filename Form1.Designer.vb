@@ -1,8 +1,8 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class Form1
     Inherits System.Windows.Forms.Form
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -17,7 +17,7 @@ Partial Class Form1
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Me.Render = New System.Windows.Forms.PictureBox()
@@ -58,13 +58,12 @@ Partial Class Form1
         Me.Draw = New System.Windows.Forms.ToolStripMenuItem()
         Me.AntiA = New System.Windows.Forms.ToolStripMenuItem()
         Me.Invert = New System.Windows.Forms.ToolStripMenuItem()
+        Me.tsmCull = New System.Windows.Forms.ToolStripMenuItem()
         Me.Tools = New System.Windows.Forms.ToolStripMenuItem()
         Me.TotalMassToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmdTrails = New System.Windows.Forms.Button()
         Me.UI_Worker = New System.ComponentModel.BackgroundWorker()
-        Me.tsmCull = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Button6 = New System.Windows.Forms.Button()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -302,7 +301,7 @@ Partial Class Form1
         Me.TimeStep.Name = "TimeStep"
         Me.TimeStep.Size = New System.Drawing.Size(48, 20)
         Me.TimeStep.TabIndex = 48
-        Me.ToolTip1.SetToolTip(Me.TimeStep, "Follow Ball Index")
+        Me.ToolTip1.SetToolTip(Me.TimeStep, "Time Step")
         Me.TimeStep.Value = New Decimal(New Integer() {5, 0, 0, 196608})
         '
         'PhysicsWorker
@@ -412,6 +411,15 @@ Partial Class Form1
         Me.Invert.Size = New System.Drawing.Size(161, 22)
         Me.Invert.Text = "Invert Colors"
         '
+        'tsmCull
+        '
+        Me.tsmCull.Checked = True
+        Me.tsmCull.CheckOnClick = True
+        Me.tsmCull.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.tsmCull.Name = "tsmCull"
+        Me.tsmCull.Size = New System.Drawing.Size(161, 22)
+        Me.tsmCull.Text = "Culling"
+        '
         'Tools
         '
         Me.Tools.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TotalMassToolStripMenuItem})
@@ -462,31 +470,12 @@ Partial Class Form1
         Me.UI_Worker.WorkerReportsProgress = True
         Me.UI_Worker.WorkerSupportsCancellation = True
         '
-        'tsmCull
-        '
-        Me.tsmCull.Checked = True
-        Me.tsmCull.CheckOnClick = True
-        Me.tsmCull.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.tsmCull.Name = "tsmCull"
-        Me.tsmCull.Size = New System.Drawing.Size(161, 22)
-        Me.tsmCull.Text = "Culling"
-        '
-        'Button6
-        '
-        Me.Button6.Location = New System.Drawing.Point(1081, 34)
-        Me.Button6.Name = "Button6"
-        Me.Button6.Size = New System.Drawing.Size(59, 17)
-        Me.Button6.TabIndex = 53
-        Me.Button6.Text = "Button6"
-        Me.Button6.UseVisualStyleBackColor = True
-        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
         Me.ClientSize = New System.Drawing.Size(1180, 690)
-        Me.Controls.Add(Me.Button6)
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.lblScale)
         Me.Controls.Add(Me.lblVisBalls)
@@ -561,5 +550,4 @@ Partial Class Form1
     Friend WithEvents cmdTrails As Button
     Friend WithEvents TimeStep As NumericUpDown
     Friend WithEvents tsmCull As ToolStripMenuItem
-    Friend WithEvents Button6 As Button
 End Class
