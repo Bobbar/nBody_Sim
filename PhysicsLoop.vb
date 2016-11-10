@@ -34,7 +34,7 @@ Public Module PhysicsLoop
     Public Density As Double = 5.0
     Public g As Integer
     Public Sel As Integer, MoV As Integer = 0
-    Public bGrav As Integer
+    Public bGrav As Boolean
     Public FPS As Single
     ' Public rd As Single
     Public bolStop As Boolean

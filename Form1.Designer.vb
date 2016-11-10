@@ -61,11 +61,11 @@ Partial Class Form1
         Me.tsmCull = New System.Windows.Forms.ToolStripMenuItem()
         Me.Tools = New System.Windows.Forms.ToolStripMenuItem()
         Me.TotalMassToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.tsmSave = New System.Windows.Forms.ToolStripMenuItem()
+        Me.tsmLoad = New System.Windows.Forms.ToolStripMenuItem()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmdTrails = New System.Windows.Forms.Button()
         Me.UI_Worker = New System.ComponentModel.BackgroundWorker()
-        Me.tsmSave = New System.Windows.Forms.ToolStripMenuItem()
-        Me.tsmLoad = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -115,9 +115,9 @@ Partial Class Form1
         Me.Label12.ForeColor = System.Drawing.Color.ForestGreen
         Me.Label12.Location = New System.Drawing.Point(750, 5)
         Me.Label12.Name = "Label12"
-        Me.Label12.Size = New System.Drawing.Size(56, 20)
+        Me.Label12.Size = New System.Drawing.Size(55, 20)
         Me.Label12.TabIndex = 20
-        Me.Label12.Text = "G: Off"
+        Me.Label12.Text = "G: On"
         '
         'Label13
         '
@@ -432,8 +432,20 @@ Partial Class Form1
         'TotalMassToolStripMenuItem
         '
         Me.TotalMassToolStripMenuItem.Name = "TotalMassToolStripMenuItem"
-        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
         Me.TotalMassToolStripMenuItem.Text = "Total Mass"
+        '
+        'tsmSave
+        '
+        Me.tsmSave.Name = "tsmSave"
+        Me.tsmSave.Size = New System.Drawing.Size(130, 22)
+        Me.tsmSave.Text = "Save State"
+        '
+        'tsmLoad
+        '
+        Me.tsmLoad.Name = "tsmLoad"
+        Me.tsmLoad.Size = New System.Drawing.Size(130, 22)
+        Me.tsmLoad.Text = "Load State"
         '
         'Panel1
         '
@@ -471,18 +483,6 @@ Partial Class Form1
         '
         Me.UI_Worker.WorkerReportsProgress = True
         Me.UI_Worker.WorkerSupportsCancellation = True
-        '
-        'tsmSave
-        '
-        Me.tsmSave.Name = "tsmSave"
-        Me.tsmSave.Size = New System.Drawing.Size(152, 22)
-        Me.tsmSave.Text = "Save State"
-        '
-        'tsmLoad
-        '
-        Me.tsmLoad.Name = "tsmLoad"
-        Me.tsmLoad.Size = New System.Drawing.Size(152, 22)
-        Me.tsmLoad.Text = "Load State"
         '
         'Form1
         '
