@@ -507,7 +507,7 @@ Err:
         'End If
         'If bolBallsRemoved Then ShrinkBallArray()
     End Sub
-    Private solarmass As Double = 5000
+    Private solarmass As Double = 30000
     Private Sub butAddBall_Click(sender As Object, e As EventArgs) Handles butAddBall.Click
         On Error Resume Next
         Const Balls As Long = 1000
@@ -963,7 +963,7 @@ Err:
                         Ball(A).LocY = Ball(A).LocY + (StepMulti * Ball(A).SpeedY)
                     Next A
                 End If
-                If UBound(Ball) > 5000 Then
+                If UBound(Ball) > 10000 Then
                     ShrinkBallArray()
                 End If
                 If NewBalls.Count > 0 Then
@@ -1295,5 +1295,31 @@ Err:
         Else
             Label12.Text = "G: On" : bGrav = 1
         End If
+    End Sub
+
+    Private Sub tsmSave_Click(sender As Object, e As EventArgs) Handles tsmSave.Click
+        Dim SaveDialog As New SaveFileDialog()
+        SaveDialog.Filter = "Body State|*.dat"
+        SaveDialog.Title = "Save State File"
+        SaveDialog.ShowDialog()
+
+        Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+        Dim fStream As New FileStream(SaveDialog.FileName, FileMode.OpenOrCreate)
+
+        bf.Serialize(fStream, Ball)
+    End Sub
+
+    Private Sub tsmLoad_Click(sender As Object, e As EventArgs) Handles tsmLoad.Click
+        Dim OpenDialog As New OpenFileDialog()
+        If OpenDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
+            ' Dim sr As New System.IO.StreamReader(OpenFileDialog1.FileName)
+            Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            Dim fStream As New FileStream(OpenDialog.FileName, FileMode.OpenOrCreate)
+
+            fStream.Position = 0 ' reset stream pointer
+            Ball = bf.Deserialize(fStream) ' read from file
+            'sr.Close()
+        End If
+
     End Sub
 End Class

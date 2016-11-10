@@ -39,7 +39,7 @@ Public Module PhysicsLoop
     ' Public rd As Single
     Public bolStop As Boolean
     '// Some Variables are not used by my code, forget them. I didnt have the time to make my code clean....
-    Public Structure BallParms
+    <Serializable()> Public Structure BallParms
         Public Size As Single
         Public LocX As Single
         Public LocY As Single

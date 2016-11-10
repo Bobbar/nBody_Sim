@@ -64,6 +64,8 @@ Partial Class Form1
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmdTrails = New System.Windows.Forms.Button()
         Me.UI_Worker = New System.ComponentModel.BackgroundWorker()
+        Me.tsmSave = New System.Windows.Forms.ToolStripMenuItem()
+        Me.tsmLoad = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -422,7 +424,7 @@ Partial Class Form1
         '
         'Tools
         '
-        Me.Tools.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TotalMassToolStripMenuItem})
+        Me.Tools.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TotalMassToolStripMenuItem, Me.tsmSave, Me.tsmLoad})
         Me.Tools.Name = "Tools"
         Me.Tools.Size = New System.Drawing.Size(47, 20)
         Me.Tools.Text = "Tools"
@@ -430,7 +432,7 @@ Partial Class Form1
         'TotalMassToolStripMenuItem
         '
         Me.TotalMassToolStripMenuItem.Name = "TotalMassToolStripMenuItem"
-        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.TotalMassToolStripMenuItem.Text = "Total Mass"
         '
         'Panel1
@@ -469,6 +471,18 @@ Partial Class Form1
         '
         Me.UI_Worker.WorkerReportsProgress = True
         Me.UI_Worker.WorkerSupportsCancellation = True
+        '
+        'tsmSave
+        '
+        Me.tsmSave.Name = "tsmSave"
+        Me.tsmSave.Size = New System.Drawing.Size(152, 22)
+        Me.tsmSave.Text = "Save State"
+        '
+        'tsmLoad
+        '
+        Me.tsmLoad.Name = "tsmLoad"
+        Me.tsmLoad.Size = New System.Drawing.Size(152, 22)
+        Me.tsmLoad.Text = "Load State"
         '
         'Form1
         '
@@ -550,4 +564,6 @@ Partial Class Form1
     Friend WithEvents cmdTrails As Button
     Friend WithEvents TimeStep As NumericUpDown
     Friend WithEvents tsmCull As ToolStripMenuItem
+    Friend WithEvents tsmSave As ToolStripMenuItem
+    Friend WithEvents tsmLoad As ToolStripMenuItem
 End Class
