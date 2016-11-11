@@ -23,6 +23,7 @@ Public Class frmAddBodies
 
         For i As Integer = 0 To NumberOfBodies
             ReDim Preserve Ball(UBound(Ball) + 1)
+            Ball(UBound(Ball)).Index = UBound(Ball)
             Ball(UBound(Ball)).Color = RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
 
@@ -55,6 +56,7 @@ Public Class frmAddBodies
 
         If bolIncludeCenterMass Then
             ReDim Preserve Ball(UBound(Ball) + 1)
+            Ball(UBound(Ball)).Index = UBound(Ball)
             Ball(UBound(Ball)).Color = Color.Black 'RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
             Ball(UBound(Ball)).LocX = Form1.Render.Width / 2 / pic_scale - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
@@ -67,7 +69,7 @@ Public Class frmAddBodies
         End If
 
 
-
+        Debug.Print(UBound(Ball))
 
     End Sub
     Private Sub AddBodies_Stationary(NumberOfBodies As Integer, MaxSize As Integer, MinSize As Integer, BodyMass As Integer)
@@ -75,6 +77,7 @@ Public Class frmAddBodies
 
         For i As Integer = 0 To NumberOfBodies
             ReDim Preserve Ball(UBound(Ball) + 1)
+            Ball(UBound(Ball)).Index = UBound(Ball)
             Ball(UBound(Ball)).Color = RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
             Ball(UBound(Ball)).LocX = GetRandomNumber(1, Form1.Render.Width / pic_scale) - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
