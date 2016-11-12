@@ -998,15 +998,8 @@ Err:
     Private Sub PhysicsWorker_DoWork(sender As Object, events As DoWorkEventArgs) Handles PhysicsWorker.DoWork
 
         Try
-
-
             Dim BodyDiv As Integer
-
             Dim StartTick, EndTick, ElapTick As Long
-
-
-
-
             Dim RunThreads As Integer
             Do Until bolStopWorker
 
@@ -1018,25 +1011,11 @@ Err:
                 StartTick = Now.Ticks
                 Thread.Sleep(intDelay)
                 'Start loop
-
-
                 'Calc Splits
 
                 BodyDiv = Int(UBound(Ball) / RunThreads)
-
                 Dim ExtraBodys As Integer = UBound(Ball) - (BodyDiv * RunThreads)
-
-                'Dim Thread1 As New PhysicsChunk(UBound(Ball), 0, Ball)
-
-                'Dim Thread1 As New PhysicsChunk(BodyDiv, 0, Ball)
-                'Dim Thread2 As New PhysicsChunk(BodyDiv * 2, BodyDiv + 1, Ball)
-                'Dim Thread3 As New PhysicsChunk(BodyDiv * 3, BodyDiv * 2 + 1, Ball)
-                'Dim Thread4 As New PhysicsChunk(BodyDiv * 4, BodyDiv * 3 + 1, Ball)
-                'Dim Thread5 As New PhysicsChunk(BodyDiv * 5, BodyDiv * 4 + 1, Ball)
-                'Dim Thread6 As New PhysicsChunk(BodyDiv * 6, BodyDiv * 5 + 1, Ball)
-                'Dim Thread7 As New PhysicsChunk(BodyDiv * 7, BodyDiv * 6 + 1, Ball)
-                'Dim Thread8 As New PhysicsChunk(BodyDiv * 8 + ExtraBodys, BodyDiv * 7 + 1, Ball)
-
+                ' Debug.Print(ExtraBodys)
                 Dim Threads As New List(Of PhysicsChunk)
                 Dim UB, LB As Integer
                 For i As Integer = 1 To RunThreads
@@ -1050,40 +1029,14 @@ Err:
                     End If
                 Next
 
-                ' + ExtraBodys
-                '  Debug.Print(BodyDiv - 0 + BodyDiv * 2 - BodyDiv + 1 + BodyDiv * 3 - BodyDiv * 2 + 1 + BodyDiv * 4 - BodyDiv * 3 + 1)
-
                 Dim rThreads As New List(Of Thread)
-
                 For Each trd As PhysicsChunk In Threads
                     rThreads.Add(New Thread(New ThreadStart(AddressOf trd.CalcPhysics)))
-
-
                 Next
-
-
-                'Dim rThread1 As New Thread(New ThreadStart(AddressOf Thread1.CalcPhysics))
-                'Dim rThread2 As New Thread(New ThreadStart(AddressOf Thread2.CalcPhysics))
-                'Dim rThread3 As New Thread(New ThreadStart(AddressOf Thread3.CalcPhysics))
-                'Dim rThread4 As New Thread(New ThreadStart(AddressOf Thread4.CalcPhysics))
-                'Dim rThread5 As New Thread(New ThreadStart(AddressOf Thread5.CalcPhysics))
-                'Dim rThread6 As New Thread(New ThreadStart(AddressOf Thread6.CalcPhysics))
-                'Dim rThread7 As New Thread(New ThreadStart(AddressOf Thread7.CalcPhysics))
-                'Dim rThread8 As New Thread(New ThreadStart(AddressOf Thread8.CalcPhysics))
-
 
                 For Each rtrd As Thread In rThreads
                     rtrd.Start()
                 Next
-
-                'rThread1.Start()
-                'rThread2.Start()
-                'rThread3.Start()
-                'rThread4.Start()
-                'rThread5.Start()
-                'rThread6.Start()
-                'rThread7.Start()
-                'rThread8.Start()
 
                 Dim bolThreadsDone As Boolean = False
                 Do Until bolThreadsDone 'rThread1.ThreadState = ThreadState.Stopped And rThread2.ThreadState = ThreadState.Stopped And rThread3.ThreadState = ThreadState.Stopped And rThread4.ThreadState = ThreadState.Stopped And rThread5.ThreadState = ThreadState.Stopped And rThread6.ThreadState = ThreadState.Stopped And rThread7.ThreadState = ThreadState.Stopped And rThread8.ThreadState = ThreadState.Stopped
@@ -1095,38 +1048,14 @@ Err:
                     If CompleteThreads = RunThreads Then bolThreadsDone = True
                 Loop
 
-
-
-
-                'Dim BodyPart1 As List(Of BallParms) = Thread1.MyBodys
-                'Dim BodyPart2 As List(Of BallParms) = Thread2.MyBodys
-                'Dim BodyPart3 As List(Of BallParms) = Thread3.MyBodys
-                'Dim BodyPart4 As List(Of BallParms) = Thread4.MyBodys
-                'Dim BodyPart5 As List(Of BallParms) = Thread5.MyBodys
-                'Dim BodyPart6 As List(Of BallParms) = Thread6.MyBodys
-                'Dim BodyPart7 As List(Of BallParms) = Thread7.MyBodys
-                'Dim BodyPart8 As List(Of BallParms) = Thread8.MyBodys
-
-
                 Dim AllBodys As New List(Of BallParms)
                 For Each trd As PhysicsChunk In Threads
                     AllBodys.AddRange(trd.MyBodys)
                 Next
 
-                'AllBodys.AddRange(BodyPart1)
-                'AllBodys.AddRange(BodyPart2)
-                'AllBodys.AddRange(BodyPart3)
-                'AllBodys.AddRange(BodyPart4)
-                'AllBodys.AddRange(BodyPart5)
-                'AllBodys.AddRange(BodyPart6)
-                'AllBodys.AddRange(BodyPart7)
-                'AllBodys.AddRange(BodyPart8)
-
                 Ball = AllBodys.ToArray
                 '  Debug.Print(UBound(Ball))
                 PhysicsWorker.ReportProgress(1, Ball)
-
-
 
 
                 'End loop

@@ -91,21 +91,21 @@ Public NotInheritable Class PhysicsChunk
                                         OuterBody(A).SpeedY += StepMulti * ForceY / M1
 
 
-                                        If DistSqrt < 50 Then
-                                            If Bodys(B).Mass > OuterBody(A).Mass * 5 Then
-                                                If Force > OuterBody(A).Mass / 2 Then 'And Bodys(B).Mass > OuterBody(A).Mass * 5 Then
-                                                    ' bolRocheLimit = True
-                                                ElseIf (Force * 1.5) < OuterBody(A).Mass / 2 Then
-                                                    bolRocheLimit = False
-                                                    OuterBody(A).IsFragment = False
+                                        If DistSqrt < 40 Then
+                                            'If Bodys(B).Mass > OuterBody(A).Mass * 5 Then
+                                            '    If Force > OuterBody(A).Mass / 2 Then 'And Bodys(B).Mass > OuterBody(A).Mass * 5 Then
+                                            '        ' bolRocheLimit = True
+                                            '    ElseIf (Force * 1.5) < OuterBody(A).Mass / 2 Then
+                                            '        bolRocheLimit = False
+                                            '        OuterBody(A).IsFragment = False
 
-                                                End If
-                                                If bolRocheLimit And OuterBody(A).Size > 1 Then
-                                                    '  NewBalls.AddRange(FractureBall(OuterBody(A)))
-                                                End If
-                                            Else
-                                                bolRocheLimit = False
-                                            End If
+                                            '    End If
+                                            '    If bolRocheLimit And OuterBody(A).Size > 1 Then
+                                            '        '  NewBalls.AddRange(FractureBall(OuterBody(A)))
+                                            '    End If
+                                            'Else
+                                            '    bolRocheLimit = False
+                                            'End If
                                             'If OuterBody(A).Index = 20 And Bodys(B).Index = 3 Then
                                             '    Debug.Print(DistSqrt & " - " & OuterBody(A).Size & " - " & Bodys(B).Size)
                                             'End If
@@ -370,7 +370,8 @@ Public NotInheritable Class PhysicsChunk
                 V2 = VekX * V2x + VeKY * V2y
 
                 U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-                U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
+
+                '  U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
 
 
                 PrevSpdX = Master.SpeedX
