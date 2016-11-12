@@ -39,6 +39,8 @@ Public Module Renderer
         End If
         Dim myBrush As SolidBrush '(BallArray(i).Color)
         If bolDraw Then
+            StartTimer()
+
             For i = 0 To UBound(BallArray)
                 If bolStopWorker Then Exit Sub
                 If BallArray(i).Visible Then
@@ -114,6 +116,7 @@ Public Module Renderer
         End If
         bolDrawing = False
         Form1.Render.Image = bm
+        StopTimer()
         '   Return bm
     End Sub
     Public Function ScaledPoint(Point As Point, Origin As Point, Optional Scale As Double = 1.0) As Point

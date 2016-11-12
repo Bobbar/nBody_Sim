@@ -57,15 +57,15 @@ Public NotInheritable Class PhysicsChunk
                     If OuterBody(A).MovinG = False Then
                         For B = 0 To UBound(Bodys)
                             If Bodys(B).Visible And OuterBody(A).Index <> Bodys(B).Index Then
-                                If bolShawdow Then
-                                    If InStr(1, OuterBody(A).Flags, "S") Then
-                                        Dim m As Double, SlX As Double, SlY As Double
-                                        SlX = Bodys(B).LocX - OuterBody(A).LocX
-                                        SlY = Bodys(B).LocY - OuterBody(A).LocY
-                                        m = SlY / SlX
-                                        Bodys(B).ShadAngle = Math.Atan2(Bodys(B).LocY - OuterBody(A).LocY, Bodys(B).LocX - OuterBody(A).LocX)   'Math.Tan(SlX / SlY) 'Math.Atan2(SlY, SlX) * 180 / PI 'Math.Atan(SlX / SlY) * 180 / PI
-                                    End If
-                                End If
+                                'If bolShawdow Then
+                                '    If InStr(1, OuterBody(A).Flags, "S") Then
+                                '        Dim m As Double, SlX As Double, SlY As Double
+                                '        SlX = Bodys(B).LocX - OuterBody(A).LocX
+                                '        SlY = Bodys(B).LocY - OuterBody(A).LocY
+                                '        m = SlY / SlX
+                                '        Bodys(B).ShadAngle = Math.Atan2(Bodys(B).LocY - OuterBody(A).LocY, Bodys(B).LocX - OuterBody(A).LocX)   'Math.Tan(SlX / SlY) 'Math.Atan2(SlY, SlX) * 180 / PI 'Math.Atan(SlX / SlY) * 180 / PI
+                                '    End If
+                                'End If
                                 If Bodys(B).LocX = OuterBody(A).LocX And Bodys(B).LocY = OuterBody(A).LocY Then
                                     CollideBodies(OuterBody(A), Bodys(B))
                                 End If
@@ -91,7 +91,7 @@ Public NotInheritable Class PhysicsChunk
                                         OuterBody(A).SpeedY += StepMulti * ForceY / M1
 
 
-                                        If DistSqrt < 100 Then
+                                        If DistSqrt < 50 Then
                                             If Bodys(B).Mass > OuterBody(A).Mass * 5 Then
                                                 If Force > OuterBody(A).Mass / 2 Then 'And Bodys(B).Mass > OuterBody(A).Mass * 5 Then
                                                     ' bolRocheLimit = True
@@ -137,8 +137,8 @@ Public NotInheritable Class PhysicsChunk
                                                     End If
 
                                                 End If
-                                                    '   End If
-                                                End If
+                                                '   End If
+                                            End If
                                         End If
                                     Else
                                     End If

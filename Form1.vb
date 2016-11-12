@@ -6,6 +6,7 @@ Imports System.ComponentModel
 Imports System.IO
 Public Class Form1
     Public TrueFPS As Integer
+    Public RenderTime As Double
 
     Sub StartMeasuring()
         TestCount += 1
@@ -430,6 +431,7 @@ Err:
         Me.Show()
         'MainLoop()
         ' MasterLoop()
+        ThreadNum = NumThreads.Value
         bolStopLoop = False
         't = New Threading.Thread(AddressOf Me.MainLoop)
         ' t2 = New Threading.Thread(AddressOf Me.MainLoop2)
@@ -992,11 +994,12 @@ Err:
         Dim PassBall() As BallParms = e.Result
         If bolDraw And Not bolDrawing Then Drawr(PassBall) '  Me.Render.Image = Drawr(PassBall)
     End Sub
+    Public ThreadNum As Integer ' = 1
     Private Sub PhysicsWorker_DoWork(sender As Object, events As DoWorkEventArgs) Handles PhysicsWorker.DoWork
 
         Try
 
-            Dim SplitNum As Integer = 4
+
             Dim BodyDiv As Integer
 
             Dim StartTick, EndTick, ElapTick As Long
@@ -1004,9 +1007,10 @@ Err:
 
 
 
-
+            Dim RunThreads As Integer
             Do Until bolStopWorker
 
+                If RunThreads <> ThreadNum Then RunThreads = ThreadNum
 
                 Do While bolStopLoop
                     Thread.Sleep(100)
@@ -1018,48 +1022,105 @@ Err:
 
                 'Calc Splits
 
-                BodyDiv = Int(UBound(Ball) / SplitNum)
+                BodyDiv = Int(UBound(Ball) / RunThreads)
 
-                Dim ExtraBodys As Integer = UBound(Ball) - (BodyDiv * SplitNum)
+                Dim ExtraBodys As Integer = UBound(Ball) - (BodyDiv * RunThreads)
 
                 'Dim Thread1 As New PhysicsChunk(UBound(Ball), 0, Ball)
 
-                Dim Thread1 As New PhysicsChunk(BodyDiv, 0, Ball)
-                Dim Thread2 As New PhysicsChunk(BodyDiv * 2, BodyDiv + 1, Ball)
-                Dim Thread3 As New PhysicsChunk(BodyDiv * 3, BodyDiv * 2 + 1, Ball)
-                Dim Thread4 As New PhysicsChunk(BodyDiv * 4 + ExtraBodys, BodyDiv * 3 + 1, Ball)
+                'Dim Thread1 As New PhysicsChunk(BodyDiv, 0, Ball)
+                'Dim Thread2 As New PhysicsChunk(BodyDiv * 2, BodyDiv + 1, Ball)
+                'Dim Thread3 As New PhysicsChunk(BodyDiv * 3, BodyDiv * 2 + 1, Ball)
+                'Dim Thread4 As New PhysicsChunk(BodyDiv * 4, BodyDiv * 3 + 1, Ball)
+                'Dim Thread5 As New PhysicsChunk(BodyDiv * 5, BodyDiv * 4 + 1, Ball)
+                'Dim Thread6 As New PhysicsChunk(BodyDiv * 6, BodyDiv * 5 + 1, Ball)
+                'Dim Thread7 As New PhysicsChunk(BodyDiv * 7, BodyDiv * 6 + 1, Ball)
+                'Dim Thread8 As New PhysicsChunk(BodyDiv * 8 + ExtraBodys, BodyDiv * 7 + 1, Ball)
 
+                Dim Threads As New List(Of PhysicsChunk)
+                Dim UB, LB As Integer
+                For i As Integer = 1 To RunThreads
+                    If i = 1 Then
+                        Threads.Add(New PhysicsChunk(BodyDiv, 0, Ball))
+                    Else
+                        LB = (BodyDiv * (i - 1)) + 1
+                        UB = BodyDiv * (i)
+                        If i = RunThreads Then UB += ExtraBodys
+                        Threads.Add(New PhysicsChunk(UB, LB, Ball))
+                    End If
+                Next
 
+                ' + ExtraBodys
                 '  Debug.Print(BodyDiv - 0 + BodyDiv * 2 - BodyDiv + 1 + BodyDiv * 3 - BodyDiv * 2 + 1 + BodyDiv * 4 - BodyDiv * 3 + 1)
 
-                Dim rThread1 As New Thread(New ThreadStart(AddressOf Thread1.CalcPhysics))
-                Dim rThread2 As New Thread(New ThreadStart(AddressOf Thread2.CalcPhysics))
-                Dim rThread3 As New Thread(New ThreadStart(AddressOf Thread3.CalcPhysics))
-                Dim rThread4 As New Thread(New ThreadStart(AddressOf Thread4.CalcPhysics))
+                Dim rThreads As New List(Of Thread)
+
+                For Each trd As PhysicsChunk In Threads
+                    rThreads.Add(New Thread(New ThreadStart(AddressOf trd.CalcPhysics)))
 
 
+                Next
 
-                rThread1.Start()
-                rThread2.Start()
-                rThread3.Start()
-                rThread4.Start()
 
-                Do Until rThread1.ThreadState = ThreadState.Stopped And rThread2.ThreadState = ThreadState.Stopped And rThread3.ThreadState = ThreadState.Stopped And rThread4.ThreadState = ThreadState.Stopped
+                'Dim rThread1 As New Thread(New ThreadStart(AddressOf Thread1.CalcPhysics))
+                'Dim rThread2 As New Thread(New ThreadStart(AddressOf Thread2.CalcPhysics))
+                'Dim rThread3 As New Thread(New ThreadStart(AddressOf Thread3.CalcPhysics))
+                'Dim rThread4 As New Thread(New ThreadStart(AddressOf Thread4.CalcPhysics))
+                'Dim rThread5 As New Thread(New ThreadStart(AddressOf Thread5.CalcPhysics))
+                'Dim rThread6 As New Thread(New ThreadStart(AddressOf Thread6.CalcPhysics))
+                'Dim rThread7 As New Thread(New ThreadStart(AddressOf Thread7.CalcPhysics))
+                'Dim rThread8 As New Thread(New ThreadStart(AddressOf Thread8.CalcPhysics))
+
+
+                For Each rtrd As Thread In rThreads
+                    rtrd.Start()
+                Next
+
+                'rThread1.Start()
+                'rThread2.Start()
+                'rThread3.Start()
+                'rThread4.Start()
+                'rThread5.Start()
+                'rThread6.Start()
+                'rThread7.Start()
+                'rThread8.Start()
+
+                Dim bolThreadsDone As Boolean = False
+                Do Until bolThreadsDone 'rThread1.ThreadState = ThreadState.Stopped And rThread2.ThreadState = ThreadState.Stopped And rThread3.ThreadState = ThreadState.Stopped And rThread4.ThreadState = ThreadState.Stopped And rThread5.ThreadState = ThreadState.Stopped And rThread6.ThreadState = ThreadState.Stopped And rThread7.ThreadState = ThreadState.Stopped And rThread8.ThreadState = ThreadState.Stopped
                     Thread.Sleep(1)
-
+                    Dim CompleteThreads As Integer = 0
+                    For Each rtrd As Thread In rThreads
+                        If rtrd.ThreadState = ThreadState.Stopped Then CompleteThreads += 1
+                    Next
+                    If CompleteThreads = RunThreads Then bolThreadsDone = True
                 Loop
 
-                Dim BodyPart1 As List(Of BallParms) = Thread1.MyBodys
-                Dim BodyPart2 As List(Of BallParms) = Thread2.MyBodys
-                Dim BodyPart3 As List(Of BallParms) = Thread3.MyBodys
-                Dim BodyPart4 As List(Of BallParms) = Thread4.MyBodys
+
+
+
+                'Dim BodyPart1 As List(Of BallParms) = Thread1.MyBodys
+                'Dim BodyPart2 As List(Of BallParms) = Thread2.MyBodys
+                'Dim BodyPart3 As List(Of BallParms) = Thread3.MyBodys
+                'Dim BodyPart4 As List(Of BallParms) = Thread4.MyBodys
+                'Dim BodyPart5 As List(Of BallParms) = Thread5.MyBodys
+                'Dim BodyPart6 As List(Of BallParms) = Thread6.MyBodys
+                'Dim BodyPart7 As List(Of BallParms) = Thread7.MyBodys
+                'Dim BodyPart8 As List(Of BallParms) = Thread8.MyBodys
 
 
                 Dim AllBodys As New List(Of BallParms)
-                AllBodys.AddRange(BodyPart1)
-                AllBodys.AddRange(BodyPart2)
-                AllBodys.AddRange(BodyPart3)
-                AllBodys.AddRange(BodyPart4)
+                For Each trd As PhysicsChunk In Threads
+                    AllBodys.AddRange(trd.MyBodys)
+                Next
+
+                'AllBodys.AddRange(BodyPart1)
+                'AllBodys.AddRange(BodyPart2)
+                'AllBodys.AddRange(BodyPart3)
+                'AllBodys.AddRange(BodyPart4)
+                'AllBodys.AddRange(BodyPart5)
+                'AllBodys.AddRange(BodyPart6)
+                'AllBodys.AddRange(BodyPart7)
+                'AllBodys.AddRange(BodyPart8)
 
                 Ball = AllBodys.ToArray
                 '  Debug.Print(UBound(Ball))
@@ -1070,19 +1131,20 @@ Err:
 
                 'End loop
                 EndTick = Now.Ticks
-                    ElapTick = EndTick - StartTick
-                    FPS = 10000000 / ElapTick
-                    If FPS > intTargetFPS Then
-                        intDelay = intDelay + 1
+                ElapTick = EndTick - StartTick
+                RenderTime = ElapTick / 10000
+                FPS = 10000000 / ElapTick
+                If FPS > intTargetFPS Then
+                    intDelay = intDelay + 1
+                Else
+                    If intDelay > 0 Then
+                        intDelay = intDelay - 1
                     Else
-                        If intDelay > 0 Then
-                            intDelay = intDelay - 1
-                        Else
-                            intDelay = 0
-                        End If
+                        intDelay = 0
                     End If
+                End If
 
-                Loop
+            Loop
 
 
 
@@ -1501,7 +1563,7 @@ Err:
         lblFPS.Text = "FPS: " & Round(FPS, 0)
         ' End If
 
-
+        lblRenTime.Text = "RTime(ms): " & Round(RenderTime, 1)
         'lblFPS.Text = "FPS: " & Round(FPS, 0) ' * 8
         lblDelay.Text = "Delay: " & intDelay
         lblBalls.Text = "Balls: " & UBound(Ball)
@@ -1594,5 +1656,9 @@ Err:
             'sr.Close()
         End If
 
+    End Sub
+
+    Private Sub NumThreads_ValueChanged(sender As Object, e As EventArgs) Handles NumThreads.ValueChanged
+        ThreadNum = NumThreads.Value
     End Sub
 End Class
