@@ -1,8 +1,8 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class Form1
     Inherits System.Windows.Forms.Form
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -17,7 +17,7 @@ Partial Class Form1
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Me.Render = New System.Windows.Forms.PictureBox()
@@ -36,7 +36,6 @@ Partial Class Form1
         Me.txtMass = New System.Windows.Forms.TextBox()
         Me.txtFlag = New System.Windows.Forms.TextBox()
         Me.butAddBall = New System.Windows.Forms.Button()
-        Me.txtStep = New System.Windows.Forms.TextBox()
         Me.butRemoveBalls = New System.Windows.Forms.Button()
         Me.butUpdate = New System.Windows.Forms.Button()
         Me.lblBalls = New System.Windows.Forms.Label()
@@ -45,6 +44,7 @@ Partial Class Form1
         Me.UpDown1 = New System.Windows.Forms.NumericUpDown()
         Me.txtFPS = New System.Windows.Forms.TextBox()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.TimeStep = New System.Windows.Forms.NumericUpDown()
         Me.PhysicsWorker = New System.ComponentModel.BackgroundWorker()
         Me.tmrRender = New System.Windows.Forms.Timer(Me.components)
         Me.lblDelay = New System.Windows.Forms.Label()
@@ -58,15 +58,22 @@ Partial Class Form1
         Me.Draw = New System.Windows.Forms.ToolStripMenuItem()
         Me.AntiA = New System.Windows.Forms.ToolStripMenuItem()
         Me.Invert = New System.Windows.Forms.ToolStripMenuItem()
+        Me.tsmCull = New System.Windows.Forms.ToolStripMenuItem()
         Me.Tools = New System.Windows.Forms.ToolStripMenuItem()
         Me.TotalMassToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.tsmSave = New System.Windows.Forms.ToolStripMenuItem()
+        Me.tsmLoad = New System.Windows.Forms.ToolStripMenuItem()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmdTrails = New System.Windows.Forms.Button()
         Me.UI_Worker = New System.ComponentModel.BackgroundWorker()
+        Me.NumThreads = New System.Windows.Forms.NumericUpDown()
+        Me.lblRenTime = New System.Windows.Forms.Label()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MenuStrip1.SuspendLayout()
         Me.Panel1.SuspendLayout()
+        CType(Me.NumThreads, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Render
@@ -109,11 +116,11 @@ Partial Class Form1
         Me.Label12.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.Label12.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label12.ForeColor = System.Drawing.Color.ForestGreen
-        Me.Label12.Location = New System.Drawing.Point(750, 5)
+        Me.Label12.Location = New System.Drawing.Point(807, 5)
         Me.Label12.Name = "Label12"
-        Me.Label12.Size = New System.Drawing.Size(56, 20)
+        Me.Label12.Size = New System.Drawing.Size(55, 20)
         Me.Label12.TabIndex = 20
-        Me.Label12.Text = "G: Off"
+        Me.Label12.Text = "G: On"
         '
         'Label13
         '
@@ -167,7 +174,7 @@ Partial Class Form1
         '
         'txtSpeedX
         '
-        Me.txtSpeedX.Location = New System.Drawing.Point(322, 6)
+        Me.txtSpeedX.Location = New System.Drawing.Point(379, 6)
         Me.txtSpeedX.Name = "txtSpeedX"
         Me.txtSpeedX.Size = New System.Drawing.Size(53, 20)
         Me.txtSpeedX.TabIndex = 29
@@ -175,7 +182,7 @@ Partial Class Form1
         '
         'txtSpeedY
         '
-        Me.txtSpeedY.Location = New System.Drawing.Point(381, 6)
+        Me.txtSpeedY.Location = New System.Drawing.Point(438, 6)
         Me.txtSpeedY.Name = "txtSpeedY"
         Me.txtSpeedY.Size = New System.Drawing.Size(52, 20)
         Me.txtSpeedY.TabIndex = 30
@@ -183,7 +190,7 @@ Partial Class Form1
         '
         'txtSize
         '
-        Me.txtSize.Location = New System.Drawing.Point(439, 6)
+        Me.txtSize.Location = New System.Drawing.Point(496, 6)
         Me.txtSize.Name = "txtSize"
         Me.txtSize.Size = New System.Drawing.Size(61, 20)
         Me.txtSize.TabIndex = 31
@@ -191,7 +198,7 @@ Partial Class Form1
         '
         'txtMass
         '
-        Me.txtMass.Location = New System.Drawing.Point(506, 6)
+        Me.txtMass.Location = New System.Drawing.Point(563, 6)
         Me.txtMass.Name = "txtMass"
         Me.txtMass.Size = New System.Drawing.Size(63, 20)
         Me.txtMass.TabIndex = 32
@@ -199,7 +206,7 @@ Partial Class Form1
         '
         'txtFlag
         '
-        Me.txtFlag.Location = New System.Drawing.Point(575, 6)
+        Me.txtFlag.Location = New System.Drawing.Point(632, 6)
         Me.txtFlag.Name = "txtFlag"
         Me.txtFlag.Size = New System.Drawing.Size(37, 20)
         Me.txtFlag.TabIndex = 33
@@ -216,15 +223,6 @@ Partial Class Form1
         Me.butAddBall.Text = "Add Bodies"
         Me.butAddBall.UseVisualStyleBackColor = False
         '
-        'txtStep
-        '
-        Me.txtStep.Location = New System.Drawing.Point(239, 6)
-        Me.txtStep.Name = "txtStep"
-        Me.txtStep.Size = New System.Drawing.Size(44, 20)
-        Me.txtStep.TabIndex = 35
-        Me.txtStep.Text = "0.0005"
-        Me.ToolTip1.SetToolTip(Me.txtStep, "Time Step")
-        '
         'butRemoveBalls
         '
         Me.butRemoveBalls.Location = New System.Drawing.Point(84, 4)
@@ -236,7 +234,7 @@ Partial Class Form1
         '
         'butUpdate
         '
-        Me.butUpdate.Location = New System.Drawing.Point(618, 5)
+        Me.butUpdate.Location = New System.Drawing.Point(675, 5)
         Me.butUpdate.Name = "butUpdate"
         Me.butUpdate.Size = New System.Drawing.Size(54, 21)
         Me.butUpdate.TabIndex = 37
@@ -249,7 +247,7 @@ Partial Class Form1
         Me.lblBalls.BackColor = System.Drawing.Color.Black
         Me.lblBalls.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblBalls.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
-        Me.lblBalls.Location = New System.Drawing.Point(11, 96)
+        Me.lblBalls.Location = New System.Drawing.Point(11, 112)
         Me.lblBalls.Name = "lblBalls"
         Me.lblBalls.Size = New System.Drawing.Size(41, 16)
         Me.lblBalls.TabIndex = 38
@@ -257,7 +255,7 @@ Partial Class Form1
         '
         'Button4
         '
-        Me.Button4.Location = New System.Drawing.Point(680, 4)
+        Me.Button4.Location = New System.Drawing.Point(737, 4)
         Me.Button4.Name = "Button4"
         Me.Button4.Size = New System.Drawing.Size(64, 22)
         Me.Button4.TabIndex = 42
@@ -266,7 +264,7 @@ Partial Class Form1
         '
         'Button5
         '
-        Me.Button5.Location = New System.Drawing.Point(961, 5)
+        Me.Button5.Location = New System.Drawing.Point(1018, 5)
         Me.Button5.Name = "Button5"
         Me.Button5.Size = New System.Drawing.Size(77, 20)
         Me.Button5.TabIndex = 43
@@ -275,7 +273,7 @@ Partial Class Form1
         '
         'UpDown1
         '
-        Me.UpDown1.Location = New System.Drawing.Point(812, 6)
+        Me.UpDown1.Location = New System.Drawing.Point(869, 6)
         Me.UpDown1.Name = "UpDown1"
         Me.UpDown1.Size = New System.Drawing.Size(48, 20)
         Me.UpDown1.TabIndex = 44
@@ -298,6 +296,19 @@ Partial Class Form1
         Me.ToolTip1.ReshowDelay = 100
         Me.ToolTip1.ShowAlways = True
         '
+        'TimeStep
+        '
+        Me.TimeStep.DecimalPlaces = 3
+        Me.TimeStep.Increment = New Decimal(New Integer() {1, 0, 0, 196608})
+        Me.TimeStep.Location = New System.Drawing.Point(238, 6)
+        Me.TimeStep.Maximum = New Decimal(New Integer() {10, 0, 0, 0})
+        Me.TimeStep.Minimum = New Decimal(New Integer() {1, 0, 0, 196608})
+        Me.TimeStep.Name = "TimeStep"
+        Me.TimeStep.Size = New System.Drawing.Size(48, 20)
+        Me.TimeStep.TabIndex = 48
+        Me.ToolTip1.SetToolTip(Me.TimeStep, "Time Step")
+        Me.TimeStep.Value = New Decimal(New Integer() {5, 0, 0, 196608})
+        '
         'PhysicsWorker
         '
         Me.PhysicsWorker.WorkerReportsProgress = True
@@ -313,7 +324,7 @@ Partial Class Form1
         Me.lblDelay.BackColor = System.Drawing.Color.Black
         Me.lblDelay.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblDelay.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
-        Me.lblDelay.Location = New System.Drawing.Point(11, 80)
+        Me.lblDelay.Location = New System.Drawing.Point(11, 96)
         Me.lblDelay.Name = "lblDelay"
         Me.lblDelay.Size = New System.Drawing.Size(45, 16)
         Me.lblDelay.TabIndex = 48
@@ -325,7 +336,7 @@ Partial Class Form1
         Me.lblVisBalls.BackColor = System.Drawing.Color.Black
         Me.lblVisBalls.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblVisBalls.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
-        Me.lblVisBalls.Location = New System.Drawing.Point(11, 112)
+        Me.lblVisBalls.Location = New System.Drawing.Point(11, 128)
         Me.lblVisBalls.Name = "lblVisBalls"
         Me.lblVisBalls.Size = New System.Drawing.Size(62, 16)
         Me.lblVisBalls.TabIndex = 49
@@ -337,7 +348,7 @@ Partial Class Form1
         Me.lblScale.BackColor = System.Drawing.Color.Black
         Me.lblScale.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblScale.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
-        Me.lblScale.Location = New System.Drawing.Point(11, 128)
+        Me.lblScale.Location = New System.Drawing.Point(11, 144)
         Me.lblScale.Name = "lblScale"
         Me.lblScale.Size = New System.Drawing.Size(45, 16)
         Me.lblScale.TabIndex = 50
@@ -354,7 +365,7 @@ Partial Class Form1
         '
         'Options
         '
-        Me.Options.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BallLines, Me.FBallSOI, Me.Trails, Me.Draw, Me.AntiA, Me.Invert})
+        Me.Options.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BallLines, Me.FBallSOI, Me.Trails, Me.Draw, Me.AntiA, Me.Invert, Me.tsmCull})
         Me.Options.Name = "Options"
         Me.Options.Size = New System.Drawing.Size(61, 20)
         Me.Options.Text = "Options"
@@ -405,9 +416,18 @@ Partial Class Form1
         Me.Invert.Size = New System.Drawing.Size(161, 22)
         Me.Invert.Text = "Invert Colors"
         '
+        'tsmCull
+        '
+        Me.tsmCull.Checked = True
+        Me.tsmCull.CheckOnClick = True
+        Me.tsmCull.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.tsmCull.Name = "tsmCull"
+        Me.tsmCull.Size = New System.Drawing.Size(161, 22)
+        Me.tsmCull.Text = "Culling"
+        '
         'Tools
         '
-        Me.Tools.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TotalMassToolStripMenuItem})
+        Me.Tools.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.TotalMassToolStripMenuItem, Me.tsmSave, Me.tsmLoad})
         Me.Tools.Name = "Tools"
         Me.Tools.Size = New System.Drawing.Size(47, 20)
         Me.Tools.Text = "Tools"
@@ -415,11 +435,25 @@ Partial Class Form1
         'TotalMassToolStripMenuItem
         '
         Me.TotalMassToolStripMenuItem.Name = "TotalMassToolStripMenuItem"
-        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.TotalMassToolStripMenuItem.Text = "Total Mass"
+        '
+        'tsmSave
+        '
+        Me.tsmSave.Name = "tsmSave"
+        Me.tsmSave.Size = New System.Drawing.Size(152, 22)
+        Me.tsmSave.Text = "Save State"
+        '
+        'tsmLoad
+        '
+        Me.tsmLoad.Name = "tsmLoad"
+        Me.tsmLoad.Size = New System.Drawing.Size(152, 22)
+        Me.tsmLoad.Text = "Load State"
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.NumThreads)
+        Me.Panel1.Controls.Add(Me.TimeStep)
         Me.Panel1.Controls.Add(Me.cmdTrails)
         Me.Panel1.Controls.Add(Me.butAddBall)
         Me.Panel1.Controls.Add(Me.Label12)
@@ -433,17 +467,16 @@ Partial Class Form1
         Me.Panel1.Controls.Add(Me.txtMass)
         Me.Panel1.Controls.Add(Me.Button4)
         Me.Panel1.Controls.Add(Me.txtFlag)
-        Me.Panel1.Controls.Add(Me.txtStep)
         Me.Panel1.Controls.Add(Me.butUpdate)
         Me.Panel1.Controls.Add(Me.butRemoveBalls)
         Me.Panel1.Location = New System.Drawing.Point(3, 27)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(1051, 30)
+        Me.Panel1.Size = New System.Drawing.Size(1116, 30)
         Me.Panel1.TabIndex = 52
         '
         'cmdTrails
         '
-        Me.cmdTrails.Location = New System.Drawing.Point(870, 5)
+        Me.cmdTrails.Location = New System.Drawing.Point(927, 5)
         Me.cmdTrails.Name = "cmdTrails"
         Me.cmdTrails.Size = New System.Drawing.Size(68, 20)
         Me.cmdTrails.TabIndex = 47
@@ -455,12 +488,36 @@ Partial Class Form1
         Me.UI_Worker.WorkerReportsProgress = True
         Me.UI_Worker.WorkerSupportsCancellation = True
         '
+        'NumThreads
+        '
+        Me.NumThreads.Location = New System.Drawing.Point(325, 6)
+        Me.NumThreads.Maximum = New Decimal(New Integer() {16, 0, 0, 0})
+        Me.NumThreads.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.NumThreads.Name = "NumThreads"
+        Me.NumThreads.Size = New System.Drawing.Size(48, 20)
+        Me.NumThreads.TabIndex = 49
+        Me.ToolTip1.SetToolTip(Me.NumThreads, "Number Of Threads")
+        Me.NumThreads.Value = New Decimal(New Integer() {1, 0, 0, 0})
+        '
+        'lblRenTime
+        '
+        Me.lblRenTime.AutoSize = True
+        Me.lblRenTime.BackColor = System.Drawing.Color.Black
+        Me.lblRenTime.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblRenTime.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.lblRenTime.Location = New System.Drawing.Point(11, 80)
+        Me.lblRenTime.Name = "lblRenTime"
+        Me.lblRenTime.Size = New System.Drawing.Size(67, 16)
+        Me.lblRenTime.TabIndex = 53
+        Me.lblRenTime.Text = "Ren Time:"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
         Me.ClientSize = New System.Drawing.Size(1180, 690)
+        Me.Controls.Add(Me.lblRenTime)
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.lblScale)
         Me.Controls.Add(Me.lblVisBalls)
@@ -475,16 +532,19 @@ Partial Class Form1
         Me.Controls.Add(Me.MenuStrip1)
         Me.KeyPreview = True
         Me.MainMenuStrip = Me.MenuStrip1
+        Me.MinimizeBox = False
         Me.MinimumSize = New System.Drawing.Size(221, 230)
         Me.Name = "Form1"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Gravity Simulator by Bobby Lovell"
         CType(Me.Render, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).EndInit()
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
+        CType(Me.NumThreads, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -505,7 +565,6 @@ Partial Class Form1
     Friend WithEvents txtMass As System.Windows.Forms.TextBox
     Friend WithEvents txtFlag As System.Windows.Forms.TextBox
     Friend WithEvents butAddBall As System.Windows.Forms.Button
-    Friend WithEvents txtStep As System.Windows.Forms.TextBox
     Friend WithEvents butRemoveBalls As System.Windows.Forms.Button
     Friend WithEvents butUpdate As System.Windows.Forms.Button
     Friend WithEvents lblBalls As System.Windows.Forms.Label
@@ -532,4 +591,10 @@ Partial Class Form1
     Friend WithEvents Panel1 As Panel
     Friend WithEvents UI_Worker As System.ComponentModel.BackgroundWorker
     Friend WithEvents cmdTrails As Button
+    Friend WithEvents TimeStep As NumericUpDown
+    Friend WithEvents tsmCull As ToolStripMenuItem
+    Friend WithEvents tsmSave As ToolStripMenuItem
+    Friend WithEvents tsmLoad As ToolStripMenuItem
+    Friend WithEvents NumThreads As NumericUpDown
+    Friend WithEvents lblRenTime As Label
 End Class

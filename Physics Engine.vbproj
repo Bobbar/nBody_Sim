@@ -95,6 +95,12 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="frmAddBodies.Designer.vb">
+      <DependentUpon>frmAddBodies.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmAddBodies.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Form1.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -120,6 +126,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="PhysicsChunk.vb" />
     <Compile Include="PhysicsLoop.vb" />
     <Compile Include="Point2D.vb" />
     <Compile Include="Point3D.vb" />
@@ -130,6 +137,9 @@
     <Compile Include="Vector3D.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="frmAddBodies.resx">
+      <DependentUpon>frmAddBodies.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.vb</DependentUpon>
     </EmbeddedResource>

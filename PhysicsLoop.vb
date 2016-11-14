@@ -2,6 +2,7 @@
 Imports System.Threading.Tasks
 Imports System.Threading
 Imports System.Drawing.Drawing2D
+Imports System.Runtime.CompilerServices
 Public Module PhysicsLoop
     Public Class SPoint
         Public X As Single
@@ -28,23 +29,27 @@ Public Module PhysicsLoop
     Public gravity As Single = 0.0
     Public friction As Single = 0.99
     Public right_side As Integer
+    Public TypicalSolarMass As Integer = 2000
     Public bottom_side As Integer
+    Public Density As Double = 5.0
     Public g As Integer
     Public Sel As Integer, MoV As Integer = 0
-    Public bGrav As Integer
+    Public bGrav As Boolean
     Public FPS As Single
     ' Public rd As Single
     Public bolStop As Boolean
     '// Some Variables are not used by my code, forget them. I didnt have the time to make my code clean....
-    Public Structure BallParms
+    <Serializable()> Public Structure BallParms
+        Public Index As Integer
         Public Size As Single
         Public LocX As Single
         Public LocY As Single
-        Public SpeedX As Single
-        Public SpeedY As Single
-
+        Public SpeedX As Double
+        Public SpeedY As Double
         'Public PrevSpeedX As Single
         'Public PrevSpeedY As Single
+        Public ForceX As Double
+        Public ForceY As Double
         'Public PrevLocX As Single
         'Public PrevLocY As Single
         'Public GravX As Single
@@ -53,11 +58,12 @@ Public Module PhysicsLoop
         'Public Old_LocX As Single
         'Public Old_LocY As Single
         Public ShadAngle As Single
-        ' Public Origin As Long
+        'Public Origin As Long
         Public Locked As Boolean
         Public Visible As Boolean
         Public Mass As Double
         Public Color As Color
+        Public IsFragment As Boolean
         Public Flags As String
     End Structure
     Public Ball() As BallParms
@@ -275,9 +281,9 @@ restart:
                                                                                                           Ball(A).Size = Sqrt(Area1 / PI)
                                                                                                           Ball(A).Mass = Ball(A).Mass + Ball(B).Mass 'Sqr(Ball(B).Mass)
                                                                                                           Ball(B).Visible = False
-                                                                                                      'End If
+                                                                                                      ' End If
                                                                                                   Else
-                                                                                                      '   If Ball(A).Origin <> B Then
+                                                                                                      '  If Ball(A).Origin <> B Then
                                                                                                       Ball(A).Flags = Replace$(Ball(A).Flags, "R", "")
                                                                                                           Ball(B).SpeedX = Ball(B).SpeedX + (U2 - V2) * VekX
                                                                                                           Ball(B).SpeedY = Ball(B).SpeedY + (U2 - V2) * VeKY
@@ -287,7 +293,7 @@ restart:
                                                                                                           Ball(B).Size = Sqrt(Area1 / PI)
                                                                                                           Ball(B).Mass = Ball(B).Mass + Ball(A).Mass 'Sqr(Ball(A).Mass)
                                                                                                           Ball(A).Visible = False
-                                                                                                      '  End If
+                                                                                                      '   End If
                                                                                                   End If
                                                                                               End If
                                                                                               If Ball(A).Mass > 350 Then Ball(A).Color = System.Drawing.Color.Red
@@ -367,8 +373,9 @@ restart:
         Return Color.FromArgb(255, objRandom.Next(0, 255), objRandom.Next(0, 255), objRandom.Next(0, 255))
     End Function
     Public Function fnMass(Radius As Double) As Double
-        fnMass = 0
-        fnMass = Sqrt(PI * (Radius ^ 2))
+
+
+        Return Sqrt(PI * (Radius ^ 2)) ^ 2 ' * Density
     End Function
     Private myRandom As New Random
     Public Function GetRandomNumber(ByVal Low As Double, ByVal High As Double) As Double
@@ -445,6 +452,7 @@ restart:
                 'Ball(u).Flags = Ball(i).Flags + "R"
                 tmpBall.Color = Ball(i).Color 'vbWhite
                 tmpBall.Flags = ""
+                tmpBall.IsFragment = True
                 tmpBall.Visible = True
                 '  Ball(u).LocY = Ball(i).LocY + Ball(u).Size * 2
 

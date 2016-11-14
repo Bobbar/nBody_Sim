@@ -10,13 +10,14 @@ Public Module Renderer
     Public ScreenCenterY As Single
     Public CircleOInfluence As Single = 10000
     Public bolDrawing As Boolean = False
+    Public bolCulling As Boolean = True
     'Public RenderWindowDimsH As Integer
     'Public RenderWindowDimsW As Integer
     Public RenderWindowDims As New Point(Form1.Render.Width, Form1.Render.Height)
     Public bm As New Bitmap(Form1.Render.Width, Form1.Render.Height) '(CInt(pic_scale * Render.Width), CInt(pic_scale * Render.Height))
     Public gr As Graphics = Graphics.FromImage(bm)
     Public Sub UpdateScale()
-        Debug.Print("Scale Update")
+        '  Debug.Print("Scale Update")
         If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
             bm = New Bitmap(RenderWindowDims.X, RenderWindowDims.Y)
             gr = Graphics.FromImage(bm)
@@ -38,10 +39,15 @@ Public Module Renderer
         End If
         Dim myBrush As SolidBrush '(BallArray(i).Color)
         If bolDraw Then
-            For i = 1 To UBound(BallArray)
+
+
+            For i = 0 To UBound(BallArray)
                 If bolStopWorker Then Exit Sub
                 If BallArray(i).Visible Then
-                    If BallArray(i).LocX + FinalOffset.X > 0 And BallArray(i).LocX + FinalOffset.X < Form1.Render.Width / pic_scale And BallArray(i).LocY + FinalOffset.Y > 0 And BallArray(i).LocY + FinalOffset.Y < Form1.Render.Height / pic_scale Then
+                    If bolCulling And BallArray(i).LocX + FinalOffset.X < 0 Or bolCulling And BallArray(i).LocX + FinalOffset.X > Form1.Render.Width / pic_scale Or bolCulling And BallArray(i).LocY + FinalOffset.Y < 0 Or bolCulling And BallArray(i).LocY + FinalOffset.Y > Form1.Render.Height / pic_scale Then
+                    Else
+
+
                         If bolInvert Then
                             myBrush = New SolidBrush(Color.Black)
                         Else
@@ -102,6 +108,7 @@ Public Module Renderer
                             'End If
                         End If
                         'e.Graphics.FillEllipse(Brushes.Black, BallArray(i).LocX - BallArray(i).Size / 2 - 1, BallArray(i).LocY - BallArray(i).Size / 2 - 1, BallArray(i).Size + 2, BallArray(i).Size + 2)
+
                     End If
                 End If
 
@@ -109,6 +116,7 @@ Public Module Renderer
         End If
         bolDrawing = False
         Form1.Render.Image = bm
+
         '   Return bm
     End Sub
     Public Function ScaledPoint(Point As Point, Origin As Point, Optional Scale As Double = 1.0) As Point
