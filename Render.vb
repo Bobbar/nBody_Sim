@@ -16,9 +16,15 @@ Public Module Renderer
     Public RenderWindowDims As New Point(Form1.Render.Width, Form1.Render.Height)
     Public bm As New Bitmap(Form1.Render.Width, Form1.Render.Height) '(CInt(pic_scale * Render.Width), CInt(pic_scale * Render.Height))
     Public gr As Graphics = Graphics.FromImage(bm)
+    Public Structure extra_render_objects
+        Public Location As SPoint
+        Public Size As Single
+
+    End Structure
+    Public ExtraEllipses As New List(Of extra_render_objects)
     Public Sub UpdateScale()
-        '  Debug.Print("Scale Update")
-        If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
+    '  Debug.Print("Scale Update")
+    If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
             bm = New Bitmap(RenderWindowDims.X, RenderWindowDims.Y)
             gr = Graphics.FromImage(bm)
         End If
@@ -42,7 +48,6 @@ Public Module Renderer
         End If
         Dim myBrush As SolidBrush '(BallArray(i).Color)
         If bolDraw Then
-
 
             For i = 0 To UBound(BallArray)
                 BodyLoc = New SPoint(Convert.ToSingle(BallArray(i).LocX), Convert.ToSingle(BallArray(i).LocY))
@@ -77,6 +82,17 @@ Public Module Renderer
                             '  Dim myPen As New Pen(Color.Red)
                             ' Dim myBrush As New SolidBrush(BallArray(i).Color)
                             '    Dim myBrush2 As New SolidBrush(Color.Red)
+
+                            'If ExtraEllipses.Count > 0 Then
+
+                            '    For Each ellip As extra_render_objects In ExtraEllipses
+                            '        gr.DrawEllipse(myPen, ellip.Location.X - ellip.Size + FinalOffset.X, ellip.Location.Y - ellip.Size + FinalOffset.Y, ellip.Size * 2, ellip.Size * 2)
+                            '    Next
+
+                            'End If
+
+
+
                             If bolFollow Then
                                 RelBallPosMod.X = -BallArray(lngFollowBall).LocX
                                 RelBallPosMod.Y = -BallArray(lngFollowBall).LocY
@@ -109,6 +125,9 @@ Public Module Renderer
                                     End If
                                 End If
                             End If
+
+
+
                             'gr.FillEllipse(myBrush2, Convert.ToInt32(ScaleMousePosExact(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).X), Convert.ToInt32(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).Y), 5, 5)
                             'Else
                             '    Dim myPen As New Pen(BallArray(i).Color)

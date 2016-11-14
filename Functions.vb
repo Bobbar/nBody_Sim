@@ -1,4 +1,5 @@
-﻿Module Functions
+﻿Imports System.Math
+Module Functions
     Public bolTrails As Boolean = False
     Public bolDraw As Boolean = True
     Public bolLines As Boolean = False
@@ -41,4 +42,18 @@
             End If
         Next
     End Sub
+    Public Function ObjectInsideTarget(Target_Loc As SPoint, Target_Size As Single, Object_Loc As SPoint) As Boolean
+        Dim DistX As Double
+        Dim DistY As Double
+        Dim Dist As Double
+        Dim DistSqrt As Double
+
+        DistX = Target_Loc.X - Object_Loc.X
+        DistY = Target_Loc.Y - Object_Loc.Y
+        Dist = (DistX * DistX) + (DistY * DistY)
+        DistSqrt = Sqrt(Dist)
+
+        If DistSqrt <= Target_Size Then Return True
+        Return False
+    End Function
 End Module

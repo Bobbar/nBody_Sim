@@ -180,7 +180,9 @@ Public Class Form1
         End If
     End Sub
     Private Sub Render_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Render.MouseDown
-        '  Debug.Print("RenLoc: " & e.Location.ToString)
+        Debug.Print("RenLoc: " & e.Location.ToString)
+        Debug.Print("OffLoc: " & ScaleMousePosRelative(New SPoint(e.Location.X, e.Location.Y)).ToString)
+
         If e.Button = Windows.Forms.MouseButtons.Right Then
             bolStopDraw = True
             ReDim Preserve Ball(UBound(Ball) + 1)
@@ -216,7 +218,7 @@ Public Class Form1
                     If MouseOver(New SPoint(e.Location), Ball(i)) And Ball(i).Visible Then
                         'Debug.Print(Render.PointToClient(New Point(Ball(i).LocX, Ball(i).LocY)).ToString)
                         ' Debug.Print("BLoc: " & Ball(i).LocX & "-" & Ball(i).LocY)
-                        Debug.Print("Body Index: " & i)
+                        Debug.Print("Body Index: " & i & "  Body Loc: " & Ball(i).LocX & "," & Ball(i).LocY)
                         If Not bolAltDown And bolShiftDown Then MoV = 1
                         Sel = i
                         If bolShiftDown Then
