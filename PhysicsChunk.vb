@@ -381,48 +381,48 @@ Public NotInheritable Class PhysicsChunk
                 Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
                 Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
                 Slave.Visible = False
-                    'If Abs(Master.SpeedX - PrevSpdX) > 100 Or Abs(Master.SpeedY - PrevSpdY) > 100 Then
+                'If Abs(Master.SpeedX - PrevSpdX) > 100 Or Abs(Master.SpeedY - PrevSpdY) > 100 Then
 
-                    '    Debugger.Break()
+                '    Debugger.Break()
 
-                    'End If
-
-
-                    Area1 = PI * (Master.Size ^ 2)
-                    Area2 = PI * (Slave.Size ^ 2)
-                    Area1 = Area1 + Area2
-                    Master.Size = Sqrt(Area1 / PI)
-                    Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+                'End If
 
 
+                Area1 = PI * (Master.Size ^ 2)
+                Area2 = PI * (Slave.Size ^ 2)
+                Area1 = Area1 + Area2
+                Master.Size = Sqrt(Area1 / PI)
+                Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
 
 
 
 
-                    'If Sqrt(Master.Mass) * 3 > 350 Then Master.Color = System.Drawing.Color.Red
-                    'If Sqrt(Master.Mass) * 3 > 400 Then Master.Color = System.Drawing.Color.Yellow
-                    'If Sqrt(Master.Mass) * 3 > 500 Then Master.Color = System.Drawing.Color.White
-                    'If Sqrt(Master.Mass) * 3 > 600 Then Master.Color = System.Drawing.Color.LightCyan
-                    'If Sqrt(Master.Mass) * 3 > 700 Then Master.Color = System.Drawing.Color.LightBlue
-                    'If Sqrt(Master.Mass) * 3 > 1000 Then
-                    '    Master.Color = Color.Black
-                    '    Master.Size = 20
-                    '    If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
-                    'End If
 
 
-                    If Master.Flags.Contains("BH") Or Master.Mass >= TypicalSolarMass * 18 Then
-                        Master.Color = Color.Black
-                        Master.Size = 15
-                        If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
-                    End If
+                'If Sqrt(Master.Mass) * 3 > 350 Then Master.Color = System.Drawing.Color.Red
+                'If Sqrt(Master.Mass) * 3 > 400 Then Master.Color = System.Drawing.Color.Yellow
+                'If Sqrt(Master.Mass) * 3 > 500 Then Master.Color = System.Drawing.Color.White
+                'If Sqrt(Master.Mass) * 3 > 600 Then Master.Color = System.Drawing.Color.LightCyan
+                'If Sqrt(Master.Mass) * 3 > 700 Then Master.Color = System.Drawing.Color.LightBlue
+                'If Sqrt(Master.Mass) * 3 > 1000 Then
+                '    Master.Color = Color.Black
+                '    Master.Size = 20
+                '    If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
+                'End If
 
 
-                    If Master.Mass >= TypicalSolarMass * 0.3 Then Master.Color = System.Drawing.Color.Red
-                    If Master.Mass >= TypicalSolarMass * 0.8 Then Master.Color = System.Drawing.Color.Gold
-                    If Master.Mass >= TypicalSolarMass Then Master.Color = System.Drawing.Color.GhostWhite
-                    If Master.Mass >= TypicalSolarMass * 1.7 Then Master.Color = System.Drawing.Color.CornflowerBlue
-                    If Master.Mass >= TypicalSolarMass * 3.2 Then Master.Color = System.Drawing.Color.DeepSkyBlue
+                If Master.Flags.Contains("BH") Or Master.Mass >= TypicalSolarMass * 18 Then
+                    Master.Color = Color.Black
+                    Master.Size = 15
+                    If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
+                End If
+
+
+                If Master.Mass >= TypicalSolarMass * 0.3 Then Master.Color = System.Drawing.Color.Red
+                If Master.Mass >= TypicalSolarMass * 0.8 Then Master.Color = System.Drawing.Color.Gold
+                If Master.Mass >= TypicalSolarMass Then Master.Color = System.Drawing.Color.GhostWhite
+                If Master.Mass >= TypicalSolarMass * 1.7 Then Master.Color = System.Drawing.Color.CornflowerBlue
+                If Master.Mass >= TypicalSolarMass * 3.2 Then Master.Color = System.Drawing.Color.DeepSkyBlue
                 'Else
                 '    Dim Friction As Double = 0.7
                 '    Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX * Friction
