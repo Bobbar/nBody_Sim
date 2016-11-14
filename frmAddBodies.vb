@@ -20,7 +20,7 @@ Public Class frmAddBodies
         ' Dim Radius As Double = 1000
         Dim px, py As Double
 
-
+        Density = txtDensity.Text
         For i As Integer = 0 To NumberOfBodies
             ReDim Preserve Ball(UBound(Ball) + 1)
             Ball(UBound(Ball)).Index = UBound(Ball)
@@ -147,7 +147,7 @@ Public Class frmAddBodies
 
     End Sub
     Private Sub AddBodies_Stationary(NumberOfBodies As Integer, MaxSize As Integer, MinSize As Integer, BodyMass As Integer)
-
+        Density = txtDensity.Text
 
         For i As Integer = 0 To NumberOfBodies
             ReDim Preserve Ball(UBound(Ball) + 1)
@@ -185,11 +185,47 @@ Public Class frmAddBodies
     End Sub
 
     Private Sub frmAddBodies_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
+        txtDensity.Text = PhysicsLoop.Density
     End Sub
 
     Private Sub frmAddBodies_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
         e.Cancel = True
         Me.Hide()
+    End Sub
+
+    Private Sub txtNumOfBodies_TextChanged(sender As Object, e As EventArgs) Handles txtNumOfBodies.TextChanged
+
+    End Sub
+
+    Private Sub txtMinSize_TextChanged(sender As Object, e As EventArgs) Handles txtMinSize.TextChanged
+
+    End Sub
+
+    Private Sub Label2_Click(sender As Object, e As EventArgs) Handles Label2.Click
+
+    End Sub
+
+    Private Sub txtMaxSize_TextChanged(sender As Object, e As EventArgs) Handles txtMaxSize.TextChanged
+
+    End Sub
+
+    Private Sub Label3_Click(sender As Object, e As EventArgs) Handles Label3.Click
+
+    End Sub
+
+    Private Sub txtBodyMass_TextChanged(sender As Object, e As EventArgs) Handles txtBodyMass.TextChanged
+
+    End Sub
+
+    Private Sub Label6_Click(sender As Object, e As EventArgs) Handles Label6.Click
+
+    End Sub
+
+    Private Sub Label4_Click(sender As Object, e As EventArgs) Handles Label4.Click
+
+    End Sub
+
+    Private Sub Label1_Click(sender As Object, e As EventArgs) Handles Label1.Click
+
     End Sub
 End Class
