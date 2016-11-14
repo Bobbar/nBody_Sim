@@ -69,6 +69,7 @@ Public Module PhysicsLoop
         Public Color As Color
         Public IsFragment As Boolean
         Public Flags As String
+        Public Group As List(Of BallParms)
     End Structure
     Public Ball() As BallParms
     Dim PrevX As Single

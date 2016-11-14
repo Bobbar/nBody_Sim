@@ -430,27 +430,37 @@ Public NotInheritable Class PhysicsChunk
                     Dim Friction As Double = 0.7
 
 
+
+                    If IsInGroup(Master.Group, Slave) Then
+
+
+
+
+
+                    End If
+
+
                     Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX * Friction
-                    Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY * Friction
+                        Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY * Friction
 
 
-                    Slave.SpeedX = Slave.SpeedX + (U2 - V2) * VekX * Friction
-                    Slave.SpeedY = Slave.SpeedY + (U2 - V2) * VeKY * Friction
-                    Dim Vec1, Vec2 As New Vector
-                    'Vec1 = New Vector(Slave.LocX - Master.LocX, (Slave.LocY - Master.LocY))
-                    'Vec2 = New Vector((Master.LocX - Slave.LocX), (Master.LocY - Slave.LocY))
-                    Vec1 = New Vector(Slave.LocX - Master.LocX, (Slave.LocY - Master.LocY))
-                    Vec2 = New Vector((Slave.LocX - Master.LocX), (Slave.LocY - Master.LocY))
-                    Vec1.Normalize()
-                    Vec2.Normalize()
-                    'Vec1 = New SPoint((Slave.LocX - Master.LocX), (Slave.LocY - Master.LocY))
-                    'Vec2 = New SPoint((Master.LocX - Slave.LocX), (Master.LocY - Slave.LocY))
-                    Slave.LocX -= ((Slave.Size / 2) + (Master.Size / 2)) * Vec1.X
-                    Slave.LocY -= ((Slave.Size / 2) + (Master.Size / 2)) * Vec1.Y
+                        Slave.SpeedX = Slave.SpeedX + (U2 - V2) * VekX * Friction
+                        Slave.SpeedY = Slave.SpeedY + (U2 - V2) * VeKY * Friction
+                        Dim Vec1, Vec2 As New Vector
+                        'Vec1 = New Vector(Slave.LocX - Master.LocX, (Slave.LocY - Master.LocY))
+                        'Vec2 = New Vector((Master.LocX - Slave.LocX), (Master.LocY - Slave.LocY))
+                        Vec1 = New Vector(Slave.LocX - Master.LocX, (Slave.LocY - Master.LocY))
+                        Vec2 = New Vector((Slave.LocX - Master.LocX), (Slave.LocY - Master.LocY))
+                        Vec1.Normalize()
+                        Vec2.Normalize()
+                        'Vec1 = New SPoint((Slave.LocX - Master.LocX), (Slave.LocY - Master.LocY))
+                        'Vec2 = New SPoint((Master.LocX - Slave.LocX), (Master.LocY - Slave.LocY))
+                        Slave.LocX -= ((Slave.Size / 2) + (Master.Size / 2)) * Vec1.X
+                        Slave.LocY -= ((Slave.Size / 2) + (Master.Size / 2)) * Vec1.Y
+
+                    End If
 
                 End If
-
-            End If
 
         Else ' if bodies are at exact same position
 
@@ -480,6 +490,12 @@ Public NotInheritable Class PhysicsChunk
 
 
     End Sub
+    Private Function IsInGroup(Group As List(Of BallParms), Body As BallParms) As Boolean
+        For Each bdy As BallParms In Group
+            If Body.Index = bdy.Index Then Return True
+        Next
+        Return False
+    End Function
     Public Sub ShrinkBallArray()
         'On Error Resume Next
         ' Debug.Print("Cleaning Ball Array")
