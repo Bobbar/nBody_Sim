@@ -45,9 +45,9 @@ Public Module PhysicsLoop
     '// Some Variables are not used by my code, forget them. I didnt have the time to make my code clean....
     <Serializable()> Public Structure BallParms
         Public Index As Integer
-        Public Size As Single
-        Public LocX As Single
-        Public LocY As Single
+        Public Size As Double
+        Public LocX As Double
+        Public LocY As Double
         Public SpeedX As Double
         Public SpeedY As Double
         'Public PrevSpeedX As Single
