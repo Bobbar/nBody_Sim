@@ -124,17 +124,19 @@ Public NotInheritable Class PhysicsChunk
                                                     '  CollideBodies(Bodys(B), OuterBody(A))
                                                     OuterBody(A).Visible = False
                                                 Else
-                                                    If OuterBody(A).Index > Bodys(B).Index Then
-                                                        CollideBodies(OuterBody(A), Bodys(B))
-                                                        If IsInMyBodys(Bodys(B).Index) Then
-                                                            OuterBody(TrueIndex(B)).Visible = False
-                                                        End If
-                                                    ElseIf OuterBody(A).Index < Bodys(B).Index Then
-                                                        OuterBody(A).Visible = False
-                                                        'If IsInMyBodys(Bodys(B).Index) Then
-                                                        '    OuterBody(TrueIndex(B)).Visible = False
-                                                        'End If
-                                                    End If
+                                                    CollideBodies(OuterBody(A), Bodys(B))
+
+                                                    'If OuterBody(A).Index > Bodys(B).Index Then
+                                                    '    CollideBodies(OuterBody(A), Bodys(B))
+                                                    '    If IsInMyBodys(Bodys(B).Index) Then
+                                                    '        OuterBody(TrueIndex(B)).Visible = False
+                                                    '    End If
+                                                    'ElseIf OuterBody(A).Index < Bodys(B).Index Then
+                                                    '    OuterBody(A).Visible = False
+                                                    '    'If IsInMyBodys(Bodys(B).Index) Then
+                                                    '    '    OuterBody(TrueIndex(B)).Visible = False
+                                                    '    'End If
+                                                    'End If
 
                                                 End If
                                                 '   End If
@@ -371,16 +373,16 @@ Public NotInheritable Class PhysicsChunk
 
                 U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
 
-                '  U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
+                U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
 
 
                 PrevSpdX = Master.SpeedX
                 PrevSpdY = Master.SpeedY
 
-                'If Master.Mass <> Slave.Mass Then
-                Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
-                Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
-                Slave.Visible = False
+                If Master.Mass <> Slave.Mass Then
+                    Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+                    Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+                    Slave.Visible = False
                     'If Abs(Master.SpeedX - PrevSpdX) > 100 Or Abs(Master.SpeedY - PrevSpdY) > 100 Then
 
                     '    Debugger.Break()
@@ -411,27 +413,34 @@ Public NotInheritable Class PhysicsChunk
                     'End If
 
 
-                    If Master.Flags.Contains("BH") Or Master.Mass >= TypicalSolarMass * 18 Then
+                    If Master.Flags.Contains("BH") Then ' Or Master.Mass >= TypicalSolarMass * 18 Then
                         Master.Color = Color.Black
                         Master.Size = 15
                         If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
                     End If
 
 
-                    If Master.Mass >= TypicalSolarMass * 0.3 Then Master.Color = System.Drawing.Color.Red
-                    If Master.Mass >= TypicalSolarMass * 0.8 Then Master.Color = System.Drawing.Color.Gold
-                    If Master.Mass >= TypicalSolarMass Then Master.Color = System.Drawing.Color.GhostWhite
-                    If Master.Mass >= TypicalSolarMass * 1.7 Then Master.Color = System.Drawing.Color.CornflowerBlue
-                    If Master.Mass >= TypicalSolarMass * 3.2 Then Master.Color = System.Drawing.Color.DeepSkyBlue
-                'Else
-                '    Dim Friction As Double = 0.7
-                '    Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX * Friction
-                '    Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY * Friction
+                    'If Master.Mass >= TypicalSolarMass * 0.3 Then Master.Color = System.Drawing.Color.Red
+                    'If Master.Mass >= TypicalSolarMass * 0.8 Then Master.Color = System.Drawing.Color.Gold
+                    'If Master.Mass >= TypicalSolarMass Then Master.Color = System.Drawing.Color.GhostWhite
+                    'If Master.Mass >= TypicalSolarMass * 1.7 Then Master.Color = System.Drawing.Color.CornflowerBlue
+                    'If Master.Mass >= TypicalSolarMass * 3.2 Then Master.Color = System.Drawing.Color.DeepSkyBlue
+                Else
+                    Dim Friction As Double = 0.7
 
 
-                '    Slave.SpeedX = Slave.SpeedX + (U2 - V2) * VekX * Friction
-                '    Slave.SpeedY = Slave.SpeedY + (U2 - V2) * VeKY * Friction
-                'End If
+                    Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX * Friction
+                    Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY * Friction
+
+
+                    Slave.SpeedX = Slave.SpeedX + (U2 - V2) * VekX * Friction
+                    Slave.SpeedY = Slave.SpeedY + (U2 - V2) * VeKY * Friction
+                    Dim Vec1, Vec2 As SPoint
+                    Vec1 = New SPoint((Slave.LocX - Master.LocX), (Slave.LocY - Master.LocY))
+                    Vec2 = New SPoint((Master.LocX - Slave.LocX), (Master.LocY - Slave.LocY))
+                    Slave.LocX = VecX + ((Slave.Size / 2) + Master.Size / 2)) * 
+                    Slave.
+                End If
 
             End If
 

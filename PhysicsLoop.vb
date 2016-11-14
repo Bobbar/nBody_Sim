@@ -4,6 +4,10 @@ Imports System.Threading
 Imports System.Drawing.Drawing2D
 Imports System.Runtime.CompilerServices
 Public Module PhysicsLoop
+
+    ''' <summary>
+    ''' Point With Single Data Types
+    ''' </summary>
     Public Class SPoint
         Public X As Single
         Public Y As Single
@@ -375,7 +379,7 @@ restart:
     Public Function fnMass(Radius As Double) As Double
 
 
-        Return Sqrt(PI * (Radius ^ 2)) ^ 2 ' * Density
+        Return Sqrt(PI * (Radius ^ 2)) ^ 2 * Density
     End Function
     Private myRandom As New Random
     Public Function GetRandomNumber(ByVal Low As Double, ByVal High As Double) As Double

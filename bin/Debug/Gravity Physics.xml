@@ -42,5 +42,10 @@ Gravity Physics
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
 </member>
+<member name="T:Physics_Engine.PhysicsLoop.SPoint">
+ <summary>
+ Point With Single Data Types
+ </summary>
+</member>
 </members>
 </doc>

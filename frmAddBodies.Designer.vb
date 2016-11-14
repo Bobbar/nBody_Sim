@@ -38,6 +38,8 @@ Partial Class frmAddBodies
         Me.Label4 = New System.Windows.Forms.Label()
         Me.txtBodyMass = New System.Windows.Forms.TextBox()
         Me.Label6 = New System.Windows.Forms.Label()
+        Me.Label7 = New System.Windows.Forms.Label()
+        Me.txtDensity = New System.Windows.Forms.TextBox()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
@@ -114,7 +116,7 @@ Partial Class frmAddBodies
         '
         'txtNumOfBodies
         '
-        Me.txtNumOfBodies.Location = New System.Drawing.Point(36, 38)
+        Me.txtNumOfBodies.Location = New System.Drawing.Point(18, 39)
         Me.txtNumOfBodies.Name = "txtNumOfBodies"
         Me.txtNumOfBodies.Size = New System.Drawing.Size(59, 20)
         Me.txtNumOfBodies.TabIndex = 0
@@ -123,7 +125,7 @@ Partial Class frmAddBodies
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(33, 22)
+        Me.Label1.Location = New System.Drawing.Point(15, 23)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(51, 13)
         Me.Label1.TabIndex = 2
@@ -131,7 +133,7 @@ Partial Class frmAddBodies
         '
         'txtMinSize
         '
-        Me.txtMinSize.Location = New System.Drawing.Point(121, 38)
+        Me.txtMinSize.Location = New System.Drawing.Point(83, 39)
         Me.txtMinSize.Name = "txtMinSize"
         Me.txtMinSize.Size = New System.Drawing.Size(44, 20)
         Me.txtMinSize.TabIndex = 3
@@ -140,7 +142,7 @@ Partial Class frmAddBodies
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(118, 22)
+        Me.Label2.Location = New System.Drawing.Point(80, 23)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(47, 13)
         Me.Label2.TabIndex = 4
@@ -149,7 +151,7 @@ Partial Class frmAddBodies
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(177, 22)
+        Me.Label3.Location = New System.Drawing.Point(130, 23)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(50, 13)
         Me.Label3.TabIndex = 6
@@ -157,7 +159,7 @@ Partial Class frmAddBodies
         '
         'txtMaxSize
         '
-        Me.txtMaxSize.Location = New System.Drawing.Point(180, 38)
+        Me.txtMaxSize.Location = New System.Drawing.Point(133, 39)
         Me.txtMaxSize.Name = "txtMaxSize"
         Me.txtMaxSize.Size = New System.Drawing.Size(44, 20)
         Me.txtMaxSize.TabIndex = 5
@@ -166,7 +168,7 @@ Partial Class frmAddBodies
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(238, 22)
+        Me.Label4.Location = New System.Drawing.Point(180, 23)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(59, 13)
         Me.Label4.TabIndex = 6
@@ -174,7 +176,7 @@ Partial Class frmAddBodies
         '
         'txtBodyMass
         '
-        Me.txtBodyMass.Location = New System.Drawing.Point(241, 38)
+        Me.txtBodyMass.Location = New System.Drawing.Point(183, 39)
         Me.txtBodyMass.Name = "txtBodyMass"
         Me.txtBodyMass.Size = New System.Drawing.Size(56, 20)
         Me.txtBodyMass.TabIndex = 5
@@ -184,17 +186,36 @@ Partial Class frmAddBodies
         '
         Me.Label6.AutoSize = True
         Me.Label6.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label6.Location = New System.Drawing.Point(245, 61)
+        Me.Label6.Location = New System.Drawing.Point(187, 62)
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(47, 13)
         Me.Label6.TabIndex = 11
         Me.Label6.Text = "0 = Auto"
+        '
+        'Label7
+        '
+        Me.Label7.AutoSize = True
+        Me.Label7.Location = New System.Drawing.Point(250, 23)
+        Me.Label7.Name = "Label7"
+        Me.Label7.Size = New System.Drawing.Size(42, 13)
+        Me.Label7.TabIndex = 13
+        Me.Label7.Text = "Density"
+        '
+        'txtDensity
+        '
+        Me.txtDensity.Location = New System.Drawing.Point(253, 39)
+        Me.txtDensity.Name = "txtDensity"
+        Me.txtDensity.Size = New System.Drawing.Size(56, 20)
+        Me.txtDensity.TabIndex = 12
+        Me.txtDensity.Text = "0"
         '
         'frmAddBodies
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(344, 308)
+        Me.Controls.Add(Me.Label7)
+        Me.Controls.Add(Me.txtDensity)
         Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.txtMaxSize)
@@ -237,4 +258,6 @@ Partial Class frmAddBodies
     Friend WithEvents cmdAddOrbit As Button
     Friend WithEvents Label6 As Label
     Friend WithEvents cmdAddStation As Button
+    Friend WithEvents Label7 As Label
+    Friend WithEvents txtDensity As TextBox
 End Class
