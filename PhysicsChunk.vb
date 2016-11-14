@@ -4,6 +4,7 @@ Imports System.Threading
 Imports System.Drawing.Drawing2D
 Imports System.ComponentModel
 Imports System.IO
+Imports System.Windows
 Public NotInheritable Class PhysicsChunk
     Sub New(iUpperBody As Integer, iLowerBody As Integer, MainBodyArray() As BallParms)
         uBoundBody = iUpperBody
@@ -435,11 +436,18 @@ Public NotInheritable Class PhysicsChunk
 
                     Slave.SpeedX = Slave.SpeedX + (U2 - V2) * VekX * Friction
                     Slave.SpeedY = Slave.SpeedY + (U2 - V2) * VeKY * Friction
-                    Dim Vec1, Vec2 As SPoint
-                    Vec1 = New SPoint((Slave.LocX - Master.LocX), (Slave.LocY - Master.LocY))
-                    Vec2 = New SPoint((Master.LocX - Slave.LocX), (Master.LocY - Slave.LocY))
-                    Slave.LocX = VecX + ((Slave.Size / 2) + Master.Size / 2)) * 
-                    Slave.
+                    Dim Vec1, Vec2 As New Vector
+                    'Vec1 = New Vector(Slave.LocX - Master.LocX, (Slave.LocY - Master.LocY))
+                    'Vec2 = New Vector((Master.LocX - Slave.LocX), (Master.LocY - Slave.LocY))
+                    Vec1 = New Vector(Slave.LocX - Master.LocX, (Slave.LocY - Master.LocY))
+                    Vec2 = New Vector((Slave.LocX - Master.LocX), (Slave.LocY - Master.LocY))
+                    Vec1.Normalize()
+                    Vec2.Normalize()
+                    'Vec1 = New SPoint((Slave.LocX - Master.LocX), (Slave.LocY - Master.LocY))
+                    'Vec2 = New SPoint((Master.LocX - Slave.LocX), (Master.LocY - Slave.LocY))
+                    Slave.LocX -= ((Slave.Size / 2) + (Master.Size / 2)) * Vec1.X
+                    Slave.LocY -= ((Slave.Size / 2) + (Master.Size / 2)) * Vec1.Y
+
                 End If
 
             End If
