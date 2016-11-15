@@ -75,28 +75,33 @@ Public Class frmAddBodies
     Private Sub AddBodies_Orbit2(NumberOfBodies As Integer, MaxSize As Integer, MinSize As Integer, BodyMass As Integer, bolIncludeCenterMass As Boolean, MassOfCenterMass As Integer)
         On Error Resume Next
         'Dim Balls As Long = Number
-        Dim Radius As Double = 100
+        Dim Radius As Double = Form1.Render.Height ' / 2 / pic_scale
         Dim px, py As Double
-
+        Density = txtDensity.Text
+        MassOfCenterMass *= Density
         Dim newEllipse As extra_render_objects
-        newEllipse.Location = New SPoint(0, 0)
+        newEllipse.Location = ScaleMousePosRelative(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2)) 'ScaleMousePosRelative(New SPoint(0, 0))
         newEllipse.Size = Radius
         ExtraEllipses.Add(newEllipse)
+
+
+
+
         For i As Integer = 0 To NumberOfBodies
             ReDim Preserve Ball(UBound(Ball) + 1)
             Ball(UBound(Ball)).Index = UBound(Ball)
             Ball(UBound(Ball)).Color = RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
 
-            px = GetRandomNumber(Form1.Render.Width / 2 - Radius, Form1.Render.Width / 2 + Radius) - ScaleOffset.X - RelBallPosMod.X
-            py = GetRandomNumber(Form1.Render.Height / 2 - Radius, Form1.Render.Height / 2 + Radius) - ScaleOffset.Y - RelBallPosMod.Y
+            px = GetRandomNumber(newEllipse.Location.X - newEllipse.Size, newEllipse.Location.X + newEllipse.Size) ' - ScaleOffset.X - RelBallPosMod.X
+            py = GetRandomNumber(newEllipse.Location.Y - newEllipse.Size, newEllipse.Location.Y + newEllipse.Size) ' - ScaleOffset.Y - RelBallPosMod.Y
 
 
             If Not ObjectInsideTarget(newEllipse.Location, newEllipse.Size, New SPoint(px, py)) Then
                 Do Until ObjectInsideTarget(newEllipse.Location, newEllipse.Size, New SPoint(px, py))
 
-                    px = GetRandomNumber(Form1.Render.Width / 2 - Radius, Form1.Render.Width / 2 + Radius) - ScaleOffset.X - RelBallPosMod.X
-                    py = GetRandomNumber(Form1.Render.Height / 2 - Radius, Form1.Render.Height / 2 + Radius) - ScaleOffset.Y - RelBallPosMod.Y
+                    px = GetRandomNumber(newEllipse.Location.X - newEllipse.Size, newEllipse.Location.X + newEllipse.Size) ' - ScaleOffset.X - RelBallPosMod.X
+                    py = GetRandomNumber(newEllipse.Location.Y - newEllipse.Size, newEllipse.Location.Y + newEllipse.Size) ' - ScaleOffset.Y - RelBallPosMod.Y
 
                 Loop
 
@@ -108,7 +113,7 @@ Public Class frmAddBodies
 
             Dim absangle As Double = Atan(Abs(py / px))
             Dim thetav As Double = PI / 2 - absangle
-            Dim phiv As Double = Rnd() * PI
+            'Dim phiv As Double = Rnd() * PI
             Dim vx As Double = -1 * Sign(py) * Cos(thetav) * magv
             Dim vy As Double = Sign(px) * Sin(thetav) * magv
 
@@ -127,20 +132,20 @@ Public Class frmAddBodies
             End If
 
         Next
-
         If bolIncludeCenterMass Then
             ReDim Preserve Ball(UBound(Ball) + 1)
             Ball(UBound(Ball)).Index = UBound(Ball)
             Ball(UBound(Ball)).Color = Color.Black 'RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
-            Ball(UBound(Ball)).LocX = Form1.Render.Width / 2 / pic_scale - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
-            Ball(UBound(Ball)).LocY = Form1.Render.Height / 2 / pic_scale - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
+            Ball(UBound(Ball)).LocX = newEllipse.Location.X ' Form1.Render.Width / 2 / pic_scale - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
+            Ball(UBound(Ball)).LocY = newEllipse.Location.Y 'Form1.Render.Height / 2 / pic_scale - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
             Ball(UBound(Ball)).SpeedX = 0
             Ball(UBound(Ball)).SpeedY = 0
             Ball(UBound(Ball)).Flags = "BH"
             Ball(UBound(Ball)).Size = 15
             Ball(UBound(Ball)).Mass = MassOfCenterMass 'fnMass(Ball(UBound(Ball)).Size) ' * 2
         End If
+
 
 
         Debug.Print(UBound(Ball))

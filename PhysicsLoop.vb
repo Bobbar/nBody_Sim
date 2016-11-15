@@ -380,7 +380,7 @@ restart:
     Public Function fnMass(Radius As Double) As Double
 
 
-        Return Sqrt(PI * (Radius ^ 2)) ^ 2 * Density
+        Return Sqrt(PI * (Radius ^ 2)) * Density '^ 2
     End Function
     Private myRandom As New Random
     Public Function GetRandomNumber(ByVal Low As Double, ByVal High As Double) As Double
