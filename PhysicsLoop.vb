@@ -68,6 +68,7 @@ Public Module PhysicsLoop
         Public Mass As Double
         Public Color As Color
         Public IsFragment As Boolean
+        Public InRoche As Boolean
         Public Flags As String
         Public Group As List(Of BallParms)
     End Structure

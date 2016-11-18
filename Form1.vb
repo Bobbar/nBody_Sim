@@ -180,6 +180,7 @@ Public Class Form1
         End If
     End Sub
     Private Sub Render_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Render.MouseDown
+        On Error Resume Next
         Debug.Print("RenLoc: " & e.Location.ToString)
         Debug.Print("OffLoc: " & ScaleMousePosRelative(New SPoint(e.Location.X, e.Location.Y)).ToString)
 
@@ -195,6 +196,7 @@ Public Class Form1
             Ball(UBound(Ball)).Size = 1
             Ball(UBound(Ball)).Flags = ""
             Ball(UBound(Ball)).IsFragment = False
+            Ball(UBound(Ball)).Index = UBound(Ball)
             Ball(UBound(Ball)).Mass = fnMass(Ball(UBound(Ball)).Size)
             Ball(UBound(Ball)).Visible = True
             '  Ball(UBound(Ball)).Flags = Ball(UBound(Ball)).Flags + "BH"
@@ -1014,6 +1016,8 @@ Err:
                 Thread.Sleep(intDelay)
                 'Start loop
                 'Calc Splits
+                Ball = CullBodies(Ball)
+
 
                 BodyDiv = Int(UBound(Ball) / RunThreads)
                 Dim ExtraBodys As Integer = UBound(Ball) - (BodyDiv * RunThreads)
@@ -1085,6 +1089,18 @@ Err:
 
 
     End Sub
+    Private Function CullBodies(Bodies() As BallParms) As BallParms()
+        Dim tmpBodies(0) As BallParms
+        For i = 0 To UBound(Bodies)
+            If Bodies(i).Visible Then
+                ReDim Preserve tmpBodies(UBound(tmpBodies) + 1)
+                tmpBodies(UBound(tmpBodies)) = Bodies(i)
+            End If
+        Next
+        Return tmpBodies
+    End Function
+
+
     Private Sub PhysicsWorker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles PhysicsWorker.ProgressChanged
         ' Debug.Print("Render complete " & Now.Ticks)
         'Dim tmpBodys As New List(Of BallParms)

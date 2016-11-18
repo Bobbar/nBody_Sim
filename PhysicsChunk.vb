@@ -40,8 +40,9 @@ Public NotInheritable Class PhysicsChunk
     Dim NewBalls As New List(Of BallParms)
 
     Public Function CalcPhysics() ' As List(Of BallParms)
-        ' Dim tmpBodys As New List(Of BallParms)
+        Dim tmpBodys As New List(Of BallParms)
         ' Do Until bolStopWorker
+        Dim EPS As Double = 30000.0
         Dim OuterBody As BallParms() = MyBodys.ToArray
 
         'Do While bolStopLoop
@@ -53,10 +54,17 @@ Public NotInheritable Class PhysicsChunk
         If UBound(OuterBody) > 1 Then
             BUB = uBoundBody
             For A = 0 To UBound(OuterBody) ' Each OuterBody(A) As BallParms In MyBodys 'A = lBoundBody To uBoundBody
+                OuterBody(A).ForceX = 0
+                OuterBody(A).ForceY = 0
                 If OuterBody(A).Visible Then
                     If OuterBody(A).MovinG = False Then
                         For B = 0 To UBound(Bodys)
                             If Bodys(B).Visible And OuterBody(A).Index <> Bodys(B).Index Then
+                                'If OuterBody(A).Index = 792 And Bodys(B).Index = 2002 Then
+                                '    Debug.Print(DistSqrt & " - " & OuterBody(A).Size & " - " & Bodys(B).Size)
+                                'End If
+
+
                                 'If bolShawdow Then
                                 '    If InStr(1, OuterBody(A).Flags, "S") Then
                                 '        Dim m As Double, SlX As Double, SlY As Double
@@ -81,69 +89,69 @@ Public NotInheritable Class PhysicsChunk
                                         M1 = OuterBody(A).Mass '^ 2
                                         M2 = Bodys(B).Mass ' ^ 2
                                         TotMass = M1 * M2
-                                        Force = TotMass / (Dist * DistSqrt)
+                                        Force = TotMass / (DistSqrt * DistSqrt + 3 * 3) ' (Dist * DistSqrt)
 
 
-                                        ForceX = Force * DistX
-                                        ForceY = Force * DistY
+                                        ForceX = Force * DistX / DistSqrt
+                                        ForceY = Force * DistY / DistSqrt
 
-                                        OuterBody(A).SpeedX += StepMulti * ForceX / M1
-                                        OuterBody(A).SpeedY += StepMulti * ForceY / M1
+                                        OuterBody(A).ForceX += ForceX
+                                        OuterBody(A).ForceY += ForceY
 
+                                        'OuterBody(A).SpeedX += StepMulti * ForceX / M1
+                                        'OuterBody(A).SpeedY += StepMulti * ForceY / M1
 
-                                        If DistSqrt < 40 Then
-                                            'If Bodys(B).Mass > OuterBody(A).Mass * 5 Then
-                                            '    If Force > OuterBody(A).Mass / 2 Then 'And Bodys(B).Mass > OuterBody(A).Mass * 5 Then
-                                            '        ' bolRocheLimit = True
-                                            '    ElseIf (Force * 1.5) < OuterBody(A).Mass / 2 Then
-                                            '        bolRocheLimit = False
-                                            '        OuterBody(A).IsFragment = False
+                                        If DistSqrt < 100 Then
+                                            If Bodys(B).Mass > OuterBody(A).Mass * 5 Then
+                                                If Force > OuterBody(A).Mass * 3 Then 'And Bodys(B).Mass > OuterBody(A).Mass * 5 Then
+                                                    bolRocheLimit = True
+                                                    OuterBody(A).InRoche = True
+                                                    If (Force * 2) < OuterBody(A).Mass * 3 And OuterBody(A).IsFragment Then
+                                                        bolRocheLimit = False
+                                                        OuterBody(A).IsFragment = False
+                                                    End If
 
-                                            '    End If
-                                            '    If bolRocheLimit And OuterBody(A).Size > 1 Then
-                                            '        '  NewBalls.AddRange(FractureBall(OuterBody(A)))
-                                            '    End If
-                                            'Else
-                                            '    bolRocheLimit = False
-                                            'End If
-                                            'If OuterBody(A).Index = 20 And Bodys(B).Index = 3 Then
-                                            '    Debug.Print(DistSqrt & " - " & OuterBody(A).Size & " - " & Bodys(B).Size)
-                                            'End If
+                                                End If
+                                                If OuterBody(A).InRoche And OuterBody(A).Size > 1 Then
+                                                    NewBalls.AddRange(FractureBall(OuterBody(A)))
+                                                    OuterBody(A).Visible = False
+                                                End If
+                                            Else
+                                                bolRocheLimit = False
+                                            End If
+
 
                                             If DistSqrt <= (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) Then 'Collision reaction
-                                                ' If Not bolRocheLimit Then
+                                                '   If Not bolRocheLimit Then
                                                 If OuterBody(A).Mass > Bodys(B).Mass Then
                                                     '  Debug.Print(Bodys(B).Visible)
                                                     CollideBodies(OuterBody(A), Bodys(B))
                                                     '   Debug.Print(Bodys(B).Visible)
 
-                                                    If IsInMyBodys(Bodys(B).Index) Then
-                                                        OuterBody(TrueIndex(B)).Visible = False
-                                                    End If
+                                                    'If IsInMyBodys(Bodys(B).Index) Then
+                                                    '    OuterBody(TrueIndex(B)).Visible = False
+                                                    'End If
                                                 ElseIf OuterBody(A).Mass < Bodys(B).Mass Then
                                                     '  CollideBodies(Bodys(B), OuterBody(A))
                                                     OuterBody(A).Visible = False
                                                 Else
-                                                    'If OuterBody(A).Index > Bodys(B).Index Then
+                                                    CollideBodies(OuterBody(A), Bodys(B), True)
+                                                    'If A Mod 2 = 0 Then
                                                     '    CollideBodies(OuterBody(A), Bodys(B))
-                                                    '    If IsInMyBodys(Bodys(B).Index) Then
-                                                    '        OuterBody(TrueIndex(B)).Visible = False
-                                                    '    End If
-                                                    'ElseIf OuterBody(A).Index < Bodys(B).Index Then
+
+                                                    'Else
                                                     '    OuterBody(A).Visible = False
-                                                    '    'If IsInMyBodys(Bodys(B).Index) Then
-                                                    '    '    OuterBody(TrueIndex(B)).Visible = False
-                                                    '    'End If
+
 
                                                     'End If
 
 
-                                                    CollideBodies(OuterBody(A), Bodys(B))
+                                                    '  CollideBodies(OuterBody(A), Bodys(B))
 
                                                 End If
-                                                '   End If
+                                                    '  End If
+                                                End If
                                             End If
-                                        End If
                                     Else
                                     End If
                                 End If
@@ -153,19 +161,33 @@ Public NotInheritable Class PhysicsChunk
                         Next B
                     End If
                 End If
-                OuterBody(A).LocX = OuterBody(A).LocX + (StepMulti * OuterBody(A).SpeedX)
-                OuterBody(A).LocY = OuterBody(A).LocY + (StepMulti * OuterBody(A).SpeedY)
+
+                'OuterBody(A).LocX = OuterBody(A).LocX + (StepMulti * OuterBody(A).SpeedX)
+                'OuterBody(A).LocY = OuterBody(A).LocY + (StepMulti * OuterBody(A).SpeedY)
                 ' tmpBodys.Add(OuterBody(A))
 
             Next A
         End If
+
         ''    ShrinkBallArray()
         ''If UBound(Ball) > 10000 Then
         ''End If
-        'If NewBalls.Count > 0 Then
-        '    ' AddNewBalls(NewBalls)
-        '    tmpBodys.AddRange(NewBalls)
-        'End If
+        UpdateBodies(OuterBody)
+        If NewBalls.Count > 0 Then
+            MyBodys.Clear()
+            MyBodys.AddRange(OuterBody)
+
+            MyBodys.AddRange(NewBalls)
+            '  OuterBody = MyBodys.ToArray
+            'AddNewBalls(NewBalls)
+            '  tmpBodys.AddRange(NewBalls)
+        Else
+            MyBodys.Clear()
+            MyBodys.AddRange(OuterBody)
+        End If
+
+
+
         '*******  PhysicsWorker.ReportProgress(1, Ball) ******
         'EndTick = Now.Ticks
         'ElapTick = EndTick - StartTick
@@ -182,10 +204,21 @@ Public NotInheritable Class PhysicsChunk
         '   StopTimer()
         '  Loop
         ' Return tmpBodys
-        MyBodys.Clear()
-        MyBodys.AddRange(OuterBody)
+
         '  MyBodys = OuterBody 'tmpBodys
     End Function
+    Private Sub UpdateBodies(ByRef Bodies() As BallParms)
+
+        For i As Integer = 0 To UBound(Bodies)
+            Bodies(i).SpeedX += StepMulti * Bodies(i).ForceX / Bodies(i).Mass
+            Bodies(i).SpeedY += StepMulti * Bodies(i).ForceY / Bodies(i).Mass
+            Bodies(i).LocX += StepMulti * Bodies(i).SpeedX
+            Bodies(i).LocY += StepMulti * Bodies(i).SpeedY
+
+        Next
+
+
+    End Sub
     Private Function IsInMyBodys(index As Integer) As Boolean
         For Each Body As BallParms In MyBodys
 
@@ -259,6 +292,7 @@ Public NotInheritable Class PhysicsChunk
                 'Ball(u).Flags = Body.Flags + "R"
                 tmpBall.Color = Body.Color 'vbWhite
                 tmpBall.Flags = ""
+                tmpBall.Index = UBound(Ball) + 1
                 tmpBall.IsFragment = True
                 tmpBall.Visible = True
                 '  Ball(u).LocY = Body.LocY + Ball(u).Size * 2
@@ -319,7 +353,7 @@ Public NotInheritable Class PhysicsChunk
 
         Return False
     End Function
-    Private Sub CollideBodies(ByRef Master As BallParms, ByRef Slave As BallParms)
+    Private Sub CollideBodies(ByRef Master As BallParms, ByRef Slave As BallParms, Optional Bump As Boolean = False)
         Dim VeKY As Double
         Dim VekX As Double
         Dim V1x As Double
@@ -350,32 +384,37 @@ Public NotInheritable Class PhysicsChunk
         DistSqrt = Sqrt(Dist)
         ' Debug.Print("Col dist:" & DistSqrt)
         If DistSqrt > 0 Then
+
+            V1x = Master.SpeedX
+            V1y = Master.SpeedY
+            V2x = Slave.SpeedX
+            V2y = Slave.SpeedY
+
+            M1 = Master.Mass + Slave.Mass
+            M2 = Slave.Mass
+
+            VekX = DistX / 2 ' (Ball(A).LocX - Ball(B).LocX) / 2
+            VeKY = DistY / 2 '(Ball(A).LocY - Ball(B).LocY) / 2
+
+            VekX = VekX / (DistSqrt / 2) 'LenG
+            VeKY = VeKY / (DistSqrt / 2) 'LenG
+
+            V1 = VekX * V1x + VeKY * V1y
+            V2 = VekX * V2x + VeKY * V2y
+
+            U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
+
+            U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
             If Not Master.IsFragment Then
-                If Master.Mass <> Slave.Mass Then
+
+
+
+
+                If Not Bump Then
                     ' If IsInMyBodys(Slave.Index) Then Slave.Visible = False
 
                     '   Master.Visible = False
                     ' Master.IsFragment = False
-                    V1x = Master.SpeedX
-                    V1y = Master.SpeedY
-                    V2x = Slave.SpeedX
-                    V2y = Slave.SpeedY
-
-                    M1 = Master.Mass
-                    M2 = Slave.Mass
-
-                    VekX = DistX / 2 ' (Ball(A).LocX - Ball(B).LocX) / 2
-                    VeKY = DistY / 2 '(Ball(A).LocY - Ball(B).LocY) / 2
-
-                    VekX = VekX / (DistSqrt / 2) 'LenG
-                    VeKY = VeKY / (DistSqrt / 2) 'LenG
-
-                    V1 = VekX * V1x + VeKY * V1y
-                    V2 = VekX * V2x + VeKY * V2y
-
-                    U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-
-                    U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
 
 
                     PrevSpdX = Master.SpeedX
@@ -399,25 +438,29 @@ Public NotInheritable Class PhysicsChunk
                     Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
 
 
-                Else
+                End If
 
 
 
 
 
-                    'If Master.Flags.Contains("BH") Or Master.Mass >= TypicalSolarMass * 18 Then
-                    '    Master.Color = Color.Black
-                    '    Master.Size = 15
-                    '    If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
-                    'End If
+                'If Master.Flags.Contains("BH") Or Master.Mass >= TypicalSolarMass * 18 Then
+                '    Master.Color = Color.Black
+                '    Master.Size = 15
+                '    If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
+                'End If
 
 
-                    'If Master.Mass >= TypicalSolarMass * 0.3 Then Master.Color = System.Drawing.Color.Red
-                    'If Master.Mass >= TypicalSolarMass * 0.8 Then Master.Color = System.Drawing.Color.Gold
-                    'If Master.Mass >= TypicalSolarMass Then Master.Color = System.Drawing.Color.GhostWhite
-                    'If Master.Mass >= TypicalSolarMass * 1.7 Then Master.Color = System.Drawing.Color.CornflowerBlue
-                    'If Master.Mass >= TypicalSolarMass * 3.2 Then Master.Color = System.Drawing.Color.DeepSkyBlue
-                    'Else
+                'If Master.Mass >= TypicalSolarMass * 0.3 Then Master.Color = System.Drawing.Color.Red
+                'If Master.Mass >= TypicalSolarMass * 0.8 Then Master.Color = System.Drawing.Color.Gold
+                'If Master.Mass >= TypicalSolarMass Then Master.Color = System.Drawing.Color.GhostWhite
+                'If Master.Mass >= TypicalSolarMass * 1.7 Then Master.Color = System.Drawing.Color.CornflowerBlue
+                'If Master.Mass >= TypicalSolarMass * 3.2 Then Master.Color = System.Drawing.Color.DeepSkyBlue
+                'Else
+
+                'End If
+            Else
+                If Master.InRoche Then
                     Dim Friction As Double = 0.7
                     Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX * Friction
                     Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY * Friction
@@ -425,36 +468,40 @@ Public NotInheritable Class PhysicsChunk
 
                     Slave.SpeedX = Slave.SpeedX + (U2 - V2) * VekX * Friction
                     Slave.SpeedY = Slave.SpeedY + (U2 - V2) * VeKY * Friction
-                    'End If
-                End If
-            End If
-
-            Else ' if bodies are at exact same position
-
-                'Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
-                ' Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
-
-                If Master.Mass > Slave.Mass Then
-                    Area1 = PI * (Master.Size ^ 2)
-                    Area2 = PI * (Slave.Size ^ 2)
-                    Area1 = Area1 + Area2
-                    Master.Size = Sqrt(Area1 / PI)
-                    Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
-                    Slave.Visible = False
-                Else
-                    Area1 = PI * (Master.Size ^ 2)
-                    Area2 = PI * (Slave.Size ^ 2)
-                    Area1 = Area1 + Area2
-                    Slave.Size = Sqrt(Area1 / PI)
-                    Slave.Mass = Slave.Mass + Master.Mass 'Sqr(Ball(B).Mass)
-                    Master.Visible = False
                 End If
 
-
-
-
-
             End If
+
+
+
+
+
+        Else ' if bodies are at exact same position
+
+            'Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+            ' Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+
+            If Master.Mass > Slave.Mass Then
+                Area1 = PI * (Master.Size ^ 2)
+                Area2 = PI * (Slave.Size ^ 2)
+                Area1 = Area1 + Area2
+                Master.Size = Sqrt(Area1 / PI)
+                Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+                Slave.Visible = False
+            Else
+                Area1 = PI * (Master.Size ^ 2)
+                Area2 = PI * (Slave.Size ^ 2)
+                Area1 = Area1 + Area2
+                Slave.Size = Sqrt(Area1 / PI)
+                Slave.Mass = Slave.Mass + Master.Mass 'Sqr(Ball(B).Mass)
+                Master.Visible = False
+            End If
+
+
+
+
+
+        End If
 
 
     End Sub
