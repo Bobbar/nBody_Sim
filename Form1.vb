@@ -220,7 +220,7 @@ Public Class Form1
                     If MouseOver(New SPoint(e.Location), Ball(i)) And Ball(i).Visible Then
                         'Debug.Print(Render.PointToClient(New Point(Ball(i).LocX, Ball(i).LocY)).ToString)
                         ' Debug.Print("BLoc: " & Ball(i).LocX & "-" & Ball(i).LocY)
-                        Debug.Print("Body Index: " & i & "  Body Loc: " & Ball(i).LocX & "," & Ball(i).LocY)
+                        Debug.Print("Body Index: " & Ball(i).Index & "  Body Loc: " & Ball(i).LocX & "," & Ball(i).LocY)
                         If Not bolAltDown And bolShiftDown Then MoV = 1
                         Sel = i
                         If bolShiftDown Then
@@ -1016,7 +1016,7 @@ Err:
                 Thread.Sleep(intDelay)
                 'Start loop
                 'Calc Splits
-                Ball = CullBodies(Ball)
+                ' Ball = CullBodies(Ball)
 
 
                 BodyDiv = Int(UBound(Ball) / RunThreads)
