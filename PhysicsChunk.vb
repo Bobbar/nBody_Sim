@@ -42,7 +42,7 @@ Public NotInheritable Class PhysicsChunk
     Public Function CalcPhysics() ' As List(Of BallParms)
         Dim tmpBodys As New List(Of BallParms)
         ' Do Until bolStopWorker
-        Dim EPS As Double = 30000.0
+        Dim EPS As Double = 2
         Dim OuterBody As BallParms() = MyBodys.ToArray
 
         'Do While bolStopLoop
@@ -89,7 +89,7 @@ Public NotInheritable Class PhysicsChunk
                                         M1 = OuterBody(A).Mass '^ 2
                                         M2 = Bodys(B).Mass ' ^ 2
                                         TotMass = M1 * M2
-                                        Force = TotMass / (DistSqrt * DistSqrt + 3 * 3) ' (Dist * DistSqrt)
+                                        Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS) ' (Dist * DistSqrt)
 
 
                                         ForceX = Force * DistX / DistSqrt
@@ -106,7 +106,7 @@ Public NotInheritable Class PhysicsChunk
                                                 If Force > OuterBody(A).Mass * 3 Then 'And Bodys(B).Mass > OuterBody(A).Mass * 5 Then
                                                     bolRocheLimit = True
                                                     '   OuterBody(A).InRoche = True
-                                                ElseIf (Force * 2) < OuterBody(A).Mass * 3 Then
+                                                ElseIf (Force * 3) < OuterBody(A).Mass * 3 Then
                                                     bolRocheLimit = False
                                                     OuterBody(A).IsFragment = False
                                                     '     OuterBody(A).InRoche = False
@@ -414,7 +414,7 @@ Public NotInheritable Class PhysicsChunk
             'If Not Master.InRoche Then
 
             If Master.IsFragment Or Slave.IsFragment Then
-                Debug.Print(".....")
+                '    Debug.Print(".....")
             End If
             If Master.Mass <> Slave.Mass Then
                 If Not Master.IsFragment Then

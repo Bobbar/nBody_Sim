@@ -40,19 +40,23 @@ Partial Class frmAddBodies
         Me.Label6 = New System.Windows.Forms.Label()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.txtDensity = New System.Windows.Forms.TextBox()
+        Me.Label8 = New System.Windows.Forms.Label()
+        Me.txtRadius = New System.Windows.Forms.TextBox()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
         '
         'GroupBox1
         '
+        Me.GroupBox1.Controls.Add(Me.Label8)
+        Me.GroupBox1.Controls.Add(Me.txtRadius)
         Me.GroupBox1.Controls.Add(Me.cmdAddOrbit)
         Me.GroupBox1.Controls.Add(Me.Label5)
         Me.GroupBox1.Controls.Add(Me.txtCenterMass)
         Me.GroupBox1.Controls.Add(Me.chkCenterMass)
         Me.GroupBox1.Location = New System.Drawing.Point(12, 79)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(316, 122)
+        Me.GroupBox1.Size = New System.Drawing.Size(316, 133)
         Me.GroupBox1.TabIndex = 0
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Add Into Circular Orbit"
@@ -69,7 +73,7 @@ Partial Class frmAddBodies
         'Label5
         '
         Me.Label5.AutoSize = True
-        Me.Label5.Location = New System.Drawing.Point(39, 59)
+        Me.Label5.Location = New System.Drawing.Point(40, 50)
         Me.Label5.Name = "Label5"
         Me.Label5.Size = New System.Drawing.Size(66, 13)
         Me.Label5.TabIndex = 9
@@ -77,7 +81,7 @@ Partial Class frmAddBodies
         '
         'txtCenterMass
         '
-        Me.txtCenterMass.Location = New System.Drawing.Point(42, 75)
+        Me.txtCenterMass.Location = New System.Drawing.Point(43, 66)
         Me.txtCenterMass.Name = "txtCenterMass"
         Me.txtCenterMass.Size = New System.Drawing.Size(56, 20)
         Me.txtCenterMass.TabIndex = 8
@@ -98,7 +102,7 @@ Partial Class frmAddBodies
         'GroupBox2
         '
         Me.GroupBox2.Controls.Add(Me.cmdAddStation)
-        Me.GroupBox2.Location = New System.Drawing.Point(14, 207)
+        Me.GroupBox2.Location = New System.Drawing.Point(14, 218)
         Me.GroupBox2.Name = "GroupBox2"
         Me.GroupBox2.Size = New System.Drawing.Size(314, 78)
         Me.GroupBox2.TabIndex = 1
@@ -209,6 +213,23 @@ Partial Class frmAddBodies
         Me.txtDensity.TabIndex = 12
         Me.txtDensity.Text = "0"
         '
+        'Label8
+        '
+        Me.Label8.AutoSize = True
+        Me.Label8.Location = New System.Drawing.Point(40, 91)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(40, 13)
+        Me.Label8.TabIndex = 12
+        Me.Label8.Text = "Radius"
+        '
+        'txtRadius
+        '
+        Me.txtRadius.Location = New System.Drawing.Point(43, 107)
+        Me.txtRadius.Name = "txtRadius"
+        Me.txtRadius.Size = New System.Drawing.Size(56, 20)
+        Me.txtRadius.TabIndex = 11
+        Me.txtRadius.Text = "1000"
+        '
         'frmAddBodies
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -260,4 +281,6 @@ Partial Class frmAddBodies
     Friend WithEvents cmdAddStation As Button
     Friend WithEvents Label7 As Label
     Friend WithEvents txtDensity As TextBox
+    Friend WithEvents Label8 As Label
+    Friend WithEvents txtRadius As TextBox
 End Class

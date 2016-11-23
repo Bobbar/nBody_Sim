@@ -75,7 +75,7 @@ Public Class frmAddBodies
     Private Sub AddBodies_Orbit2(NumberOfBodies As Integer, MaxSize As Integer, MinSize As Integer, BodyMass As Integer, bolIncludeCenterMass As Boolean, MassOfCenterMass As Integer)
         On Error Resume Next
         'Dim Balls As Long = Number
-        Dim Radius As Double = 5000 ' / 2 / pic_scale
+        Dim Radius As Double = Int(txtRadius.Text) '5000 ' / 2 / pic_scale
         Dim px, py As Double
         Density = txtDensity.Text
         MassOfCenterMass *= Density
