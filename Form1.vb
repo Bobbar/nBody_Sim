@@ -221,6 +221,8 @@ Public Class Form1
                         'Debug.Print(Render.PointToClient(New Point(Ball(i).LocX, Ball(i).LocY)).ToString)
                         ' Debug.Print("BLoc: " & Ball(i).LocX & "-" & Ball(i).LocY)
                         Debug.Print("Body Index: " & Ball(i).Index & "  Body Loc: " & Ball(i).LocX & "," & Ball(i).LocY)
+                        Debug.Print("Mass: " & Ball(i).Mass & " " & "Size: " & Ball(i).Size)
+                        Debug.Print("InRoche: " & Ball(i).InRoche.ToString & " " & "RocheF: " & Ball(i).ForceTot)
                         If Not bolAltDown And bolShiftDown Then MoV = 1
                         Sel = i
                         If bolShiftDown Then
@@ -1440,6 +1442,11 @@ Err:
 
     Private Sub tmrRender_Tick(sender As Object, e As EventArgs) Handles tmrRender.Tick
         ' If bolDraw Then Me.Render.Image = Drawr()
+        If bolStop Then
+            Drawr(Ball)
+            SetUIInfo()
+        End If
+
     End Sub
     Private Sub TotalMassToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TotalMassToolStripMenuItem.Click
         Dim TotalMass As Double

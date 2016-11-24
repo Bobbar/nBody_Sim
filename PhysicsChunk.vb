@@ -76,7 +76,7 @@ Public NotInheritable Class PhysicsChunk
                                 '    End If
                                 'End If
                                 If Bodys(B).LocX = OuterBody(A).LocX And Bodys(B).LocY = OuterBody(A).LocY Then
-                                    CollideBodies(OuterBody(A), Bodys(B))
+                                    '  CollideBodies(OuterBody(A), Bodys(B))
                                 End If
                                 If bGrav = 0 Then
                                 Else
@@ -255,6 +255,9 @@ Public NotInheritable Class PhysicsChunk
         Dist = (DistX * DistX) + (DistY * DistY)
         DistSqrt = Sqrt(Dist)
         ' Debug.Print("Col dist:" & DistSqrt)
+        If Master.Index = Slave.Index Then
+            Debugger.Break()
+        End If
         If DistSqrt > 0 Then
 
             V1x = Master.SpeedX
@@ -283,27 +286,35 @@ Public NotInheritable Class PhysicsChunk
                 '   Debug.Print(".....")
             End If
             '  If Master.Mass <> Slave.Mass Then
-            If Not Master.InRoche Then
+            If Not Master.InRoche And Slave.InRoche Then
 
-
-                ' If IsInMyBodys(Slave.Index) Then Slave.Visible = False
-
-                '   Master.Visible = False
-                ' Master.IsFragment = False
 
 
                 PrevSpdX = Master.SpeedX
+                PrevSpdY = Master.SpeedY
+
+                Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+                Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+                Slave.Visible = False
+
+
+
+                Area1 = PI * (Master.Size ^ 2)
+                Area2 = PI * (Slave.Size ^ 2)
+                Area1 = Area1 + Area2
+                Master.Size = Sqrt(Area1 / PI)
+                Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+
+            ElseIf Not Master.InRoche And Not Slave.InRoche Then
+
+                If Master.Index > Slave.Index Then
+                    PrevSpdX = Master.SpeedX
                     PrevSpdY = Master.SpeedY
 
-                    'If Master.Mass <> Slave.Mass Then
                     Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
                     Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
                     Slave.Visible = False
-                    'If Abs(Master.SpeedX - PrevSpdX) > 100 Or Abs(Master.SpeedY - PrevSpdY) > 100 Then
 
-                    '    Debugger.Break()
-
-                    'End If
 
 
                     Area1 = PI * (Master.Size ^ 2)
@@ -311,43 +322,28 @@ Public NotInheritable Class PhysicsChunk
                     Area1 = Area1 + Area2
                     Master.Size = Sqrt(Area1 / PI)
                     Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+                Else
+
+                    Master.Visible = False
 
 
-                    '    End If
+                End If
 
 
 
+            ElseIf Master.InRoche And Slave.InRoche Then
+
+                    Dim Friction As Double = 0.8
+                    Master.SpeedX += (U1 - V1) * VekX * Friction
+                    Master.SpeedY += (U1 - V1) * VeKY * Friction
 
 
-                    'If Master.Flags.Contains("BH") Or Master.Mass >= TypicalSolarMass * 18 Then
-                    '    Master.Color = Color.Black
-                    '    Master.Size = 15
-                    '    If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
-                    'End If
+                    Slave.SpeedX += (U2 - V2) * VekX * Friction
+                    Slave.SpeedY += (U2 - V2) * VeKY * Friction
 
+                ElseIf Master.InRoche And Not Slave.InRoche Then
 
-                    'If Master.Mass >= TypicalSolarMass * 0.3 Then Master.Color = System.Drawing.Color.Red
-                    'If Master.Mass >= TypicalSolarMass * 0.8 Then Master.Color = System.Drawing.Color.Gold
-                    'If Master.Mass >= TypicalSolarMass Then Master.Color = System.Drawing.Color.GhostWhite
-                    'If Master.Mass >= TypicalSolarMass * 1.7 Then Master.Color = System.Drawing.Color.CornflowerBlue
-                    'If Master.Mass >= TypicalSolarMass * 3.2 Then Master.Color = System.Drawing.Color.DeepSkyBlue
-                    'Else
-
-                    'End If
-
-                ElseIf Master.InRoche And Slave.InRoche Then
-
-                Dim Friction As Double = 0.8
-                Master.SpeedX += (U1 - V1) * VekX * Friction
-                Master.SpeedY += (U1 - V1) * VeKY * Friction
-
-
-                Slave.SpeedX += (U2 - V2) * VekX * Friction
-                Slave.SpeedY += (U2 - V2) * VeKY * Friction
-
-            ElseIf Master.InRoche And Not Slave.InRoche Then
-
-                Master.Visible = False
+                    Master.Visible = False
 
 
 

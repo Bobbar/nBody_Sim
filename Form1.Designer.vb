@@ -45,6 +45,7 @@ Partial Class Form1
         Me.txtFPS = New System.Windows.Forms.TextBox()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.TimeStep = New System.Windows.Forms.NumericUpDown()
+        Me.NumThreads = New System.Windows.Forms.NumericUpDown()
         Me.PhysicsWorker = New System.ComponentModel.BackgroundWorker()
         Me.tmrRender = New System.Windows.Forms.Timer(Me.components)
         Me.lblDelay = New System.Windows.Forms.Label()
@@ -66,14 +67,13 @@ Partial Class Form1
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmdTrails = New System.Windows.Forms.Button()
         Me.UI_Worker = New System.ComponentModel.BackgroundWorker()
-        Me.NumThreads = New System.Windows.Forms.NumericUpDown()
         Me.lblRenTime = New System.Windows.Forms.Label()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NumThreads, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MenuStrip1.SuspendLayout()
         Me.Panel1.SuspendLayout()
-        CType(Me.NumThreads, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Render
@@ -309,6 +309,17 @@ Partial Class Form1
         Me.ToolTip1.SetToolTip(Me.TimeStep, "Time Step")
         Me.TimeStep.Value = New Decimal(New Integer() {5, 0, 0, 196608})
         '
+        'NumThreads
+        '
+        Me.NumThreads.Location = New System.Drawing.Point(325, 6)
+        Me.NumThreads.Maximum = New Decimal(New Integer() {16, 0, 0, 0})
+        Me.NumThreads.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me.NumThreads.Name = "NumThreads"
+        Me.NumThreads.Size = New System.Drawing.Size(48, 20)
+        Me.NumThreads.TabIndex = 49
+        Me.ToolTip1.SetToolTip(Me.NumThreads, "Number Of Threads")
+        Me.NumThreads.Value = New Decimal(New Integer() {1, 0, 0, 0})
+        '
         'PhysicsWorker
         '
         Me.PhysicsWorker.WorkerReportsProgress = True
@@ -316,7 +327,8 @@ Partial Class Form1
         '
         'tmrRender
         '
-        Me.tmrRender.Interval = 1
+        Me.tmrRender.Enabled = True
+        Me.tmrRender.Interval = 10
         '
         'lblDelay
         '
@@ -435,19 +447,19 @@ Partial Class Form1
         'TotalMassToolStripMenuItem
         '
         Me.TotalMassToolStripMenuItem.Name = "TotalMassToolStripMenuItem"
-        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
         Me.TotalMassToolStripMenuItem.Text = "Total Mass"
         '
         'tsmSave
         '
         Me.tsmSave.Name = "tsmSave"
-        Me.tsmSave.Size = New System.Drawing.Size(152, 22)
+        Me.tsmSave.Size = New System.Drawing.Size(130, 22)
         Me.tsmSave.Text = "Save State"
         '
         'tsmLoad
         '
         Me.tsmLoad.Name = "tsmLoad"
-        Me.tsmLoad.Size = New System.Drawing.Size(152, 22)
+        Me.tsmLoad.Size = New System.Drawing.Size(130, 22)
         Me.tsmLoad.Text = "Load State"
         '
         'Panel1
@@ -487,17 +499,6 @@ Partial Class Form1
         '
         Me.UI_Worker.WorkerReportsProgress = True
         Me.UI_Worker.WorkerSupportsCancellation = True
-        '
-        'NumThreads
-        '
-        Me.NumThreads.Location = New System.Drawing.Point(325, 6)
-        Me.NumThreads.Maximum = New Decimal(New Integer() {16, 0, 0, 0})
-        Me.NumThreads.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
-        Me.NumThreads.Name = "NumThreads"
-        Me.NumThreads.Size = New System.Drawing.Size(48, 20)
-        Me.NumThreads.TabIndex = 49
-        Me.ToolTip1.SetToolTip(Me.NumThreads, "Number Of Threads")
-        Me.NumThreads.Value = New Decimal(New Integer() {1, 0, 0, 0})
         '
         'lblRenTime
         '
@@ -540,11 +541,11 @@ Partial Class Form1
         CType(Me.Render, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NumThreads, System.ComponentModel.ISupportInitialize).EndInit()
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
-        CType(Me.NumThreads, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
