@@ -54,6 +54,7 @@ Public Module PhysicsLoop
         'Public PrevSpeedY As Single
         Public ForceX As Double
         Public ForceY As Double
+        Public ForceTot As Double
         'Public PrevLocX As Single
         'Public PrevLocY As Single
         'Public GravX As Single
