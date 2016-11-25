@@ -125,40 +125,42 @@ Public NotInheritable Class PhysicsChunk
 
 
                                             If DistSqrt <= (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) Then 'Collision reaction
-                                                'If Bodys(B).Index = 334 Then
-                                                '    Debug.Print("...")
-                                                'End If
+
+                                                CollideBodies(OuterBody(A), Bodys(B))
+                                                ''If Bodys(B).Index = 334 Then
+                                                ''    Debug.Print("...")
+                                                ''End If
 
 
-                                                '    If Not bolRocheLimit Then
-                                                If OuterBody(A).Mass > Bodys(B).Mass Then
+                                                ''    If Not bolRocheLimit Then
+                                                'If OuterBody(A).Mass > Bodys(B).Mass Then
 
-                                                    CollideBodies(OuterBody(A), Bodys(B))
+                                                '    CollideBodies(OuterBody(A), Bodys(B))
 
-                                                ElseIf OuterBody(A).Mass < Bodys(B).Mass Then
+                                                'ElseIf OuterBody(A).Mass < Bodys(B).Mass Then
 
-                                                    OuterBody(A).Visible = False
-                                                Else
-
-
-                                                    ' If OuterBody(A).Index > Bodys(B).Index Then
-                                                    CollideBodies(OuterBody(A), Bodys(B))
-
-                                                    'Else
-                                                    '    OuterBody(A).Visible = False
-
-
-                                                    'End If
-                                                End If
-                                                '    End If
-
+                                                '    OuterBody(A).Visible = False
                                                 'Else
 
 
-                                                '    CollideBodies(OuterBody(A), Bodys(B), True)
+                                                '    ' If OuterBody(A).Index > Bodys(B).Index Then
+                                                '    CollideBodies(OuterBody(A), Bodys(B))
 
+                                                '    'Else
+                                                '    '    OuterBody(A).Visible = False
+
+
+                                                '    'End If
                                                 'End If
-                                                '  End If
+                                                ''    End If
+
+                                                ''Else
+
+
+                                                ''    CollideBodies(OuterBody(A), Bodys(B), True)
+
+                                                ''End If
+                                                ''  End If
                                             End If
                                         End If
                                     Else
@@ -288,26 +290,32 @@ Public NotInheritable Class PhysicsChunk
             '  If Master.Mass <> Slave.Mass Then
             If Not Master.InRoche And Slave.InRoche Then
 
+                If Master.Mass > Slave.Mass Then
 
 
-                PrevSpdX = Master.SpeedX
-                PrevSpdY = Master.SpeedY
+                    PrevSpdX = Master.SpeedX
+                    PrevSpdY = Master.SpeedY
 
-                Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
-                Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
-                Slave.Visible = False
+                    Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+                    Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+                    Slave.Visible = False
 
 
 
-                Area1 = PI * (Master.Size ^ 2)
-                Area2 = PI * (Slave.Size ^ 2)
-                Area1 = Area1 + Area2
-                Master.Size = Sqrt(Area1 / PI)
-                Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+                    Area1 = PI * (Master.Size ^ 2)
+                    Area2 = PI * (Slave.Size ^ 2)
+                    Area1 = Area1 + Area2
+                    Master.Size = Sqrt(Area1 / PI)
+                    Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
 
+                Else
+                    Master.Visible = False
+
+
+                End If
             ElseIf Not Master.InRoche And Not Slave.InRoche Then
+                If Master.Mass > Slave.Mass Then
 
-                If Master.Index > Slave.Index Then
                     PrevSpdX = Master.SpeedX
                     PrevSpdY = Master.SpeedY
 
@@ -323,27 +331,24 @@ Public NotInheritable Class PhysicsChunk
                     Master.Size = Sqrt(Area1 / PI)
                     Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
                 Else
-
                     Master.Visible = False
-
 
                 End If
 
 
-
             ElseIf Master.InRoche And Slave.InRoche Then
 
-                    Dim Friction As Double = 0.8
-                    Master.SpeedX += (U1 - V1) * VekX * Friction
-                    Master.SpeedY += (U1 - V1) * VeKY * Friction
+                Dim Friction As Double = 0.8
+                Master.SpeedX += (U1 - V1) * VekX * Friction
+                Master.SpeedY += (U1 - V1) * VeKY * Friction
 
 
-                    Slave.SpeedX += (U2 - V2) * VekX * Friction
-                    Slave.SpeedY += (U2 - V2) * VeKY * Friction
+                Slave.SpeedX += (U2 - V2) * VekX * Friction
+                Slave.SpeedY += (U2 - V2) * VeKY * Friction
 
-                ElseIf Master.InRoche And Not Slave.InRoche Then
+            ElseIf Master.InRoche And Not Slave.InRoche Then
 
-                    Master.Visible = False
+                Master.Visible = False
 
 
 
