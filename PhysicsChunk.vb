@@ -180,10 +180,10 @@ Public NotInheritable Class PhysicsChunk
                 'OuterBody(A).LocY = OuterBody(A).LocY + (StepMulti * OuterBody(A).SpeedY)
                 ' tmpBodys.Add(OuterBody(A))
 
-                If OuterBody(A).ForceTot > OuterBody(A).Mass * 4 And OuterBody(A).Size < 10 Then
+                If OuterBody(A).ForceTot > OuterBody(A).Mass * 4 And Not OuterBody(A).Flags.Contains("BH") Then ' And OuterBody(A).Size < 10 
                     OuterBody(A).InRoche = True
                     NewBalls.AddRange(FractureBall(OuterBody(A)))
-                ElseIf (OuterBody(A).ForceTot * 4) < OuterBody(A).Mass * 4 And OuterBody(A).Size > 10 Then
+                ElseIf (OuterBody(A).ForceTot * 2) < OuterBody(A).Mass * 4 Then ' And OuterBody(A).Size > 10
                     OuterBody(A).InRoche = False
 
                 End If

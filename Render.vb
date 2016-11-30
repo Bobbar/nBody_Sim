@@ -11,6 +11,7 @@ Public Module Renderer
     Public CircleOInfluence As Single = 10000
     Public bolDrawing As Boolean = False
     Public bolCulling As Boolean = True
+    Public FollowGUID As String
     'Public RenderWindowDimsH As Integer
     'Public RenderWindowDimsW As Integer
     Public RenderWindowDims As New Point(Form1.Render.Width, Form1.Render.Height)
@@ -35,7 +36,7 @@ Public Module Renderer
         bolDrawing = True
         Dim BodyLoc, Body2Loc As SPoint
         Dim BodySize, Body2Size As Single
-
+        Dim FollowLoc As New SPoint
         If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
             UpdateScale()
         End If
@@ -48,6 +49,7 @@ Public Module Renderer
         End If
         Dim myBrush As SolidBrush '(BallArray(i).Color)
         If bolDraw Then
+            If bolFollow Then FollowLoc = FollowBodyLoc()
 
             For i = 0 To UBound(BallArray)
                 BodyLoc = New SPoint(Convert.ToSingle(BallArray(i).LocX), Convert.ToSingle(BallArray(i).LocY))
@@ -94,8 +96,12 @@ Public Module Renderer
 
 
                             If bolFollow Then
-                                RelBallPosMod.X = -BallArray(lngFollowBall).LocX
-                                RelBallPosMod.Y = -BallArray(lngFollowBall).LocY
+
+                                'RelBallPosMod.X = -BallArray(lngFollowBall).LocX
+                                'RelBallPosMod.Y = -BallArray(lngFollowBall).LocY
+
+                                RelBallPosMod.X = -FollowLoc.X
+                                RelBallPosMod.Y = -FollowLoc.Y
                                 ' If BallArray(lngFollowBall).LocY <> Ball(lngFollowBall).LocY Then Debug.Print("Loc ERROR")
                             End If
                             gr.FillEllipse(myBrush, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
@@ -104,7 +110,7 @@ Public Module Renderer
                                 gr.DrawEllipse(myPen, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
                             End If
                             If bolFollow Then
-                                If lngFollowBall = i Then
+                                If BallArray(i).UID = FollowGUID Then 'lngFollowBall = i Then
                                     '  End If
                                     'gr.DrawEllipse(myPen, BallArray(lngFollowBall).LocX - BodySize / 2 + FinalOffset.X - ScaleMousePosExact(New SPoint(10000, 10000)).X, BallArray(lngFollowBall).LocY - BodySize / 2 + FinalOffset.Y - ScaleMousePosExact(New SPoint(10000, 10000)).Y, 10000, 10000)
 
@@ -146,6 +152,17 @@ Public Module Renderer
 
         '   Return bm
     End Sub
+    Private Function FollowBodyLoc() As SPoint
+        For Each b As BallParms In Ball
+            If b.UID = FollowGUID Then
+                Return New SPoint(b.LocX, b.LocY)
+
+
+            End If
+
+
+        Next
+    End Function
     Public Function ScaledPoint(Point As Point, Origin As Point, Optional Scale As Double = 1.0) As Point
         Return New Point(Origin.X + Point.X * Scale, Origin.Y + Point.Y * Scale)
     End Function

@@ -232,6 +232,7 @@ Public Class Form1
                         End If
                         If bolAltDown Then
                             lngFollowBall = Sel
+                            FollowGUID = Ball(Sel).UID
                             Ball(Sel).Flags = Ball(Sel).Flags + "F"
                             tmrFollow.Enabled = True
                         End If
@@ -1006,6 +1007,7 @@ Err:
 
         Try
             Dim BodyDiv As Integer
+
             Dim StartTick, EndTick, ElapTick As Long
             Dim RunThreads As Integer
             Do Until bolStopWorker
@@ -1020,7 +1022,9 @@ Err:
                 'Start loop
                 'Calc Splits
                 ' Ball = CullBodies(Ball)
-
+                If UBound(Ball) > (VisibleBalls() * 2) Then
+                    Ball = CullBodies(Ball)
+                End If
 
                 BodyDiv = Int(UBound(Ball) / RunThreads)
                 Dim ExtraBodys As Integer = UBound(Ball) - (BodyDiv * RunThreads)
@@ -1098,6 +1102,7 @@ Err:
             If Bodies(i).Visible Then
                 ReDim Preserve tmpBodies(UBound(tmpBodies) + 1)
                 tmpBodies(UBound(tmpBodies)) = Bodies(i)
+
             End If
         Next
         Return tmpBodies
