@@ -1,4 +1,5 @@
-﻿Imports System.Math
+﻿Option Explicit On
+Imports System.Math
 Imports System.Threading.Tasks
 Imports System.Threading
 Imports System.Drawing.Drawing2D
@@ -28,23 +29,28 @@ Public NotInheritable Class PhysicsChunk
     Dim M1 As Double
     Dim M2 As Double
     'Dim ClsForce As Double
-    Dim ForceX As Double
-    Dim ForceY As Double
-    Dim TotMass As Double
-    Dim Force As Double
+
+
     Dim BUB As Long
     Dim StartTick, EndTick, ElapTick As Long
-    Dim DistX As Double
-    Dim DistY As Double
-    Dim Dist As Double
-    Dim DistSqrt As Double
+
     Dim bolRocheLimit As Boolean = False
     Dim NewBalls As New List(Of BallParms)
 
     Public Function CalcPhysics() ' As List(Of BallParms)
+        Dim TotMass As Double
+        Dim Force As Double
+        Dim ForceX As Double
+        Dim ForceY As Double
+        Dim DistX As Double
+        Dim DistY As Double
+        Dim Dist As Double
+        Dim DistSqrt As Double
         Dim tmpBodys As New List(Of BallParms)
+        Dim DistArray As New List(Of String)
+
         ' Do Until bolStopWorker
-        Dim EPS As Double = 2
+        Dim EPS As Double = 1.02
         Dim OuterBody As BallParms() = MyBodys.ToArray
 
         'Do While bolStopLoop
@@ -88,7 +94,7 @@ Public NotInheritable Class PhysicsChunk
                                     Dist = (DistX * DistX) + (DistY * DistY)
                                     DistSqrt = Sqrt(Dist)
                                     If DistSqrt > 0 Then 'Gravity reaction
-                                        If DistSqrt < (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) Then DistSqrt = (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) 'prevent screamers
+                                        '   If DistSqrt < (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) Then DistSqrt = (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) 'prevent screamers
                                         M1 = OuterBody(A).Mass '^ 2
                                         M2 = Bodys(B).Mass ' ^ 2
                                         TotMass = M1 * M2
@@ -113,7 +119,7 @@ Public NotInheritable Class PhysicsChunk
 
 
 
-                                                CollideBodies(OuterBody(A), Bodys(B))
+                                                CollideBodies(OuterBody(A), Bodys(B), DistSqrt, DistX, DistY, ForceX, ForceY)
 
                                             End If
                                         End If
@@ -139,6 +145,7 @@ Public NotInheritable Class PhysicsChunk
                     OuterBody(A).InRoche = False
 
                 End If
+                '    DistArray.Add(A.ToString + " - " + DistSqrt.ToString)
 
             Next A
         End If
@@ -181,7 +188,7 @@ Public NotInheritable Class PhysicsChunk
 
         '  MyBodys = OuterBody 'tmpBodys
     End Function
-    Private Sub CollideBodies(ByRef Master As BallParms, ByRef Slave As BallParms)
+    Private Sub CollideBodies(ByRef Master As BallParms, ByRef Slave As BallParms, DistSqrt As Double, DistX As Double, DistY As Double, ForceX As Double, ForceY As Double)
         Dim VeKY As Double
         Dim VekX As Double
         Dim V1x As Double
@@ -190,8 +197,8 @@ Public NotInheritable Class PhysicsChunk
         Dim M2 As Double
         Dim V1y As Double
         Dim V2y As Double
-        Dim TotMass As Double
-        Dim Force, ForceX, ForceY As Double
+        'Dim TotMass As Double
+        ' Dim Force, ForceX, ForceY As Double
         Dim EPS As Double = 2
 
         ' Dim NewVelX1, NewVelY1, NewVelX2, NewVelY2 As Double
@@ -201,18 +208,18 @@ Public NotInheritable Class PhysicsChunk
         Dim V2 As Double
         Dim U2 As Double
         Dim U1 As Double
-        Dim DistX As Double
-        Dim DistY As Double
-        Dim Dist As Double
-        Dim DistSqrt As Double
+        'Dim DistX As Double
+        'Dim DistY As Double
+        'Dim Dist As Double
+        ' Dim DistSqrt As Double
         Dim PrevSpdX, PrevSpdY As Double
 
         Dim Area1 As Double, Area2 As Double
 
-        DistX = Slave.LocX - Master.LocX
-        DistY = Slave.LocY - Master.LocY
-        Dist = (DistX * DistX) + (DistY * DistY)
-        DistSqrt = Sqrt(Dist)
+        'DistX = Slave.LocX - Master.LocX
+        'DistY = Slave.LocY - Master.LocY
+        'Dist = (DistX * DistX) + (DistY * DistY)
+        'DistSqrt = Sqrt(Dist)
         ' Debug.Print("Col dist:" & DistSqrt)
 
         If DistSqrt > 0 Then
@@ -343,14 +350,14 @@ Public NotInheritable Class PhysicsChunk
 
             ElseIf Master.InRoche And Slave.InRoche Then
 
-                TotMass = Master.Mass * Slave.Mass
-                Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS)
-                ForceX = Force * DistX / DistSqrt
-                ForceY = Force * DistY / DistSqrt
-                Master.ForceX -= ForceX
-                Master.ForceY -= ForceY
-                Slave.ForceX -= ForceX
-                Slave.ForceY -= ForceY
+                'TotMass = Master.Mass * Slave.Mass
+                'Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS)
+                'ForceX = Force * DistX / DistSqrt
+                'ForceY = Force * DistY / DistSqrt
+                Master.ForceX -= ForceX * 2
+                Master.ForceY -= ForceY * 2
+                Slave.ForceX -= ForceX * 2
+                Slave.ForceY -= ForceY * 2
 
 
                 Dim Friction As Double = 0.8
