@@ -208,7 +208,7 @@ Public Class Form1
             If bolAltDown Then
                 tmrFollow.Enabled = False
                 bolFollow = False
-                Ball(lngFollowBall).Flags = Replace(Ball(lngFollowBall).Flags, "F", "")
+                '  Ball(lngFollowBall).Flags = Replace(Ball(lngFollowBall).Flags, "F", "")
                 lngFollowBall = 0
             End If
             'For i = 1 To UBound(Ball)
@@ -233,7 +233,7 @@ Public Class Form1
                         If bolAltDown Then
                             lngFollowBall = Sel
                             FollowGUID = Ball(Sel).UID
-                            Ball(Sel).Flags = Ball(Sel).Flags + "F"
+                            ' Ball(Sel).Flags = Ball(Sel).Flags + "F"
                             tmrFollow.Enabled = True
                         End If
                         txtSpeedX.Text = Ball(Sel).SpeedX

@@ -107,62 +107,14 @@ Public NotInheritable Class PhysicsChunk
                                         'OuterBody(A).SpeedY += StepMulti * ForceY / M1
 
                                         If DistSqrt < 100 Then
-                                            'If Bodys(B).Mass > OuterBody(A).Mass * 5 Then
-                                            '    If Force > OuterBody(A).Mass * 3 Then 'And Bodys(B).Mass > OuterBody(A).Mass * 5 Then
-                                            '        bolRocheLimit = True
-                                            '        '   OuterBody(A).InRoche = True
-                                            '    ElseIf (Force * 3) < OuterBody(A).Mass * 3 Then
-                                            '        bolRocheLimit = False
-                                            '        '  OuterBody(A).IsFragment = False
-                                            '        '     OuterBody(A).InRoche = False
-                                            '    End If
-                                            '    If bolRocheLimit And OuterBody(A).Size > 1 Then
-                                            '        '  NewBalls.AddRange(FractureBall(OuterBody(A)))
-                                            '        '   OuterBody(A).Visible = False
-                                            '    End If
-                                            'Else
-                                            '    bolRocheLimit = False
-                                            '    '      OuterBody(A).InRoche = False
-                                            'End If
 
 
                                             If DistSqrt <= (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) Then 'Collision reaction
 
+
+
                                                 CollideBodies(OuterBody(A), Bodys(B))
-                                                ''If Bodys(B).Index = 334 Then
-                                                ''    Debug.Print("...")
-                                                ''End If
 
-
-                                                ''    If Not bolRocheLimit Then
-                                                'If OuterBody(A).Mass > Bodys(B).Mass Then
-
-                                                '    CollideBodies(OuterBody(A), Bodys(B))
-
-                                                'ElseIf OuterBody(A).Mass < Bodys(B).Mass Then
-
-                                                '    OuterBody(A).Visible = False
-                                                'Else
-
-
-                                                '    ' If OuterBody(A).Index > Bodys(B).Index Then
-                                                '    CollideBodies(OuterBody(A), Bodys(B))
-
-                                                '    'Else
-                                                '    '    OuterBody(A).Visible = False
-
-
-                                                '    'End If
-                                                'End If
-                                                ''    End If
-
-                                                ''Else
-
-
-                                                ''    CollideBodies(OuterBody(A), Bodys(B), True)
-
-                                                ''End If
-                                                ''  End If
                                             End If
                                         End If
                                     Else
@@ -238,6 +190,9 @@ Public NotInheritable Class PhysicsChunk
         Dim M2 As Double
         Dim V1y As Double
         Dim V2y As Double
+        Dim TotMass As Double
+        Dim Force, ForceX, ForceY As Double
+        Dim EPS As Double = 2
 
         ' Dim NewVelX1, NewVelY1, NewVelX2, NewVelY2 As Double
 
@@ -259,9 +214,7 @@ Public NotInheritable Class PhysicsChunk
         Dist = (DistX * DistX) + (DistY * DistY)
         DistSqrt = Sqrt(Dist)
         ' Debug.Print("Col dist:" & DistSqrt)
-        If Master.UID = Slave.UID Then
-            Debugger.Break()
-        End If
+
         If DistSqrt > 0 Then
 
             V1x = Master.SpeedX
@@ -286,9 +239,7 @@ Public NotInheritable Class PhysicsChunk
             U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
             'If Not Master.InRoche Then
 
-            If Master.InRoche And Slave.InRoche Then
-                '   Debug.Print(".....")
-            End If
+
             '  If Master.Mass <> Slave.Mass Then
             If Not Master.InRoche And Slave.InRoche Then
 
@@ -358,9 +309,6 @@ Public NotInheritable Class PhysicsChunk
                     Master.Size = Sqrt(Area1 / PI)
                     Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
                 ElseIf Master.Mass = Slave.Mass Then
-                    If UIDtoInt(Master.UID) = UIDtoInt(Slave.UID) Then
-                        Debugger.Break()
-                    End If
 
                     '  If Master.Index > Slave.Index Then
                     If UIDtoInt(Master.UID) > UIDtoInt(Slave.UID) Then
@@ -394,6 +342,16 @@ Public NotInheritable Class PhysicsChunk
 
 
             ElseIf Master.InRoche And Slave.InRoche Then
+
+                TotMass = Master.Mass * Slave.Mass
+                Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS)
+                ForceX = Force * DistX / DistSqrt
+                ForceY = Force * DistY / DistSqrt
+                Master.ForceX -= ForceX
+                Master.ForceY -= ForceY
+                Slave.ForceX -= ForceX
+                Slave.ForceY -= ForceY
+
 
                 Dim Friction As Double = 0.8
                 Master.SpeedX += (U1 - V1) * VekX * Friction
