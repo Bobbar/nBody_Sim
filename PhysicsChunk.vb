@@ -308,8 +308,33 @@ Public NotInheritable Class PhysicsChunk
                     Master.Size = Sqrt(Area1 / PI)
                     Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
 
-                Else
-                    Master.Visible = False
+                ElseIf Master.Mass = Slave.Mass Then
+
+                    If Master.Index > Slave.Index Then
+
+                        PrevSpdX = Master.SpeedX
+                        PrevSpdY = Master.SpeedY
+
+                        Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+                        Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+                        Slave.Visible = False
+
+
+
+                        Area1 = PI * (Master.Size ^ 2)
+                        Area2 = PI * (Slave.Size ^ 2)
+                        Area1 = Area1 + Area2
+                        Master.Size = Sqrt(Area1 / PI)
+                        Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+                    Else
+                        Master.Visible = False
+
+                    End If
+
+
+
+
+                    '  Master.Visible = False
 
 
                 End If
@@ -330,8 +355,32 @@ Public NotInheritable Class PhysicsChunk
                     Area1 = Area1 + Area2
                     Master.Size = Sqrt(Area1 / PI)
                     Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
-                Else
-                    Master.Visible = False
+                ElseIf Master.Mass = Slave.Mass Then
+
+                    If Master.Index > Slave.Index Then
+
+                        PrevSpdX = Master.SpeedX
+                        PrevSpdY = Master.SpeedY
+
+                        Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+                        Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+                        Slave.Visible = False
+
+
+
+                        Area1 = PI * (Master.Size ^ 2)
+                        Area2 = PI * (Slave.Size ^ 2)
+                        Area1 = Area1 + Area2
+                        Master.Size = Sqrt(Area1 / PI)
+                        Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+                    Else
+                        Master.Visible = False
+
+                    End If
+
+
+
+                    '   Master.Visible = False
 
                 End If
 
