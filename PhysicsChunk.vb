@@ -4,6 +4,8 @@ Imports System.Threading
 Imports System.Drawing.Drawing2D
 Imports System.ComponentModel
 Imports System.IO
+Imports System.Numerics
+
 Public NotInheritable Class PhysicsChunk
     Sub New(iUpperBody As Integer, iLowerBody As Integer, MainBodyArray() As BallParms)
         uBoundBody = iUpperBody
@@ -60,7 +62,7 @@ Public NotInheritable Class PhysicsChunk
                 If OuterBody(A).Visible Then
                     If OuterBody(A).MovinG = False Then
                         For B = 1 To UBound(Bodys)
-                            If OuterBody(A).Index <> Bodys(B).Index And Bodys(B).Visible Then
+                            If OuterBody(A).UID <> Bodys(B).UID And Bodys(B).Visible Then
                                 'If OuterBody(A).Index = 792 And Bodys(B).Index = 2002 Then
                                 '    Debug.Print(DistSqrt & " - " & OuterBody(A).Size & " - " & Bodys(B).Size)
                                 'End If
@@ -181,7 +183,7 @@ Public NotInheritable Class PhysicsChunk
                 If OuterBody(A).ForceTot > OuterBody(A).Mass * 4 And OuterBody(A).Size < 10 Then
                     OuterBody(A).InRoche = True
                     NewBalls.AddRange(FractureBall(OuterBody(A)))
-                ElseIf (OuterBody(A).ForceTot * 2) < OuterBody(A).Mass * 4 And OuterBody(A).Size > 10 Then
+                ElseIf (OuterBody(A).ForceTot * 4) < OuterBody(A).Mass * 4 And OuterBody(A).Size > 10 Then
                     OuterBody(A).InRoche = False
 
                 End If
@@ -257,7 +259,7 @@ Public NotInheritable Class PhysicsChunk
         Dist = (DistX * DistX) + (DistY * DistY)
         DistSqrt = Sqrt(Dist)
         ' Debug.Print("Col dist:" & DistSqrt)
-        If Master.Index = Slave.Index Then
+        If Master.UID = Slave.UID Then
             Debugger.Break()
         End If
         If DistSqrt > 0 Then
@@ -310,7 +312,7 @@ Public NotInheritable Class PhysicsChunk
 
                 ElseIf Master.Mass = Slave.Mass Then
 
-                    If Master.Index > Slave.Index Then
+                    If UIDtoInt(Master.UID) > UIDtoInt(Slave.UID) Then
 
                         PrevSpdX = Master.SpeedX
                         PrevSpdY = Master.SpeedY
@@ -356,9 +358,14 @@ Public NotInheritable Class PhysicsChunk
                     Master.Size = Sqrt(Area1 / PI)
                     Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
                 ElseIf Master.Mass = Slave.Mass Then
+                    If UIDtoInt(Master.UID) = UIDtoInt(Slave.UID) Then
+                        Debugger.Break()
+                    End If
 
-                    If Master.Index > Slave.Index Then
-
+                    '  If Master.Index > Slave.Index Then
+                    If UIDtoInt(Master.UID) > UIDtoInt(Slave.UID) Then
+                        'Debug.Print(UIDtoInt(Master.UID).ToString)
+                        'Debug.Print(UIDtoInt(Slave.UID).ToString)
                         PrevSpdX = Master.SpeedX
                         PrevSpdY = Master.SpeedY
 
@@ -378,9 +385,10 @@ Public NotInheritable Class PhysicsChunk
 
                     End If
 
+                Else
 
 
-                    '   Master.Visible = False
+                    Master.Visible = False
 
                 End If
 
@@ -440,6 +448,12 @@ Public NotInheritable Class PhysicsChunk
 
 
     End Sub
+    Private Function UIDtoInt(UID As String) As BigInteger
+        Dim bytGUIDBytes As Byte() = System.Text.Encoding.Unicode.GetBytes(UID) 'adUserDirectoryRecord.Guid.ToByteArray()
+        Array.Resize(bytGUIDBytes, 17)
+
+        Return New BigInteger(bytGUIDBytes)
+    End Function
     Private Sub UpdateBodies(ByRef Bodies() As BallParms)
 
         For i As Integer = 0 To UBound(Bodies)
@@ -526,7 +540,9 @@ Public NotInheritable Class PhysicsChunk
                 tmpBall.Color = Body.Color 'vbWhite
                 tmpBall.Flags = ""
                 tmpBall.Index = UBound(Ball) + 1
+                tmpBall.UID = Guid.NewGuid.ToString
                 tmpBall.IsFragment = True
+                tmpBall.InRoche = True
                 tmpBall.Visible = True
                 '  Ball(u).LocY = Body.LocY + Ball(u).Size * 2
 

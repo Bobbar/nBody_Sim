@@ -23,7 +23,7 @@ Public Class frmAddBodies
         Density = txtDensity.Text
         For i As Integer = 0 To NumberOfBodies
             ReDim Preserve Ball(UBound(Ball) + 1)
-            Ball(UBound(Ball)).Index = UBound(Ball)
+            Ball(UBound(Ball)).UID = Guid.NewGuid.ToString
             Ball(UBound(Ball)).Color = RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
 
@@ -56,6 +56,7 @@ Public Class frmAddBodies
 
         If bolIncludeCenterMass Then
             ReDim Preserve Ball(UBound(Ball) + 1)
+            Ball(UBound(Ball)).UID = Guid.NewGuid.ToString
             Ball(UBound(Ball)).Index = UBound(Ball)
             Ball(UBound(Ball)).Color = Color.Black 'RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
@@ -89,7 +90,8 @@ Public Class frmAddBodies
 
         For i As Integer = 0 To NumberOfBodies
             ReDim Preserve Ball(UBound(Ball) + 1)
-            Ball(UBound(Ball)).Index = UBound(Ball)
+            ' Ball(UBound(Ball)).Index = UBound(Ball)
+            Ball(UBound(Ball)).UID = Guid.NewGuid.ToString
             Ball(UBound(Ball)).Color = RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
 
@@ -134,7 +136,7 @@ Public Class frmAddBodies
         Next
         If bolIncludeCenterMass Then
             ReDim Preserve Ball(UBound(Ball) + 1)
-            Ball(UBound(Ball)).Index = UBound(Ball)
+            Ball(UBound(Ball)).UID = Guid.NewGuid.ToString
             Ball(UBound(Ball)).Color = Color.Black 'RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
             Ball(UBound(Ball)).LocX = newEllipse.Location.X ' Form1.Render.Width / 2 / pic_scale - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
@@ -156,7 +158,7 @@ Public Class frmAddBodies
 
         For i As Integer = 0 To NumberOfBodies
             ReDim Preserve Ball(UBound(Ball) + 1)
-            Ball(UBound(Ball)).Index = UBound(Ball)
+            Ball(UBound(Ball)).UID = Guid.NewGuid.ToString
             Ball(UBound(Ball)).Color = RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
             Ball(UBound(Ball)).LocX = GetRandomNumber(1, Form1.Render.Width / pic_scale) - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
