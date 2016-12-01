@@ -44,42 +44,9 @@ Public Module PhysicsLoop
     ' Public rd As Single
     Public bolStop As Boolean
     '// Some Variables are not used by my code, forget them. I didnt have the time to make my code clean....
-    <Serializable()> Public Structure BallParms
-        '   Public Index As Integer
-        Public Size As Double
-        Public LocX As Double
-        Public LocY As Double
-        Public SpeedX As Double
-        Public SpeedY As Double
-        'Public PrevSpeedX As Single
-        'Public PrevSpeedY As Single
-        Public ForceX As Double
-        Public ForceY As Double
-        Public ForceTot As Double
-        Public UID As String
-        'Public PrevLocX As Single
-        'Public PrevLocY As Single
-        'Public GravX As Single
-        'Public GravY As Single
-        Public MovinG As Boolean
-        'Public Old_LocX As Single
-        'Public Old_LocY As Single
-        '     Public ShadAngle As Single
-        'Public Origin As Long
-        '   Public Locked As Boolean
-        Public Visible As Boolean
-        Public Mass As Double
-        Public Color As Color
-        '   Public IsFragment As Boolean
-        Public InRoche As Boolean
-        Public Flags As String
-        '    Public Group As List(Of BallParms)
-    End Structure
-    Public Ball() As BodyParms ' BallParms
-
-
     <ProtoBuf.ProtoContract>
-    Public Class BodyParms
+    Public Structure BallParms
+
         <ProtoBuf.ProtoMember(1)>
         Public Size As Double
         <ProtoBuf.ProtoMember(2)>
@@ -104,15 +71,149 @@ Public Module PhysicsLoop
         Public Visible As Boolean
         <ProtoBuf.ProtoMember(12)>
         Public Mass As Double
-        <ProtoBuf.ProtoMember(13)>
+
+
         Public Color As Color
+        <ProtoBuf.ProtoMember(13)>
+        Private Property ColorSerialized() As Integer
+            Get
+                Return Color.ToArgb()
+            End Get
+            Set
+                Color = Color.FromArgb(Value)
+            End Set
+        End Property
+
+
         <ProtoBuf.ProtoMember(14)>
         Public InRoche As Boolean
         <ProtoBuf.ProtoMember(15)>
         Public Flags As String
 
 
+        ''   Public Index As Integer
+
+        'Public Size As Double
+        'Public LocX As Double
+        'Public LocY As Double
+        'Public SpeedX As Double
+        'Public SpeedY As Double
+        ''Public PrevSpeedX As Single
+        ''Public PrevSpeedY As Single
+        'Public ForceX As Double
+        'Public ForceY As Double
+        'Public ForceTot As Double
+        'Public UID As String
+        ''Public PrevLocX As Single
+        ''Public PrevLocY As Single
+        ''Public GravX As Single
+        ''Public GravY As Single
+        'Public MovinG As Boolean
+        ''Public Old_LocX As Single
+        ''Public Old_LocY As Single
+        ''     Public ShadAngle As Single
+        ''Public Origin As Long
+        ''   Public Locked As Boolean
+        'Public Visible As Boolean
+        'Public Mass As Double
+        'Public Color As Color
+        ''   Public IsFragment As Boolean
+        'Public InRoche As Boolean
+        'Public Flags As String
+        ''    Public Group As List(Of BallParms)
+    End Structure
+    Public Ball() As BallParms
+    Public RecordedBodies As New List(Of BallParms())
+    'Private _nestedArray As List(Of BallParms())
+    ' The nested array I would like to serialize.
+    <ProtoBuf.ProtoMember(1)>
+    Public Property _nestedArrayForProtoBuf() As List(Of ProtobufArray(Of BallParms))
+        ' Never used elsewhere
+        Get
+            If RecordedBodies Is Nothing Then
+                '  ( _nestedArray == null || _nestedArray.Count == 0 )  if the default constructor instanciate it
+                Return Nothing
+            End If
+            Return RecordedBodies.[Select](Function(p) New ProtobufArray(Of BallParms)(p)).ToList()
+        End Get
+        Set
+            RecordedBodies = Value.[Select](Function(p) p.MyArray).ToList()
+        End Set
+    End Property
+
+
+    <ProtoBuf.ProtoContract>
+    Public Class ProtobufArray(Of T)
+        ' The intermediate type
+        <ProtoBuf.ProtoMember(1)>
+        Public MyArray As T()
+
+        Public Sub New()
+        End Sub
+        Public Sub New(array As T())
+            MyArray = array
+        End Sub
     End Class
+
+
+
+    '<ProtoBuf.ProtoContract>
+    'Public Class BodyParms
+    '    Sub New(body As BallParms)
+    '        Size = body.Size
+    '        LocX = body.LocX
+    '        LocY = body.LocY
+    '        UID = body.UID
+    '        Visible = body.Visible
+    '        Color = body.Color
+    '        Flags = body.Flags
+    '        'SpeedX = body.SpeedX
+    '        'SpeedY = body.SpeedY
+    '        'ForceX = body.ForceX
+    '        'ForceY = body.ForceY
+    '        'ForceTot = body.ForceTot
+
+
+
+
+
+
+    '    End Sub
+
+
+    '    <ProtoBuf.ProtoMember(1)>
+    '    Public Size As Double
+    '    <ProtoBuf.ProtoMember(2)>
+    '    Public LocX As Double
+    '    <ProtoBuf.ProtoMember(3)>
+    '    Public LocY As Double
+    '    <ProtoBuf.ProtoMember(4)>
+    '    Public SpeedX As Double
+    '    <ProtoBuf.ProtoMember(5)>
+    '    Public SpeedY As Double
+    '    <ProtoBuf.ProtoMember(6)>
+    '    Public ForceX As Double
+    '    <ProtoBuf.ProtoMember(7)>
+    '    Public ForceY As Double
+    '    <ProtoBuf.ProtoMember(8)>
+    '    Public ForceTot As Double
+    '    <ProtoBuf.ProtoMember(9)>
+    '    Public UID As String
+    '    <ProtoBuf.ProtoMember(10)>
+    '    Public MovinG As Boolean
+    '    <ProtoBuf.ProtoMember(11)>
+    '    Public Visible As Boolean
+    '    <ProtoBuf.ProtoMember(12)>
+    '    Public Mass As Double
+    '    <ProtoBuf.ProtoMember(13)>
+    '    Public Color As Color
+    '    <ProtoBuf.ProtoMember(14)>
+    '    Public InRoche As Boolean
+    '    <ProtoBuf.ProtoMember(15)>
+    '    Public Flags As String
+
+
+    'End Class
 
     Dim PrevX As Single
     Dim PrevY As Single

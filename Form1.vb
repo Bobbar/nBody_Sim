@@ -10,7 +10,7 @@ Public Class Form1
     Public bolRendering As Boolean
     Public bolStoring As Boolean
     Public bolPlaying As Boolean
-    Public RecordedBodies As New List(Of BallParms())
+
     Public RecordFileName As String
 
     Sub StartMeasuring()
@@ -45,7 +45,7 @@ Public Class Form1
     Public Sub ShrinkBallArray()
         'On Error Resume Next
         ' Debug.Print("Cleaning Ball Array")
-        Dim TempArray() As BodyParms 'BallParms
+        Dim TempArray() As BallParms
         '       t.Abort()
         '  bolStopLoop = True
         't.Join()
@@ -259,7 +259,7 @@ Public Class Form1
         End If
     End Sub
     Private Sub Render_MouseMove(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Render.MouseMove
-        On Error GoTo err
+        On Error GoTo Err
         If e.Button = Windows.Forms.MouseButtons.Left Then
             'For i = 0 To UBound(Ball)
             '    Ball(i).Old_LocX = Ball(i).LocX
@@ -835,7 +835,7 @@ Err:
     Public Structure ThreadStruct
         Public UpperBound As Integer
         Public LowerBound As Integer
-        Public Bodys() as BallParms
+        Public Bodys() As BallParms
     End Structure
     'Private Sub pWorkerThread(sender As Object, e As DoWorkEventArgs)
     '    Dim uBoundBody, lBoundBody As Integer
@@ -1084,15 +1084,16 @@ Err:
                     '  Debug.Print(UBound(Ball))
 
                     If bolStoring Then
+                        '  Dim BodyFrame
                         RecordedBodies.Add(Ball)
 
-                        Using s As Stream = New MemoryStream()
+                        'Using s As Stream = New MemoryStream()
 
-                            ' Dim formatter As ProtoBuf.Serializer 'System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+                        '    ' Dim formatter As ProtoBuf.Serializer 'System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
 
-                            ProtoBuf.Serializer.Serialize(s, RecordedBodies.Item(1))
-                            Debug.Print(RecordedBodies.Count & " - " & s.Length / 1024)
-                        End Using
+                        '    ProtoBuf.Serializer.Serialize(s, RecordedBodies.Item(1))
+                        '    Debug.Print(RecordedBodies.Count & " - " & s.Length / 1024)
+                        'End Using
                     End If
 
                 ElseIf bolPlaying Then
@@ -1702,12 +1703,15 @@ Err:
             Dim fStream As New FileStream(OpenDialog.FileName, FileMode.OpenOrCreate)
 
             fStream.Position = 0 ' reset stream pointer
-            RecordedBodies = bf.Deserialize(fStream) ' read from file
+            _nestedArrayForProtoBuf = ProtoBuf.Serializer.Deserialize(Of List(Of ProtobufArray(Of BallParms)))(fStream) 'bf.Deserialize(fStream) ' read from file
             'sr.Close()
         End If
 
 
         bolPlaying = Not bolPlaying
+        If Not PhysicsWorker.IsBusy And Not bolStopWorker Then
+            PhysicsWorker.RunWorkerAsync()
+        End If
     End Sub
 
     Private Sub cmdStor_Click(sender As Object, e As EventArgs) Handles cmdStor.Click
@@ -1726,10 +1730,11 @@ Err:
 
 
         RecordFileName = SaveDialog.FileName
-        Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+        '  Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
         If SaveDialog.FileName <> "" Then
             Dim fStream As New FileStream(SaveDialog.FileName, FileMode.OpenOrCreate)
-            bf.Serialize(fStream, RecordedBodies)
+            ProtoBuf.Serializer.Serialize(fStream, _nestedArrayForProtoBuf)
+            ' bf.Serialize(fStream, RecordedBodies)
         End If
 
     End Sub

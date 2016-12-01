@@ -98,52 +98,52 @@ Public Module Renderer
 
                         If bolFollow Then
 
-                                'RelBallPosMod.X = -BallArray(lngFollowBall).LocX
-                                'RelBallPosMod.Y = -BallArray(lngFollowBall).LocY
+                            'RelBallPosMod.X = -BallArray(lngFollowBall).LocX
+                            'RelBallPosMod.Y = -BallArray(lngFollowBall).LocY
 
-                                RelBallPosMod.X = -FollowLoc.X
-                                RelBallPosMod.Y = -FollowLoc.Y
-                                ' If BallArray(lngFollowBall).LocY <> Ball(lngFollowBall).LocY Then Debug.Print("Loc ERROR")
-                            End If
-                            gr.FillEllipse(myBrush, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
-                            If InStr(1, BallArray(i).Flags, "BH") > 0 Then
-                                ' Dim myPen As New Pen(Color.Red)
-                                gr.DrawEllipse(myPen, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
-                            End If
-                            If bolFollow Then
-                                If BallArray(i).UID = FollowGUID Then 'lngFollowBall = i Then
-                                    '  End If
-                                    'gr.DrawEllipse(myPen, BallArray(lngFollowBall).LocX - BodySize / 2 + FinalOffset.X - ScaleMousePosExact(New SPoint(10000, 10000)).X, BallArray(lngFollowBall).LocY - BodySize / 2 + FinalOffset.Y - ScaleMousePosExact(New SPoint(10000, 10000)).Y, 10000, 10000)
+                            RelBallPosMod.X = -FollowLoc.X
+                            RelBallPosMod.Y = -FollowLoc.Y
+                            ' If BallArray(lngFollowBall).LocY <> Ball(lngFollowBall).LocY Then Debug.Print("Loc ERROR")
+                        End If
+                        gr.FillEllipse(myBrush, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
+                        If InStr(1, BallArray(i).Flags, "BH") > 0 Then
+                            ' Dim myPen As New Pen(Color.Red)
+                            gr.DrawEllipse(myPen, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
+                        End If
+                        If bolFollow Then
+                            If BallArray(i).UID = FollowGUID Then 'lngFollowBall = i Then
+                                '  End If
+                                'gr.DrawEllipse(myPen, BallArray(lngFollowBall).LocX - BodySize / 2 + FinalOffset.X - ScaleMousePosExact(New SPoint(10000, 10000)).X, BallArray(lngFollowBall).LocY - BodySize / 2 + FinalOffset.Y - ScaleMousePosExact(New SPoint(10000, 10000)).Y, 10000, 10000)
 
-                                    If bolSOI Then
-                                        gr.DrawEllipse(myPen, BodyLoc.X - BodySize / 2 + FinalOffset.X - (CircleOInfluence), BodyLoc.Y - BodySize / 2 + FinalOffset.Y - (CircleOInfluence), CircleOInfluence * 2, CircleOInfluence * 2)
-                                    End If
-                                    If bolLines Then
-                                        For b As Integer = 0 To UBound(BallArray)
-                                            Body2Loc = New SPoint(Convert.ToSingle(BallArray(b).LocX), Convert.ToSingle(BallArray(b).LocY))
-                                            Body2Size = Convert.ToSingle(BallArray(b).Size)
+                                If bolSOI Then
+                                    gr.DrawEllipse(myPen, BodyLoc.X - BodySize / 2 + FinalOffset.X - (CircleOInfluence), BodyLoc.Y - BodySize / 2 + FinalOffset.Y - (CircleOInfluence), CircleOInfluence * 2, CircleOInfluence * 2)
+                                End If
+                                If bolLines Then
+                                    For b As Integer = 0 To UBound(BallArray)
+                                        Body2Loc = New SPoint(Convert.ToSingle(BallArray(b).LocX), Convert.ToSingle(BallArray(b).LocY))
+                                        Body2Size = Convert.ToSingle(BallArray(b).Size)
 
-                                            If BallArray(b).Visible And GetDistanceOfBalls(BallArray(b), BallArray(i)) < CircleOInfluence Then
-                                                Dim myPen2 As New Pen(Color.DarkGreen)
-                                                myPen2.Width = 0.5
-                                                gr.DrawLine(myPen2, BodyLoc.X + FinalOffset.X, BodyLoc.Y + FinalOffset.Y, Body2Loc.X + FinalOffset.X, Body2Loc.Y + FinalOffset.Y)
-                                            End If
-                                        Next
-                                    End If
+                                        If BallArray(b).Visible And GetDistanceOfBalls(BallArray(b), BallArray(i)) < CircleOInfluence Then
+                                            Dim myPen2 As New Pen(Color.DarkGreen)
+                                            myPen2.Width = 0.5
+                                            gr.DrawLine(myPen2, BodyLoc.X + FinalOffset.X, BodyLoc.Y + FinalOffset.Y, Body2Loc.X + FinalOffset.X, Body2Loc.Y + FinalOffset.Y)
+                                        End If
+                                    Next
                                 End If
                             End If
-
-
-
-                            'gr.FillEllipse(myBrush2, Convert.ToInt32(ScaleMousePosExact(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).X), Convert.ToInt32(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).Y), 5, 5)
-                            'Else
-                            '    Dim myPen As New Pen(BallArray(i).Color)
-                            '    Form1.Render.CreateGraphics.DrawEllipse(myPen, BodyLoc.X - BodySize / 2 + RelBallPosMod.X, BodyLoc.Y - BodySize / 2 + RelBallPosMod.Y, BodySize, BodySize)
-                            'End If
-                            '  End If
-                            'e.Graphics.FillEllipse(Brushes.Black, BodyLoc.X - BodySize / 2 - 1, BodyLoc.Y - BodySize / 2 - 1, BodySize + 2, BodySize + 2)
-
                         End If
+
+
+
+                        'gr.FillEllipse(myBrush2, Convert.ToInt32(ScaleMousePosExact(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).X), Convert.ToInt32(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).Y), 5, 5)
+                        'Else
+                        '    Dim myPen As New Pen(BallArray(i).Color)
+                        '    Form1.Render.CreateGraphics.DrawEllipse(myPen, BodyLoc.X - BodySize / 2 + RelBallPosMod.X, BodyLoc.Y - BodySize / 2 + RelBallPosMod.Y, BodySize, BodySize)
+                        'End If
+                        '  End If
+                        'e.Graphics.FillEllipse(Brushes.Black, BodyLoc.X - BodySize / 2 - 1, BodyLoc.Y - BodySize / 2 - 1, BodySize + 2, BodySize + 2)
+
+                    End If
                 End If
 
             Next
