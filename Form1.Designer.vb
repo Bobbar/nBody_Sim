@@ -71,12 +71,14 @@ Partial Class Form1
         Me.cmdStor = New System.Windows.Forms.Button()
         Me.Button6 = New System.Windows.Forms.Button()
         Me.Button7 = New System.Windows.Forms.Button()
+        Me.SeekBar = New System.Windows.Forms.TrackBar()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumThreads, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MenuStrip1.SuspendLayout()
         Me.Panel1.SuspendLayout()
+        CType(Me.SeekBar, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Render
@@ -87,7 +89,7 @@ Partial Class Form1
         Me.Render.BackColor = System.Drawing.Color.White
         Me.Render.Location = New System.Drawing.Point(0, 60)
         Me.Render.Name = "Render"
-        Me.Render.Size = New System.Drawing.Size(1338, 628)
+        Me.Render.Size = New System.Drawing.Size(1264, 620)
         Me.Render.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage
         Me.Render.TabIndex = 15
         Me.Render.TabStop = False
@@ -374,7 +376,7 @@ Partial Class Form1
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Options, Me.Tools})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(1335, 24)
+        Me.MenuStrip1.Size = New System.Drawing.Size(1261, 24)
         Me.MenuStrip1.TabIndex = 51
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -542,12 +544,22 @@ Partial Class Form1
         Me.Button7.Text = "Replay"
         Me.Button7.UseVisualStyleBackColor = True
         '
+        'SeekBar
+        '
+        Me.SeekBar.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.SeekBar.Location = New System.Drawing.Point(6, 686)
+        Me.SeekBar.Name = "SeekBar"
+        Me.SeekBar.Size = New System.Drawing.Size(1246, 45)
+        Me.SeekBar.TabIndex = 57
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
-        Me.ClientSize = New System.Drawing.Size(1335, 690)
+        Me.ClientSize = New System.Drawing.Size(1261, 733)
+        Me.Controls.Add(Me.SeekBar)
         Me.Controls.Add(Me.Button7)
         Me.Controls.Add(Me.Button6)
         Me.Controls.Add(Me.cmdStor)
@@ -579,6 +591,7 @@ Partial Class Form1
         Me.MenuStrip1.PerformLayout()
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
+        CType(Me.SeekBar, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -634,4 +647,5 @@ Partial Class Form1
     Friend WithEvents cmdStor As Button
     Friend WithEvents Button6 As Button
     Friend WithEvents Button7 As Button
+    Friend WithEvents SeekBar As TrackBar
 End Class

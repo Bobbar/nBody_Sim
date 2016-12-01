@@ -492,6 +492,7 @@ Err:
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
         bolStop = Not bolStop
         If bolStop Then
+            SeekIndex = SeekBar.Value
             Button3.Text = "Start"
 
             tmrFollow.Enabled = False
@@ -1009,6 +1010,8 @@ Err:
     End Sub
     Public ThreadNum As Integer ' = 1
     Private StartTick, EndTick, ElapTick As Long
+    Public SeekIndex As Integer = 0
+    Public Prev_SeekIndex As Integer = 0
     Private Sub PhysicsWorker_DoWork(sender As Object, events As DoWorkEventArgs) Handles PhysicsWorker.DoWork
 
         Try
@@ -1099,17 +1102,32 @@ Err:
                 ElseIf bolPlaying Then
                     'ELSE IF IS PLAYING THEN CYCLE REPLAY
 
-                    'Do While bolStopLoop
-                    '    Thread.Sleep(100)
-                    'Loop
-                    'StartTick = Now.Ticks
-                    'Thread.Sleep(intDelay)
-                    For Each b() As BallParms In RecordedBodies
+                    Dim PlayArray()() As BallParms = RecordedBodies.ToArray
+
+
+
+                    For i = 0 To UBound(PlayArray(1)) 'Each b() As BallParms In RecordedBodies
                         ExecDelay()
-                        Ball = b
-                        PhysicsWorker.ReportProgress(1, Ball)
+                        If SeekIndex <> Prev_SeekIndex Then
+                            i = SeekIndex
+                            Prev_SeekIndex = SeekIndex
+                        End If
+                        Ball = PlayArray(i)
+
+                        PhysicsWorker.ReportProgress(i, Ball)
+
                         CalcDelay()
-                    Next
+                    Next i
+
+
+                    'For Each b() As BallParms In RecordedBodies
+                    '    ExecDelay()
+                    '    Ball = b
+
+                    '    PhysicsWorker.ReportProgress(RecordedBodies.IndexOf(b), Ball)
+
+                    '    CalcDelay()
+                    'Next
                 End If
                 PhysicsWorker.ReportProgress(1, Ball)
                 'END PLAYING CONDITION
@@ -1185,6 +1203,10 @@ Err:
         'Dim tmpBodys As New List(Of BallParms)
         'tmpBodys.AddRange(e.UserState)
         Dim PassBall() As BallParms = e.UserState ' tmpBodys.ToArray
+        If bolPlaying Then
+
+            SeekBar.Value = e.ProgressPercentage
+        End If
         If bolDraw And Not bolDrawing Then Drawr(PassBall) '  Me.Render.Image = Drawr(PassBall)
     End Sub
     'Public Function CalcPhysics(iUpperBody As Integer, iLowerBody As Integer, MainBodyArray() As BallParms) As List(Of BallParms)
@@ -1520,6 +1542,9 @@ Err:
     Private Sub tmrRender_Tick(sender As Object, e As EventArgs) Handles tmrRender.Tick
 
         If bolStop Or bolRendering Then
+            If bolPlaying Then
+                Ball = RecordedBodies(SeekIndex)
+            End If
             Drawr(Ball)
             SetUIInfo()
         End If
@@ -1707,11 +1732,17 @@ Err:
             'sr.Close()
         End If
 
-
+        SeekBar.Maximum = RecordedBodies.Count - 1
+        SeekBar.Value = 1
         bolPlaying = Not bolPlaying
         If Not PhysicsWorker.IsBusy And Not bolStopWorker Then
             PhysicsWorker.RunWorkerAsync()
         End If
+    End Sub
+
+    Private Sub SeekBar_Scroll(sender As Object, e As EventArgs) Handles SeekBar.Scroll
+        'Prev_SeekIndex = SeekBar.Value
+        SeekIndex = SeekBar.Value
     End Sub
 
     Private Sub cmdStor_Click(sender As Object, e As EventArgs) Handles cmdStor.Click
