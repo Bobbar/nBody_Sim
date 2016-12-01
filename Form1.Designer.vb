@@ -68,6 +68,9 @@ Partial Class Form1
         Me.cmdTrails = New System.Windows.Forms.Button()
         Me.UI_Worker = New System.ComponentModel.BackgroundWorker()
         Me.lblRenTime = New System.Windows.Forms.Label()
+        Me.cmdStor = New System.Windows.Forms.Button()
+        Me.Button6 = New System.Windows.Forms.Button()
+        Me.Button7 = New System.Windows.Forms.Button()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -84,7 +87,7 @@ Partial Class Form1
         Me.Render.BackColor = System.Drawing.Color.White
         Me.Render.Location = New System.Drawing.Point(0, 60)
         Me.Render.Name = "Render"
-        Me.Render.Size = New System.Drawing.Size(1183, 628)
+        Me.Render.Size = New System.Drawing.Size(1338, 628)
         Me.Render.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage
         Me.Render.TabIndex = 15
         Me.Render.TabStop = False
@@ -371,7 +374,7 @@ Partial Class Form1
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Options, Me.Tools})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(1180, 24)
+        Me.MenuStrip1.Size = New System.Drawing.Size(1335, 24)
         Me.MenuStrip1.TabIndex = 51
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -512,12 +515,42 @@ Partial Class Form1
         Me.lblRenTime.TabIndex = 53
         Me.lblRenTime.Text = "Ren Time:"
         '
+        'cmdStor
+        '
+        Me.cmdStor.Location = New System.Drawing.Point(1125, 33)
+        Me.cmdStor.Name = "cmdStor"
+        Me.cmdStor.Size = New System.Drawing.Size(37, 20)
+        Me.cmdStor.TabIndex = 54
+        Me.cmdStor.Text = "Stor"
+        Me.cmdStor.UseVisualStyleBackColor = True
+        '
+        'Button6
+        '
+        Me.Button6.Location = New System.Drawing.Point(1168, 32)
+        Me.Button6.Name = "Button6"
+        Me.Button6.Size = New System.Drawing.Size(62, 20)
+        Me.Button6.TabIndex = 55
+        Me.Button6.Text = "StopStor"
+        Me.Button6.UseVisualStyleBackColor = True
+        '
+        'Button7
+        '
+        Me.Button7.Location = New System.Drawing.Point(1236, 32)
+        Me.Button7.Name = "Button7"
+        Me.Button7.Size = New System.Drawing.Size(62, 20)
+        Me.Button7.TabIndex = 56
+        Me.Button7.Text = "Replay"
+        Me.Button7.UseVisualStyleBackColor = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
-        Me.ClientSize = New System.Drawing.Size(1180, 690)
+        Me.ClientSize = New System.Drawing.Size(1335, 690)
+        Me.Controls.Add(Me.Button7)
+        Me.Controls.Add(Me.Button6)
+        Me.Controls.Add(Me.cmdStor)
         Me.Controls.Add(Me.lblRenTime)
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.lblScale)
@@ -598,4 +631,7 @@ Partial Class Form1
     Friend WithEvents tsmLoad As ToolStripMenuItem
     Friend WithEvents NumThreads As NumericUpDown
     Friend WithEvents lblRenTime As Label
+    Friend WithEvents cmdStor As Button
+    Friend WithEvents Button6 As Button
+    Friend WithEvents Button7 As Button
 End Class
