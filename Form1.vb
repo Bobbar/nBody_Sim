@@ -1098,7 +1098,7 @@ Err:
                         '    Debug.Print(RecordedBodies.Count & " - " & s.Length / 1024)
                         'End Using
                     End If
-
+                    PhysicsWorker.ReportProgress(1, Ball)
                 ElseIf bolPlaying Then
                     'ELSE IF IS PLAYING THEN CYCLE REPLAY
 
@@ -1117,6 +1117,7 @@ Err:
                         PhysicsWorker.ReportProgress(i, Ball)
 
                         CalcDelay()
+                        bolRendering = False
                     Next i
 
 
@@ -1129,7 +1130,7 @@ Err:
                     '    CalcDelay()
                     'Next
                 End If
-                PhysicsWorker.ReportProgress(1, Ball)
+
                 'END PLAYING CONDITION
 
 
@@ -1727,7 +1728,7 @@ Err:
             Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             Dim fStream As New FileStream(OpenDialog.FileName, FileMode.OpenOrCreate)
 
-            fStream.Position = 0 ' reset stream pointer
+            ' fStream.Position = 0 ' reset stream pointer
             _nestedArrayForProtoBuf = ProtoBuf.Serializer.Deserialize(Of List(Of ProtobufArray(Of BallParms)))(fStream) 'bf.Deserialize(fStream) ' read from file
             'sr.Close()
         End If

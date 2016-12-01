@@ -45,7 +45,7 @@ Public Module PhysicsLoop
     Public bolStop As Boolean
     '// Some Variables are not used by my code, forget them. I didnt have the time to make my code clean....
     <ProtoBuf.ProtoContract>
-    Public Structure BallParms
+    <Serializable()> Public Structure BallParms
 
         <ProtoBuf.ProtoMember(1)>
         Public Size As Double

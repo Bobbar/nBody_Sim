@@ -89,7 +89,7 @@ Partial Class Form1
         Me.Render.BackColor = System.Drawing.Color.White
         Me.Render.Location = New System.Drawing.Point(0, 60)
         Me.Render.Name = "Render"
-        Me.Render.Size = New System.Drawing.Size(1264, 620)
+        Me.Render.Size = New System.Drawing.Size(1319, 620)
         Me.Render.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage
         Me.Render.TabIndex = 15
         Me.Render.TabStop = False
@@ -376,7 +376,7 @@ Partial Class Form1
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Options, Me.Tools})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(1261, 24)
+        Me.MenuStrip1.Size = New System.Drawing.Size(1316, 24)
         Me.MenuStrip1.TabIndex = 51
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -550,7 +550,7 @@ Partial Class Form1
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.SeekBar.Location = New System.Drawing.Point(6, 686)
         Me.SeekBar.Name = "SeekBar"
-        Me.SeekBar.Size = New System.Drawing.Size(1246, 45)
+        Me.SeekBar.Size = New System.Drawing.Size(1301, 45)
         Me.SeekBar.TabIndex = 57
         '
         'Form1
@@ -558,7 +558,7 @@ Partial Class Form1
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
-        Me.ClientSize = New System.Drawing.Size(1261, 733)
+        Me.ClientSize = New System.Drawing.Size(1316, 733)
         Me.Controls.Add(Me.SeekBar)
         Me.Controls.Add(Me.Button7)
         Me.Controls.Add(Me.Button6)
