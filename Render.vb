@@ -33,7 +33,7 @@ Public Module Renderer
         gr.ScaleTransform(pic_scale, pic_scale)
     End Sub
     Public Sub Drawr(ByVal BallArray() As BallParms) ' As Bitmap
-        bolDrawing = True
+
         Dim BodyLoc, Body2Loc As SPoint
         Dim BodySize, Body2Size As Single
         Dim FollowLoc As New SPoint
@@ -49,6 +49,7 @@ Public Module Renderer
         End If
         Dim myBrush As SolidBrush '(BallArray(i).Color)
         If bolDraw Then
+            bolDrawing = True
             If bolFollow Then FollowLoc = FollowBodyLoc()
 
             For i = 0 To UBound(BallArray)
@@ -147,9 +148,9 @@ Public Module Renderer
 
             Next
         End If
-        bolDrawing = False
-        Form1.Render.Image = bm
 
+        Form1.Render.Image = bm
+        bolDrawing = False
         '   Return bm
     End Sub
     Private Function FollowBodyLoc() As SPoint

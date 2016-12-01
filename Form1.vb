@@ -7,6 +7,7 @@ Imports System.IO
 Public Class Form1
     Public TrueFPS As Integer
     Public RenderTime As Double
+    Public bolRendering As Boolean
 
     Sub StartMeasuring()
         TestCount += 1
@@ -1011,7 +1012,7 @@ Err:
             Dim StartTick, EndTick, ElapTick As Long
             Dim RunThreads As Integer
             Do Until bolStopWorker
-
+                bolRendering = True
                 If RunThreads <> ThreadNum Then RunThreads = ThreadNum
 
                 Do While bolStopLoop
@@ -1085,7 +1086,7 @@ Err:
                         intDelay = 0
                     End If
                 End If
-
+                bolRendering = False
             Loop
 
 
@@ -1448,7 +1449,8 @@ Err:
 
     Private Sub tmrRender_Tick(sender As Object, e As EventArgs) Handles tmrRender.Tick
         ' If bolDraw Then Me.Render.Image = Drawr()
-        If bolStop Then
+        '   Debug.Print(bolRendering.ToString)
+        If bolStop Or bolRendering Then
             Drawr(Ball)
             SetUIInfo()
         End If

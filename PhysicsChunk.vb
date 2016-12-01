@@ -36,6 +36,10 @@ Public NotInheritable Class PhysicsChunk
 
     Dim bolRocheLimit As Boolean = False
     Dim NewBalls As New List(Of BallParms)
+    Dim RGBMulti As Integer = 4
+    Dim CalcColor As Integer
+    Dim ColorsRGB As Integer = 255
+
 
     Public Function CalcPhysics() ' As List(Of BallParms)
         Dim TotMass As Double
@@ -137,7 +141,7 @@ Public NotInheritable Class PhysicsChunk
                 'OuterBody(A).LocX = OuterBody(A).LocX + (StepMulti * OuterBody(A).SpeedX)
                 'OuterBody(A).LocY = OuterBody(A).LocY + (StepMulti * OuterBody(A).SpeedY)
                 ' tmpBodys.Add(OuterBody(A))
-
+                'CalcColor = ColorsRGB - (OuterBody(A).ForceTot * RGBMulti)
                 If OuterBody(A).ForceTot > OuterBody(A).Mass * 4 And Not OuterBody(A).Flags.Contains("BH") Then ' And OuterBody(A).Size < 10 
                     OuterBody(A).InRoche = True
                     NewBalls.AddRange(FractureBall(OuterBody(A)))
@@ -354,10 +358,11 @@ Public NotInheritable Class PhysicsChunk
                 'Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS)
                 'ForceX = Force * DistX / DistSqrt
                 'ForceY = Force * DistY / DistSqrt
-                Master.ForceX -= ForceX * 2
-                Master.ForceY -= ForceY * 2
-                Slave.ForceX -= ForceX * 2
-                Slave.ForceY -= ForceY * 2
+                Dim multi As Integer = 4
+                Master.ForceX -= ForceX * multi
+                Master.ForceY -= ForceY * multi
+                Slave.ForceX -= ForceX * multi
+                Slave.ForceY -= ForceY * multi
 
 
                 Dim Friction As Double = 0.8

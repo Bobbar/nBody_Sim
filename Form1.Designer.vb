@@ -328,7 +328,7 @@ Partial Class Form1
         'tmrRender
         '
         Me.tmrRender.Enabled = True
-        Me.tmrRender.Interval = 10
+        Me.tmrRender.Interval = 1
         '
         'lblDelay
         '
