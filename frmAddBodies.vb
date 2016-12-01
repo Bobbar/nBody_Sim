@@ -57,7 +57,7 @@ Public Class frmAddBodies
         If bolIncludeCenterMass Then
             ReDim Preserve Ball(UBound(Ball) + 1)
             Ball(UBound(Ball)).UID = Guid.NewGuid.ToString
-            Ball(UBound(Ball)).Index = UBound(Ball)
+            ' Ball(UBound(Ball)).Index = UBound(Ball)
             Ball(UBound(Ball)).Color = Color.Black 'RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
             Ball(UBound(Ball)).LocX = Form1.Render.Width / 2 / pic_scale - ScaleOffset.X - RelBallPosMod.X ' * pic_scale

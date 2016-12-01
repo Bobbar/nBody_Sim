@@ -158,3 +158,4 @@ C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Physics_Engine.Form1.resourc
 C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Physics_Engine.Resources.resources
 C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Physics Engine.vbproj.GenerateResource.Cache
 C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Physics_Engine.frmAddBodies.resources
+C:\GitHub\Physics Engine - Copy\Physics-2\bin\Debug\protobuf-net.dll

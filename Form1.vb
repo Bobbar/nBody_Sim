@@ -11,6 +11,7 @@ Public Class Form1
     Public bolStoring As Boolean
     Public bolPlaying As Boolean
     Public RecordedBodies As New List(Of BallParms())
+    Public RecordFileName As String
 
     Sub StartMeasuring()
         TestCount += 1
@@ -44,7 +45,7 @@ Public Class Form1
     Public Sub ShrinkBallArray()
         'On Error Resume Next
         ' Debug.Print("Cleaning Ball Array")
-        Dim TempArray() As BallParms
+        Dim TempArray() As BodyParms 'BallParms
         '       t.Abort()
         '  bolStopLoop = True
         't.Join()
@@ -199,8 +200,8 @@ Public Class Form1
             Ball(UBound(Ball)).SpeedY = 0
             Ball(UBound(Ball)).Size = 1
             Ball(UBound(Ball)).Flags = ""
-            Ball(UBound(Ball)).IsFragment = False
-            Ball(UBound(Ball)).Index = UBound(Ball)
+            '  Ball(UBound(Ball)).IsFragment = False
+            '  Ball(UBound(Ball)).Index = UBound(Ball)
             Ball(UBound(Ball)).UID = Guid.NewGuid.ToString
             Ball(UBound(Ball)).Mass = fnMass(Ball(UBound(Ball)).Size)
             Ball(UBound(Ball)).Visible = True
@@ -225,15 +226,15 @@ Public Class Form1
                     If MouseOver(New SPoint(e.Location), Ball(i)) And Ball(i).Visible Then
                         'Debug.Print(Render.PointToClient(New Point(Ball(i).LocX, Ball(i).LocY)).ToString)
                         ' Debug.Print("BLoc: " & Ball(i).LocX & "-" & Ball(i).LocY)
-                        Debug.Print("Body Index: " & Ball(i).Index & "  Body Loc: " & Ball(i).LocX & "," & Ball(i).LocY)
+                        Debug.Print("Body UID: " & Ball(i).UID & "  Body Loc: " & Ball(i).LocX & "," & Ball(i).LocY)
                         Debug.Print("Mass: " & Ball(i).Mass & " " & "Size: " & Ball(i).Size)
                         Debug.Print("InRoche: " & Ball(i).InRoche.ToString & " " & "RocheF: " & Ball(i).ForceTot)
                         If Not bolAltDown And bolShiftDown Then MoV = 1
                         Sel = i
-                        If bolShiftDown Then
-                            Ball(Sel).Locked = True
-                            '  Ball(Sel).Flags = "BH"
-                        End If
+                        'If bolShiftDown Then
+                        '    Ball(Sel).Locked = True
+                        '    '  Ball(Sel).Flags = "BH"
+                        'End If
                         If bolAltDown Then
                             lngFollowBall = Sel
                             FollowGUID = Ball(Sel).UID
@@ -1081,8 +1082,17 @@ Err:
 
                     Ball = AllBodys.ToArray
                     '  Debug.Print(UBound(Ball))
+
                     If bolStoring Then
                         RecordedBodies.Add(Ball)
+
+                        Using s As Stream = New MemoryStream()
+
+                            ' Dim formatter As ProtoBuf.Serializer 'System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+
+                            ProtoBuf.Serializer.Serialize(s, RecordedBodies.Item(1))
+                            Debug.Print(RecordedBodies.Count & " - " & s.Length / 1024)
+                        End Using
                     End If
 
                 ElseIf bolPlaying Then
@@ -1352,144 +1362,144 @@ Err:
         Body.LocY += StepMulti * Body.SpeedY
 
     End Sub
-    Private Sub CollideBodies(ByRef Master As BallParms, ByRef Slave As BallParms)
-        Dim VeKY As Double
-        Dim VekX As Double
-        Dim V1x As Double
-        Dim V2x As Double
-        Dim M1 As Double
-        Dim M2 As Double
-        Dim V1y As Double
-        Dim V2y As Double
+    'Private Sub CollideBodies(ByRef Master As BallParms, ByRef Slave As BallParms)
+    '    Dim VeKY As Double
+    '    Dim VekX As Double
+    '    Dim V1x As Double
+    '    Dim V2x As Double
+    '    Dim M1 As Double
+    '    Dim M2 As Double
+    '    Dim V1y As Double
+    '    Dim V2y As Double
 
-        ' Dim NewVelX1, NewVelY1, NewVelX2, NewVelY2 As Double
-
-
-        Dim V1 As Double
-        Dim V2 As Double
-        Dim U2 As Double
-        Dim U1 As Double
-        Dim DistX As Double
-        Dim DistY As Double
-        Dim Dist As Double
-        Dim DistSqrt As Double
-        Dim PrevSpdX, PrevSpdY As Double
-
-        Dim Area1 As Double, Area2 As Double
-
-        DistX = Slave.LocX - Master.LocX
-        DistY = Slave.LocY - Master.LocY
-        Dist = (DistX * DistX) + (DistY * DistY)
-        DistSqrt = Sqrt(Dist)
-        ' Debug.Print("Col dist:" & DistSqrt)
-        If DistSqrt > 0 Then
-            If Not Master.IsFragment Then
-
-                Slave.Visible = False
-                ' Master.IsFragment = False
-                V1x = Master.SpeedX
-                V1y = Master.SpeedY
-                V2x = Slave.SpeedX
-                V2y = Slave.SpeedY
-
-                M1 = Master.Mass
-                M2 = Slave.Mass
-
-                VekX = DistX / 2 ' (Ball(A).LocX - Ball(B).LocX) / 2
-                VeKY = DistY / 2 '(Ball(A).LocY - Ball(B).LocY) / 2
-
-                VekX = VekX / (DistSqrt / 2) 'LenG
-                VeKY = VeKY / (DistSqrt / 2) 'LenG
-
-                V1 = VekX * V1x + VeKY * V1y
-                V2 = VekX * V2x + VeKY * V2y
-
-                U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-                '   U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
+    '    ' Dim NewVelX1, NewVelY1, NewVelX2, NewVelY2 As Double
 
 
-                PrevSpdX = Master.SpeedX
-                PrevSpdY = Master.SpeedY
+    '    Dim V1 As Double
+    '    Dim V2 As Double
+    '    Dim U2 As Double
+    '    Dim U1 As Double
+    '    Dim DistX As Double
+    '    Dim DistY As Double
+    '    Dim Dist As Double
+    '    Dim DistSqrt As Double
+    '    Dim PrevSpdX, PrevSpdY As Double
+
+    '    Dim Area1 As Double, Area2 As Double
+
+    '    DistX = Slave.LocX - Master.LocX
+    '    DistY = Slave.LocY - Master.LocY
+    '    Dist = (DistX * DistX) + (DistY * DistY)
+    '    DistSqrt = Sqrt(Dist)
+    '    ' Debug.Print("Col dist:" & DistSqrt)
+    '    If DistSqrt > 0 Then
+    '        If Not Master.IsFragment Then
+
+    '            Slave.Visible = False
+    '            ' Master.IsFragment = False
+    '            V1x = Master.SpeedX
+    '            V1y = Master.SpeedY
+    '            V2x = Slave.SpeedX
+    '            V2y = Slave.SpeedY
+
+    '            M1 = Master.Mass
+    '            M2 = Slave.Mass
+
+    '            VekX = DistX / 2 ' (Ball(A).LocX - Ball(B).LocX) / 2
+    '            VeKY = DistY / 2 '(Ball(A).LocY - Ball(B).LocY) / 2
+
+    '            VekX = VekX / (DistSqrt / 2) 'LenG
+    '            VeKY = VeKY / (DistSqrt / 2) 'LenG
+
+    '            V1 = VekX * V1x + VeKY * V1y
+    '            V2 = VekX * V2x + VeKY * V2y
+
+    '            U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
+    '            '   U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
 
 
-                Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
-                Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
-
-                'If Abs(Master.SpeedX - PrevSpdX) > 100 Or Abs(Master.SpeedY - PrevSpdY) > 100 Then
-
-                '    Debugger.Break()
-
-                'End If
+    '            PrevSpdX = Master.SpeedX
+    '            PrevSpdY = Master.SpeedY
 
 
-                Area1 = PI * (Master.Size ^ 2)
-                Area2 = PI * (Slave.Size ^ 2)
-                Area1 = Area1 + Area2
-                Master.Size = Sqrt(Area1 / PI)
-                Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+    '            Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+    '            Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+
+    '            'If Abs(Master.SpeedX - PrevSpdX) > 100 Or Abs(Master.SpeedY - PrevSpdY) > 100 Then
+
+    '            '    Debugger.Break()
+
+    '            'End If
 
 
+    '            Area1 = PI * (Master.Size ^ 2)
+    '            Area2 = PI * (Slave.Size ^ 2)
+    '            Area1 = Area1 + Area2
+    '            Master.Size = Sqrt(Area1 / PI)
+    '            Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
 
 
 
 
-                'If Sqrt(Master.Mass) * 3 > 350 Then Master.Color = System.Drawing.Color.Red
-                'If Sqrt(Master.Mass) * 3 > 400 Then Master.Color = System.Drawing.Color.Yellow
-                'If Sqrt(Master.Mass) * 3 > 500 Then Master.Color = System.Drawing.Color.White
-                'If Sqrt(Master.Mass) * 3 > 600 Then Master.Color = System.Drawing.Color.LightCyan
-                'If Sqrt(Master.Mass) * 3 > 700 Then Master.Color = System.Drawing.Color.LightBlue
-                'If Sqrt(Master.Mass) * 3 > 1000 Then
-                '    Master.Color = Color.Black
-                '    Master.Size = 20
-                '    If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
-                'End If
 
 
-                If Master.Flags.Contains("BH") Or Master.Mass >= TypicalSolarMass * 18 Then
-                    Master.Color = Color.Black
-                    Master.Size = 15
-                    If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
-                End If
+    '            'If Sqrt(Master.Mass) * 3 > 350 Then Master.Color = System.Drawing.Color.Red
+    '            'If Sqrt(Master.Mass) * 3 > 400 Then Master.Color = System.Drawing.Color.Yellow
+    '            'If Sqrt(Master.Mass) * 3 > 500 Then Master.Color = System.Drawing.Color.White
+    '            'If Sqrt(Master.Mass) * 3 > 600 Then Master.Color = System.Drawing.Color.LightCyan
+    '            'If Sqrt(Master.Mass) * 3 > 700 Then Master.Color = System.Drawing.Color.LightBlue
+    '            'If Sqrt(Master.Mass) * 3 > 1000 Then
+    '            '    Master.Color = Color.Black
+    '            '    Master.Size = 20
+    '            '    If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
+    '            'End If
 
 
-                If Master.Mass >= TypicalSolarMass * 0.3 Then Master.Color = System.Drawing.Color.Red
-                If Master.Mass >= TypicalSolarMass * 0.8 Then Master.Color = System.Drawing.Color.Gold
-                If Master.Mass >= TypicalSolarMass Then Master.Color = System.Drawing.Color.GhostWhite
-                If Master.Mass >= TypicalSolarMass * 1.7 Then Master.Color = System.Drawing.Color.CornflowerBlue
-                If Master.Mass >= TypicalSolarMass * 3.2 Then Master.Color = System.Drawing.Color.DeepSkyBlue
-
-            End If
-
-        Else ' if bodies are at exact same position
-
-                'Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
-                ' Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
-
-                If Master.Mass > Slave.Mass Then
-
-                Area1 = PI * (Master.Size ^ 2)
-                Area2 = PI * (Slave.Size ^ 2)
-                Area1 = Area1 + Area2
-                Master.Size = Sqrt(Area1 / PI)
-                Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
-                Slave.Visible = False
-            Else
-
-                Area1 = PI * (Master.Size ^ 2)
-                Area2 = PI * (Slave.Size ^ 2)
-                Area1 = Area1 + Area2
-                Slave.Size = Sqrt(Area1 / PI)
-                Slave.Mass = Slave.Mass + Master.Mass 'Sqr(Ball(B).Mass)
-                Master.Visible = False
-            End If
+    '            If Master.Flags.Contains("BH") Or Master.Mass >= TypicalSolarMass * 18 Then
+    '                Master.Color = Color.Black
+    '                Master.Size = 15
+    '                If InStr(1, Master.Flags, "BH") = 0 Then Master.Flags = Master.Flags + "BH"
+    '            End If
 
 
+    '            If Master.Mass >= TypicalSolarMass * 0.3 Then Master.Color = System.Drawing.Color.Red
+    '            If Master.Mass >= TypicalSolarMass * 0.8 Then Master.Color = System.Drawing.Color.Gold
+    '            If Master.Mass >= TypicalSolarMass Then Master.Color = System.Drawing.Color.GhostWhite
+    '            If Master.Mass >= TypicalSolarMass * 1.7 Then Master.Color = System.Drawing.Color.CornflowerBlue
+    '            If Master.Mass >= TypicalSolarMass * 3.2 Then Master.Color = System.Drawing.Color.DeepSkyBlue
+
+    '        End If
+
+    '    Else ' if bodies are at exact same position
+
+    '            'Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+    '            ' Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+
+    '            If Master.Mass > Slave.Mass Then
+
+    '            Area1 = PI * (Master.Size ^ 2)
+    '            Area2 = PI * (Slave.Size ^ 2)
+    '            Area1 = Area1 + Area2
+    '            Master.Size = Sqrt(Area1 / PI)
+    '            Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+    '            Slave.Visible = False
+    '        Else
+
+    '            Area1 = PI * (Master.Size ^ 2)
+    '            Area2 = PI * (Slave.Size ^ 2)
+    '            Area1 = Area1 + Area2
+    '            Slave.Size = Sqrt(Area1 / PI)
+    '            Slave.Mass = Slave.Mass + Master.Mass 'Sqr(Ball(B).Mass)
+    '            Master.Visible = False
+    '        End If
 
 
-        End If
 
 
-    End Sub
+    '    End If
+
+
+    'End Sub
     Private Sub AddNewBalls(ByRef NewBalls As List(Of BallParms))
 
         For Each AddBall As BallParms In NewBalls
@@ -1683,6 +1693,20 @@ Err:
     End Sub
 
     Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
+        On Error Resume Next
+        RecordedBodies.Clear()
+        Dim OpenDialog As New OpenFileDialog()
+        If OpenDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
+            ' Dim sr As New System.IO.StreamReader(OpenFileDialog1.FileName)
+            Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            Dim fStream As New FileStream(OpenDialog.FileName, FileMode.OpenOrCreate)
+
+            fStream.Position = 0 ' reset stream pointer
+            RecordedBodies = bf.Deserialize(fStream) ' read from file
+            'sr.Close()
+        End If
+
+
         bolPlaying = Not bolPlaying
     End Sub
 
@@ -1691,6 +1715,22 @@ Err:
     End Sub
 
     Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+        Debug.Print(RecordedBodies.Count)
+
         bolStoring = False
+
+        Dim SaveDialog As New SaveFileDialog()
+        SaveDialog.Filter = "Body State|*.dat"
+        SaveDialog.Title = "Save State File"
+        SaveDialog.ShowDialog()
+
+
+        RecordFileName = SaveDialog.FileName
+        Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+        If SaveDialog.FileName <> "" Then
+            Dim fStream As New FileStream(SaveDialog.FileName, FileMode.OpenOrCreate)
+            bf.Serialize(fStream, RecordedBodies)
+        End If
+
     End Sub
 End Class

@@ -3,6 +3,7 @@ Imports System.Threading.Tasks
 Imports System.Threading
 Imports System.Drawing.Drawing2D
 Imports System.Runtime.CompilerServices
+Imports System.IO
 Public Module PhysicsLoop
 
     ''' <summary>
@@ -44,7 +45,7 @@ Public Module PhysicsLoop
     Public bolStop As Boolean
     '// Some Variables are not used by my code, forget them. I didnt have the time to make my code clean....
     <Serializable()> Public Structure BallParms
-        Public Index As Integer
+        '   Public Index As Integer
         Public Size As Double
         Public LocX As Double
         Public LocY As Double
@@ -63,18 +64,56 @@ Public Module PhysicsLoop
         Public MovinG As Boolean
         'Public Old_LocX As Single
         'Public Old_LocY As Single
-        Public ShadAngle As Single
+        '     Public ShadAngle As Single
         'Public Origin As Long
-        Public Locked As Boolean
+        '   Public Locked As Boolean
         Public Visible As Boolean
         Public Mass As Double
         Public Color As Color
-        Public IsFragment As Boolean
+        '   Public IsFragment As Boolean
         Public InRoche As Boolean
         Public Flags As String
-        Public Group As List(Of BallParms)
+        '    Public Group As List(Of BallParms)
     End Structure
-    Public Ball() As BallParms
+    Public Ball() As BodyParms ' BallParms
+
+
+    <ProtoBuf.ProtoContract>
+    Public Class BodyParms
+        <ProtoBuf.ProtoMember(1)>
+        Public Size As Double
+        <ProtoBuf.ProtoMember(2)>
+        Public LocX As Double
+        <ProtoBuf.ProtoMember(3)>
+        Public LocY As Double
+        <ProtoBuf.ProtoMember(4)>
+        Public SpeedX As Double
+        <ProtoBuf.ProtoMember(5)>
+        Public SpeedY As Double
+        <ProtoBuf.ProtoMember(6)>
+        Public ForceX As Double
+        <ProtoBuf.ProtoMember(7)>
+        Public ForceY As Double
+        <ProtoBuf.ProtoMember(8)>
+        Public ForceTot As Double
+        <ProtoBuf.ProtoMember(9)>
+        Public UID As String
+        <ProtoBuf.ProtoMember(10)>
+        Public MovinG As Boolean
+        <ProtoBuf.ProtoMember(11)>
+        Public Visible As Boolean
+        <ProtoBuf.ProtoMember(12)>
+        Public Mass As Double
+        <ProtoBuf.ProtoMember(13)>
+        Public Color As Color
+        <ProtoBuf.ProtoMember(14)>
+        Public InRoche As Boolean
+        <ProtoBuf.ProtoMember(15)>
+        Public Flags As String
+
+
+    End Class
+
     Dim PrevX As Single
     Dim PrevY As Single
     Dim CurrentPX As Single

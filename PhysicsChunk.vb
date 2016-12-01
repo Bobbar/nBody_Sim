@@ -436,23 +436,23 @@ Public NotInheritable Class PhysicsChunk
 
 
     End Sub
-    Private Function IsInMyBodys(index As Integer) As Boolean
-        For Each Body As BallParms In MyBodys
+    'Private Function IsInMyBodys(index As Integer) As Boolean
+    '    For Each Body As BallParms In MyBodys
 
-            If Body.Index = index Then Return True
-        Next
-        Return False
+    '        If Body.Index = index Then Return True
+    '    Next
+    '    Return False
 
-    End Function
-    Private Function TrueIndex(index As Integer) As Integer
-        Dim i As Integer
-        For Each Body As BallParms In MyBodys
+    'End Function
+    'Private Function TrueIndex(index As Integer) As Integer
+    '    Dim i As Integer
+    '    For Each Body As BallParms In MyBodys
 
-            If Body.Index = index Then i = MyBodys.IndexOf(Body) 'Return MyBodys.IndexOf(Body)
-        Next
-        Return i
+    '        If Body.Index = index Then i = MyBodys.IndexOf(Body) 'Return MyBodys.IndexOf(Body)
+    '    Next
+    '    Return i
 
-    End Function
+    'End Function
 
     Private Function FractureBall(ByRef Body As BallParms) As List(Of BallParms)
         Dim NewBallSize As Single
@@ -509,9 +509,9 @@ Public NotInheritable Class PhysicsChunk
                 'Ball(u).Flags = Body.Flags + "R"
                 tmpBall.Color = Body.Color 'vbWhite
                 tmpBall.Flags = ""
-                tmpBall.Index = UBound(Ball) + 1
+                '  tmpBall.Index = UBound(Ball) + 1
                 tmpBall.UID = Guid.NewGuid.ToString
-                tmpBall.IsFragment = True
+                '  tmpBall.IsFragment = True
                 tmpBall.InRoche = True
                 tmpBall.Visible = True
                 '  Ball(u).LocY = Body.LocY + Ball(u).Size * 2
