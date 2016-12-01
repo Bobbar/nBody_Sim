@@ -4,6 +4,8 @@ Imports System.Threading
 Imports System.Drawing.Drawing2D
 Imports System.ComponentModel
 Imports System.IO
+Imports System.IO.Compression
+Imports System.Runtime.InteropServices
 Public Class Form1
     Public TrueFPS As Integer
     Public RenderTime As Double
@@ -1691,25 +1693,36 @@ Err:
 
     Private Sub tsmSave_Click(sender As Object, e As EventArgs) Handles tsmSave.Click
         Dim SaveDialog As New SaveFileDialog()
-        SaveDialog.Filter = "Body State|*.dat"
+        SaveDialog.Filter = "Body State|*.sta"
         SaveDialog.Title = "Save State File"
         SaveDialog.ShowDialog()
 
-        Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-        Dim fStream As New FileStream(SaveDialog.FileName, FileMode.OpenOrCreate)
+        'Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+        'Dim fStream As New FileStream(SaveDialog.FileName, FileMode.OpenOrCreate)
 
-        bf.Serialize(fStream, Ball)
+        'bf.Serialize(fStream, Ball)
+
+        If SaveDialog.FileName <> "" Then
+            Dim fStream As New FileStream(SaveDialog.FileName, FileMode.OpenOrCreate)
+            ProtoBuf.Serializer.Serialize(fStream, Ball)
+            ' bf.Serialize(fStream, RecordedBodies)
+        End If
+
     End Sub
 
     Private Sub tsmLoad_Click(sender As Object, e As EventArgs) Handles tsmLoad.Click
         Dim OpenDialog As New OpenFileDialog()
+        OpenDialog.Filter = "Body State File|*.sta"
+        OpenDialog.Title = "Open State File"
         If OpenDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
             ' Dim sr As New System.IO.StreamReader(OpenFileDialog1.FileName)
             Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             Dim fStream As New FileStream(OpenDialog.FileName, FileMode.OpenOrCreate)
 
-            fStream.Position = 0 ' reset stream pointer
-            Ball = bf.Deserialize(fStream) ' read from file
+            'fStream.Position = 0 ' reset stream pointer
+            ' Ball = bf.Deserialize(fStream) ' read from file
+
+            Ball = ProtoBuf.Serializer.Deserialize(Of BallParms())(fStream)
             'sr.Close()
         End If
 
@@ -1720,25 +1733,38 @@ Err:
     End Sub
 
     Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
-        On Error Resume Next
+        '  On Error Resume Next
         RecordedBodies.Clear()
         Dim OpenDialog As New OpenFileDialog()
+        OpenDialog.Filter = "Recording File|*.dat"
+        OpenDialog.Title = "Open Rendered Recording"
         If OpenDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
             ' Dim sr As New System.IO.StreamReader(OpenFileDialog1.FileName)
             Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             Dim fStream As New FileStream(OpenDialog.FileName, FileMode.OpenOrCreate)
 
             ' fStream.Position = 0 ' reset stream pointer
+
+
+
             _nestedArrayForProtoBuf = ProtoBuf.Serializer.Deserialize(Of List(Of ProtobufArray(Of BallParms)))(fStream) 'bf.Deserialize(fStream) ' read from file
             'sr.Close()
         End If
 
         SeekBar.Maximum = RecordedBodies.Count - 1
         SeekBar.Value = 1
+
+
+
+
+
         bolPlaying = Not bolPlaying
         If Not PhysicsWorker.IsBusy And Not bolStopWorker Then
             PhysicsWorker.RunWorkerAsync()
         End If
+
+
+
     End Sub
 
     Private Sub SeekBar_Scroll(sender As Object, e As EventArgs) Handles SeekBar.Scroll
@@ -1747,8 +1773,43 @@ Err:
     End Sub
 
     Private Sub cmdStor_Click(sender As Object, e As EventArgs) Handles cmdStor.Click
-        bolStoring = True
+        bolStoring = Not bolStoring
+        If bolStoring Then
+            cmdStor.Text = "Stop Recording"
+            cmdStor.BackColor = Color.Red
+
+
+
+
+
+        Else
+            cmdStor.Text = "Record"
+            cmdStor.BackColor = System.Drawing.SystemColors.Control
+
+            Debug.Print(RecordedBodies.Count)
+
+
+            Dim SaveDialog As New SaveFileDialog()
+            SaveDialog.Filter = "Record File|*.dat"
+            SaveDialog.Title = "Save Rendered Recording"
+            SaveDialog.ShowDialog()
+
+
+            RecordFileName = SaveDialog.FileName
+            '  Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            If SaveDialog.FileName <> "" Then
+                Dim fStream As New FileStream(SaveDialog.FileName, FileMode.OpenOrCreate)
+                ProtoBuf.Serializer.Serialize(fStream, _nestedArrayForProtoBuf)
+
+                ' bf.Serialize(fStream, RecordedBodies)
+            End If
+
+
+        End If
+
+
     End Sub
+
 
     Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
         Debug.Print(RecordedBodies.Count)
@@ -1756,8 +1817,8 @@ Err:
         bolStoring = False
 
         Dim SaveDialog As New SaveFileDialog()
-        SaveDialog.Filter = "Body State|*.dat"
-        SaveDialog.Title = "Save State File"
+        SaveDialog.Filter = "Record File|*.dat"
+        SaveDialog.Title = "Save Rendered Recording"
         SaveDialog.ShowDialog()
 
 

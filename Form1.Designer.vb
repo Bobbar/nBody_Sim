@@ -269,7 +269,7 @@ Partial Class Form1
         '
         'Button5
         '
-        Me.Button5.Location = New System.Drawing.Point(1018, 5)
+        Me.Button5.Location = New System.Drawing.Point(1001, 5)
         Me.Button5.Name = "Button5"
         Me.Button5.Size = New System.Drawing.Size(77, 20)
         Me.Button5.TabIndex = 43
@@ -470,8 +470,10 @@ Partial Class Form1
         'Panel1
         '
         Me.Panel1.Controls.Add(Me.NumThreads)
+        Me.Panel1.Controls.Add(Me.Button7)
         Me.Panel1.Controls.Add(Me.TimeStep)
         Me.Panel1.Controls.Add(Me.cmdTrails)
+        Me.Panel1.Controls.Add(Me.cmdStor)
         Me.Panel1.Controls.Add(Me.butAddBall)
         Me.Panel1.Controls.Add(Me.Label12)
         Me.Panel1.Controls.Add(Me.Button3)
@@ -488,7 +490,7 @@ Partial Class Form1
         Me.Panel1.Controls.Add(Me.butRemoveBalls)
         Me.Panel1.Location = New System.Drawing.Point(3, 27)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(1116, 30)
+        Me.Panel1.Size = New System.Drawing.Size(1213, 30)
         Me.Panel1.TabIndex = 52
         '
         'cmdTrails
@@ -519,29 +521,30 @@ Partial Class Form1
         '
         'cmdStor
         '
-        Me.cmdStor.Location = New System.Drawing.Point(1125, 33)
+        Me.cmdStor.Location = New System.Drawing.Point(1084, 5)
         Me.cmdStor.Name = "cmdStor"
-        Me.cmdStor.Size = New System.Drawing.Size(37, 20)
+        Me.cmdStor.Size = New System.Drawing.Size(54, 20)
         Me.cmdStor.TabIndex = 54
-        Me.cmdStor.Text = "Stor"
+        Me.cmdStor.Text = "Record"
         Me.cmdStor.UseVisualStyleBackColor = True
         '
         'Button6
         '
-        Me.Button6.Location = New System.Drawing.Point(1168, 32)
+        Me.Button6.Location = New System.Drawing.Point(1242, 32)
         Me.Button6.Name = "Button6"
         Me.Button6.Size = New System.Drawing.Size(62, 20)
         Me.Button6.TabIndex = 55
         Me.Button6.Text = "StopStor"
         Me.Button6.UseVisualStyleBackColor = True
+        Me.Button6.Visible = False
         '
         'Button7
         '
-        Me.Button7.Location = New System.Drawing.Point(1236, 32)
+        Me.Button7.Location = New System.Drawing.Point(1144, 5)
         Me.Button7.Name = "Button7"
         Me.Button7.Size = New System.Drawing.Size(62, 20)
         Me.Button7.TabIndex = 56
-        Me.Button7.Text = "Replay"
+        Me.Button7.Text = "Load Rec"
         Me.Button7.UseVisualStyleBackColor = True
         '
         'SeekBar
@@ -560,9 +563,7 @@ Partial Class Form1
         Me.BackColor = System.Drawing.SystemColors.Control
         Me.ClientSize = New System.Drawing.Size(1316, 733)
         Me.Controls.Add(Me.SeekBar)
-        Me.Controls.Add(Me.Button7)
         Me.Controls.Add(Me.Button6)
-        Me.Controls.Add(Me.cmdStor)
         Me.Controls.Add(Me.lblRenTime)
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.lblScale)
