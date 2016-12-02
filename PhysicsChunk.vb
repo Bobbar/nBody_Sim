@@ -358,7 +358,7 @@ Public NotInheritable Class PhysicsChunk
                 'Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS)
                 'ForceX = Force * DistX / DistSqrt
                 'ForceY = Force * DistY / DistSqrt
-                Dim multi As Integer = 4
+                Dim multi As Integer = 20
                 Master.ForceX -= ForceX * multi
                 Master.ForceY -= ForceY * multi
                 Slave.ForceX -= ForceX * multi

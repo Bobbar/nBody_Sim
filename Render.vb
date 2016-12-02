@@ -150,6 +150,7 @@ Public Module Renderer
         End If
 
         Form1.Render.Image = bm
+
         bolDrawing = False
         '   Return bm
     End Sub

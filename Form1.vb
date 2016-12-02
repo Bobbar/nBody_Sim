@@ -1041,6 +1041,7 @@ Err:
                 If Not bolPlaying Then
                     'IF NOT PLAYING THEN RENDER NORMALLY*****************
 
+
                     If UBound(Ball) > (VisibleBalls() * 2) Then
                         Ball = CullBodies(Ball)
                     End If
@@ -1065,6 +1066,8 @@ Err:
                     For Each trd As PhysicsChunk In Threads
                         rThreads.Add(New Thread(New ThreadStart(AddressOf trd.CalcPhysics)))
                     Next
+
+
 
                     For Each rtrd As Thread In rThreads
                         rtrd.Start()
@@ -1100,7 +1103,9 @@ Err:
                         '    Debug.Print(RecordedBodies.Count & " - " & s.Length / 1024)
                         'End Using
                     End If
+
                     PhysicsWorker.ReportProgress(1, Ball)
+
                 ElseIf bolPlaying Then
                     'ELSE IF IS PLAYING THEN CYCLE REPLAY
 
@@ -1172,6 +1177,7 @@ Err:
         Loop
         StartTick = Now.Ticks
         Thread.Sleep(intDelay)
+
     End Sub
     Private Sub CalcDelay()
         EndTick = Now.Ticks
@@ -1187,6 +1193,7 @@ Err:
                 intDelay = 0
             End If
         End If
+
     End Sub
     Private Function CullBodies(Bodies() As BallParms) As BallParms()
         Dim tmpBodies(0) As BallParms
@@ -1205,12 +1212,14 @@ Err:
         ' Debug.Print("Render complete " & Now.Ticks)
         'Dim tmpBodys As New List(Of BallParms)
         'tmpBodys.AddRange(e.UserState)
+
         Dim PassBall() As BallParms = e.UserState ' tmpBodys.ToArray
         If bolPlaying Then
 
             SeekBar.Value = e.ProgressPercentage
         End If
         If bolDraw And Not bolDrawing Then Drawr(PassBall) '  Me.Render.Image = Drawr(PassBall)
+
     End Sub
     'Public Function CalcPhysics(iUpperBody As Integer, iLowerBody As Integer, MainBodyArray() As BallParms) As List(Of BallParms)
 
@@ -1784,8 +1793,8 @@ Err:
 
         Else
             cmdStor.Text = "Record"
-            cmdStor.BackColor = System.Drawing.SystemColors.Control
-
+            cmdStor.BackColor = colBackColor
+            cmdStor.ForeColor = colControlForeColor
             Debug.Print(RecordedBodies.Count)
 
 
@@ -1798,6 +1807,7 @@ Err:
             RecordFileName = SaveDialog.FileName
             '  Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             If SaveDialog.FileName <> "" Then
+
                 Dim fStream As New FileStream(SaveDialog.FileName, FileMode.OpenOrCreate)
                 ProtoBuf.Serializer.Serialize(fStream, _nestedArrayForProtoBuf)
 
