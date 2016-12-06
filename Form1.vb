@@ -1094,7 +1094,9 @@ Err:
                     If bolStoring Then
                         '  Dim BodyFrame
                         'RecordedBodies.Add(Ball)
+                        StartTimer()
                         RecordFrame(Ball)
+                        StopTimer()
                         'Using s As Stream = New MemoryStream()
 
                         '    ' Dim formatter As ProtoBuf.Serializer 'System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
@@ -1172,37 +1174,51 @@ Err:
 
     End Sub
     Public Sub RecordFrame(Bodies() As BallParms)
-        Dim tmpCompBodies(0) As Body_Rec_Parms
-        Dim i As Integer = 0
-        For Each body As BallParms In Bodies
-            If body.Visible Then
-                tmpCompBodies(i).Size = body.Size
-                tmpCompBodies(i).LocX = body.LocX
-                tmpCompBodies(i).LocY = body.LocY
-                tmpCompBodies(i).Visible = body.Visible
-                tmpCompBodies(i).Flags = body.Flags
-                tmpCompBodies(i).Color = body.Color
-                ReDim Preserve tmpCompBodies(UBound(tmpCompBodies) + 1)
-                i += 1
-            End If
+        ' Dim tmpCompBodies(0) As Body_Rec_Parms
+        Dim tmpCompBodies(UBound(Bodies)) As Body_Rec_Parms
+        ' Dim i As Integer = 0
+        'For Each body As BallParms In Bodies
+        For s As Integer = 0 To UBound(Bodies)
+            '  If Bodies(s).Visible Then
+            tmpCompBodies(s).Size = Bodies(s).Size
+            tmpCompBodies(s).LocX = Bodies(s).LocX
+            tmpCompBodies(s).LocY = Bodies(s).LocY
+            tmpCompBodies(s).Visible = Bodies(s).Visible
+            tmpCompBodies(s).Flags = Bodies(s).Flags
+            tmpCompBodies(s).Color = Bodies(s).Color
+            'ReDim Preserve tmpCompBodies(UBound(tmpCompBodies) + 1)
+            '    i += 1
+            '  End If
 
         Next
         CompRecBodies.Add(tmpCompBodies)
     End Sub
     Public Function ConvertFrame(Bodies() As Body_Rec_Parms) As BallParms()
-        Dim tmpCompBodies(0) As BallParms
-        Dim i As Integer = 0
-        For Each body As Body_Rec_Parms In Bodies
-            If body.Visible Then
-                tmpCompBodies(i).Size = body.Size
-                tmpCompBodies(i).LocX = body.LocX
-                tmpCompBodies(i).LocY = body.LocY
-                tmpCompBodies(i).Visible = body.Visible
-                tmpCompBodies(i).Flags = body.Flags
-                tmpCompBodies(i).Color = body.Color
-                ReDim Preserve tmpCompBodies(UBound(tmpCompBodies) + 1)
-                i += 1
-            End If
+        Dim tmpCompBodies(UBound(Bodies)) As BallParms
+        'Dim i As Integer = 0
+        For s As Integer = 0 To UBound(Bodies)
+            'For Each body As Body_Rec_Parms In Bodies
+
+            'tmpCompBodies(i).Size = body.Size
+            'tmpCompBodies(i).LocX = body.LocX
+            'tmpCompBodies(i).LocY = body.LocY
+            'tmpCompBodies(i).Visible = body.Visible
+            'tmpCompBodies(i).Flags = body.Flags
+            'tmpCompBodies(i).Color = body.Color
+
+            tmpCompBodies(s).Size = Bodies(s).Size
+            tmpCompBodies(s).LocX = Bodies(s).LocX
+            tmpCompBodies(s).LocY = Bodies(s).LocY
+            tmpCompBodies(s).Visible = Bodies(s).Visible
+            tmpCompBodies(s).Flags = Bodies(s).Flags
+            tmpCompBodies(s).Color = Bodies(s).Color
+
+
+
+
+            'ReDim Preserve tmpCompBodies(UBound(tmpCompBodies) + 1)
+            'i += 1
+
 
         Next
         'CompRecBodies.Add(tmpCompBodies)
@@ -1689,7 +1705,16 @@ Err:
         lblScale.Text = "Scale: " & Round(pic_scale, 2)
 
 
+        If bolStoring Then
+            lblRecFrames.Visible = True
+            lblRecFrames.Text = "RecFrames: " & CompRecBodies.Count.ToString
+            lblRecSize.Visible = True
 
+            lblRecSize.Text = "Size (KB): " & RecSize()
+        Else
+            lblRecFrames.Visible = False
+            lblRecSize.Visible = False
+        End If
 
 
 
@@ -1706,7 +1731,21 @@ Err:
 
 
     End Sub
+    Private Function RecSize() As Double
+        Dim Bodies As Integer
+        For i As Integer = 0 To UBound(CompRecBodies.ToArray)
 
+            Bodies += CompRecBodies(i).Count
+
+
+        Next
+
+        Bodies *= 43
+        Bodies \= 1000
+
+        Return Bodies
+
+    End Function
     Private Sub cmdTrails_Click(sender As Object, e As EventArgs) Handles cmdTrails.Click
         bolTrails = Not bolTrails
         Select Case bolTrails
@@ -1854,6 +1893,7 @@ Err:
                 ProtoBuf.Serializer.Serialize(fStream, _nestedArrayForProtoBuf)
 
                 ' bf.Serialize(fStream, RecordedBodies)
+                CompRecBodies.Clear()
             End If
 
 

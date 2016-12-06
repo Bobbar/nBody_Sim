@@ -65,13 +65,15 @@ Partial Class Form1
         Me.tsmSave = New System.Windows.Forms.ToolStripMenuItem()
         Me.tsmLoad = New System.Windows.Forms.ToolStripMenuItem()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.Button7 = New System.Windows.Forms.Button()
         Me.cmdTrails = New System.Windows.Forms.Button()
+        Me.cmdStor = New System.Windows.Forms.Button()
         Me.UI_Worker = New System.ComponentModel.BackgroundWorker()
         Me.lblRenTime = New System.Windows.Forms.Label()
-        Me.cmdStor = New System.Windows.Forms.Button()
         Me.Button6 = New System.Windows.Forms.Button()
-        Me.Button7 = New System.Windows.Forms.Button()
         Me.SeekBar = New System.Windows.Forms.TrackBar()
+        Me.lblRecFrames = New System.Windows.Forms.Label()
+        Me.lblRecSize = New System.Windows.Forms.Label()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -493,6 +495,15 @@ Partial Class Form1
         Me.Panel1.Size = New System.Drawing.Size(1213, 30)
         Me.Panel1.TabIndex = 52
         '
+        'Button7
+        '
+        Me.Button7.Location = New System.Drawing.Point(1144, 5)
+        Me.Button7.Name = "Button7"
+        Me.Button7.Size = New System.Drawing.Size(62, 20)
+        Me.Button7.TabIndex = 56
+        Me.Button7.Text = "Load Rec"
+        Me.Button7.UseVisualStyleBackColor = True
+        '
         'cmdTrails
         '
         Me.cmdTrails.Location = New System.Drawing.Point(927, 5)
@@ -501,6 +512,15 @@ Partial Class Form1
         Me.cmdTrails.TabIndex = 47
         Me.cmdTrails.Text = "Trails"
         Me.cmdTrails.UseVisualStyleBackColor = True
+        '
+        'cmdStor
+        '
+        Me.cmdStor.Location = New System.Drawing.Point(1084, 5)
+        Me.cmdStor.Name = "cmdStor"
+        Me.cmdStor.Size = New System.Drawing.Size(54, 20)
+        Me.cmdStor.TabIndex = 54
+        Me.cmdStor.Text = "Record"
+        Me.cmdStor.UseVisualStyleBackColor = True
         '
         'UI_Worker
         '
@@ -519,15 +539,6 @@ Partial Class Form1
         Me.lblRenTime.TabIndex = 53
         Me.lblRenTime.Text = "Ren Time:"
         '
-        'cmdStor
-        '
-        Me.cmdStor.Location = New System.Drawing.Point(1084, 5)
-        Me.cmdStor.Name = "cmdStor"
-        Me.cmdStor.Size = New System.Drawing.Size(54, 20)
-        Me.cmdStor.TabIndex = 54
-        Me.cmdStor.Text = "Record"
-        Me.cmdStor.UseVisualStyleBackColor = True
-        '
         'Button6
         '
         Me.Button6.Location = New System.Drawing.Point(1242, 32)
@@ -538,15 +549,6 @@ Partial Class Form1
         Me.Button6.UseVisualStyleBackColor = True
         Me.Button6.Visible = False
         '
-        'Button7
-        '
-        Me.Button7.Location = New System.Drawing.Point(1144, 5)
-        Me.Button7.Name = "Button7"
-        Me.Button7.Size = New System.Drawing.Size(62, 20)
-        Me.Button7.TabIndex = 56
-        Me.Button7.Text = "Load Rec"
-        Me.Button7.UseVisualStyleBackColor = True
-        '
         'SeekBar
         '
         Me.SeekBar.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
@@ -556,12 +558,40 @@ Partial Class Form1
         Me.SeekBar.Size = New System.Drawing.Size(1301, 45)
         Me.SeekBar.TabIndex = 57
         '
+        'lblRecFrames
+        '
+        Me.lblRecFrames.AutoSize = True
+        Me.lblRecFrames.BackColor = System.Drawing.Color.Black
+        Me.lblRecFrames.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblRecFrames.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.lblRecFrames.Location = New System.Drawing.Point(11, 179)
+        Me.lblRecFrames.Name = "lblRecFrames"
+        Me.lblRecFrames.Size = New System.Drawing.Size(83, 16)
+        Me.lblRecFrames.TabIndex = 58
+        Me.lblRecFrames.Text = "Rec Frames:"
+        Me.lblRecFrames.Visible = False
+        '
+        'lblRecSize
+        '
+        Me.lblRecSize.AutoSize = True
+        Me.lblRecSize.BackColor = System.Drawing.Color.Black
+        Me.lblRecSize.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblRecSize.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.lblRecSize.Location = New System.Drawing.Point(11, 195)
+        Me.lblRecSize.Name = "lblRecSize"
+        Me.lblRecSize.Size = New System.Drawing.Size(91, 16)
+        Me.lblRecSize.TabIndex = 59
+        Me.lblRecSize.Text = "Rec Size(KB):"
+        Me.lblRecSize.Visible = False
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
         Me.ClientSize = New System.Drawing.Size(1316, 733)
+        Me.Controls.Add(Me.lblRecSize)
+        Me.Controls.Add(Me.lblRecFrames)
         Me.Controls.Add(Me.SeekBar)
         Me.Controls.Add(Me.Button6)
         Me.Controls.Add(Me.lblRenTime)
@@ -649,4 +679,6 @@ Partial Class Form1
     Friend WithEvents Button6 As Button
     Friend WithEvents Button7 As Button
     Friend WithEvents SeekBar As TrackBar
+    Friend WithEvents lblRecFrames As Label
+    Friend WithEvents lblRecSize As Label
 End Class
