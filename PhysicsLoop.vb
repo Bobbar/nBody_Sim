@@ -122,22 +122,62 @@ Public Module PhysicsLoop
         'Public Flags As String
         ''    Public Group As List(Of BallParms)
     End Structure
+    <ProtoBuf.ProtoContract>
+    Public Structure Body_Rec_Parms
+        <ProtoBuf.ProtoMember(1)>
+        Public Size As Double
+        <ProtoBuf.ProtoMember(2)>
+        Public LocX As Double
+        <ProtoBuf.ProtoMember(3)>
+        Public LocY As Double
+        <ProtoBuf.ProtoMember(4)>
+        Public Visible As Boolean
+        <ProtoBuf.ProtoMember(5)>
+        Public Flags As String
+
+        Public Color As Color
+        <ProtoBuf.ProtoMember(6)>
+        Private Property ColorSerialized() As Integer
+            Get
+                Return Color.ToArgb()
+            End Get
+            Set
+                Color = Color.FromArgb(Value)
+            End Set
+        End Property
+    End Structure
     Public Ball() As BallParms
     Public RecordedBodies As New List(Of BallParms())
+    Public CompRecBodies As New List(Of Body_Rec_Parms())
     'Private _nestedArray As List(Of BallParms())
+    '' The nested array I would like to serialize.
+    '<ProtoBuf.ProtoMember(1)>
+    'Public Property _nestedArrayForProtoBuf() As List(Of ProtobufArray(Of BallParms))
+    '    ' Never used elsewhere
+    '    Get
+    '        If RecordedBodies Is Nothing Then
+    '            '  ( _nestedArray == null || _nestedArray.Count == 0 )  if the default constructor instanciate it
+    '            Return Nothing
+    '        End If
+    '        Return RecordedBodies.[Select](Function(p) New ProtobufArray(Of BallParms)(p)).ToList()
+    '    End Get
+    '    Set
+    '        RecordedBodies = Value.[Select](Function(p) p.MyArray).ToList()
+    '    End Set
+    'End Property
     ' The nested array I would like to serialize.
     <ProtoBuf.ProtoMember(1)>
-    Public Property _nestedArrayForProtoBuf() As List(Of ProtobufArray(Of BallParms))
+    Public Property _nestedArrayForProtoBuf() As List(Of ProtobufArray(Of Body_Rec_Parms))
         ' Never used elsewhere
         Get
-            If RecordedBodies Is Nothing Then
+            If CompRecBodies Is Nothing Then
                 '  ( _nestedArray == null || _nestedArray.Count == 0 )  if the default constructor instanciate it
                 Return Nothing
             End If
-            Return RecordedBodies.[Select](Function(p) New ProtobufArray(Of BallParms)(p)).ToList()
+            Return CompRecBodies.[Select](Function(p) New ProtobufArray(Of Body_Rec_Parms)(p)).ToList()
         End Get
         Set
-            RecordedBodies = Value.[Select](Function(p) p.MyArray).ToList()
+            CompRecBodies = Value.[Select](Function(p) p.MyArray).ToList()
         End Set
     End Property
 

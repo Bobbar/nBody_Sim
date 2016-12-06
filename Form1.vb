@@ -1093,8 +1093,8 @@ Err:
 
                     If bolStoring Then
                         '  Dim BodyFrame
-                        RecordedBodies.Add(Ball)
-
+                        'RecordedBodies.Add(Ball)
+                        RecordFrame(Ball)
                         'Using s As Stream = New MemoryStream()
 
                         '    ' Dim formatter As ProtoBuf.Serializer 'System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
@@ -1109,7 +1109,7 @@ Err:
                 ElseIf bolPlaying Then
                     'ELSE IF IS PLAYING THEN CYCLE REPLAY
 
-                    Dim PlayArray()() As BallParms = RecordedBodies.ToArray
+                    Dim PlayArray()() As Body_Rec_Parms = CompRecBodies.ToArray 'BallParms = RecordedBodies.ToArray
 
 
 
@@ -1119,7 +1119,7 @@ Err:
                             i = SeekIndex
                             Prev_SeekIndex = SeekIndex
                         End If
-                        Ball = PlayArray(i)
+                        Ball = ConvertFrame(PlayArray(i))
 
                         PhysicsWorker.ReportProgress(i, Ball)
 
@@ -1171,6 +1171,43 @@ Err:
 
 
     End Sub
+    Public Sub RecordFrame(Bodies() As BallParms)
+        Dim tmpCompBodies(0) As Body_Rec_Parms
+        Dim i As Integer = 0
+        For Each body As BallParms In Bodies
+            If body.Visible Then
+                tmpCompBodies(i).Size = body.Size
+                tmpCompBodies(i).LocX = body.LocX
+                tmpCompBodies(i).LocY = body.LocY
+                tmpCompBodies(i).Visible = body.Visible
+                tmpCompBodies(i).Flags = body.Flags
+                tmpCompBodies(i).Color = body.Color
+                ReDim Preserve tmpCompBodies(UBound(tmpCompBodies) + 1)
+                i += 1
+            End If
+
+        Next
+        CompRecBodies.Add(tmpCompBodies)
+    End Sub
+    Public Function ConvertFrame(Bodies() As Body_Rec_Parms) As BallParms()
+        Dim tmpCompBodies(0) As BallParms
+        Dim i As Integer = 0
+        For Each body As Body_Rec_Parms In Bodies
+            If body.Visible Then
+                tmpCompBodies(i).Size = body.Size
+                tmpCompBodies(i).LocX = body.LocX
+                tmpCompBodies(i).LocY = body.LocY
+                tmpCompBodies(i).Visible = body.Visible
+                tmpCompBodies(i).Flags = body.Flags
+                tmpCompBodies(i).Color = body.Color
+                ReDim Preserve tmpCompBodies(UBound(tmpCompBodies) + 1)
+                i += 1
+            End If
+
+        Next
+        'CompRecBodies.Add(tmpCompBodies)
+        Return tmpCompBodies
+    End Function
     Private Sub ExecDelay()
         Do While bolStopLoop
             Thread.Sleep(100)
@@ -1555,7 +1592,7 @@ Err:
 
         If bolStop Or bolRendering Then
             If bolPlaying Then
-                Ball = RecordedBodies(SeekIndex)
+                Ball = ConvertFrame(CompRecBodies(SeekIndex)) 'RecordedBodies(SeekIndex)
             End If
             Drawr(Ball)
             SetUIInfo()
@@ -1756,11 +1793,13 @@ Err:
 
 
 
-            _nestedArrayForProtoBuf = ProtoBuf.Serializer.Deserialize(Of List(Of ProtobufArray(Of BallParms)))(fStream) 'bf.Deserialize(fStream) ' read from file
+            '_nestedArrayForProtoBuf = ProtoBuf.Serializer.Deserialize(Of List(Of ProtobufArray(Of BallParms)))(fStream) 'bf.Deserialize(fStream) ' read from file
+            _nestedArrayForProtoBuf = ProtoBuf.Serializer.Deserialize(Of List(Of ProtobufArray(Of Body_Rec_Parms)))(fStream) 'bf.Deserialize(fStream) ' read from file
+            'RecordedBodies = ConvertRecording(CompRecBodies)
             'sr.Close()
         End If
 
-        SeekBar.Maximum = RecordedBodies.Count - 1
+        SeekBar.Maximum = CompRecBodies.Count - 1 'RecordedBodies.Count - 1
         SeekBar.Value = 1
 
 
@@ -1795,7 +1834,10 @@ Err:
             cmdStor.Text = "Record"
             cmdStor.BackColor = colBackColor
             cmdStor.ForeColor = colControlForeColor
-            Debug.Print(RecordedBodies.Count)
+            Debug.Print(CompRecBodies.Count)
+
+
+            ' CompRecBodies = CompressRecording(RecordedBodies)
 
 
             Dim SaveDialog As New SaveFileDialog()
@@ -1819,8 +1861,67 @@ Err:
 
 
     End Sub
+    Private Function CompressRecording(RawRecording As List(Of BallParms())) As List(Of Body_Rec_Parms())
+        Dim CompBodies As New List(Of Body_Rec_Parms)
+        Dim CompFrames As New List(Of Body_Rec_Parms())
+
+        For Each Frame() As BallParms In RecordedBodies
+            Dim tmpFrame(0) As Body_Rec_Parms
+            Dim i As Integer = 0
+            For Each body As BallParms In Frame
+
+                If body.Visible Then
+
+                    tmpFrame(i).Size = body.Size
+                    tmpFrame(i).LocX = body.LocX
+                    tmpFrame(i).LocY = body.LocY
+                    tmpFrame(i).Visible = body.Visible
+                    tmpFrame(i).Flags = body.Flags
+                    tmpFrame(i).Color = body.Color
+                    ReDim Preserve tmpFrame(UBound(tmpFrame) + 1)
+                    i += 1
+                    'CompBodies.Add(tmpFrame)
+                End If
+            Next
+            CompFrames.Add(tmpFrame)
+
+        Next
+
+        Return CompFrames
+    End Function
+    Public Function ConvertRecording(CompressRec As List(Of Body_Rec_Parms())) As List(Of BallParms())
+        Dim Bodies As New List(Of BallParms)
+        Dim Frames As New List(Of BallParms())
+
+        For Each Frame() As Body_Rec_Parms In CompressRec
+            Dim tmpFrame(0) As BallParms
+            Dim i As Integer = 0
+            For Each body As Body_Rec_Parms In Frame
+
+                If body.Visible Then
+
+                    tmpFrame(i).Size = body.Size
+                    tmpFrame(i).LocX = body.LocX
+                    tmpFrame(i).LocY = body.LocY
+                    tmpFrame(i).Visible = body.Visible
+                    tmpFrame(i).Flags = body.Flags
+                    tmpFrame(i).Color = body.Color
+                    ReDim Preserve tmpFrame(UBound(tmpFrame) + 1)
+                    i += 1
+                    'CompBodies.Add(tmpFrame)
+                End If
+            Next
+            Frames.Add(tmpFrame)
+
+        Next
+
+        Return Frames
 
 
+
+
+
+    End Function
     Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
         Debug.Print(RecordedBodies.Count)
 
