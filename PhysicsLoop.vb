@@ -134,9 +134,11 @@ Public Module PhysicsLoop
         Public Visible As Boolean
         <ProtoBuf.ProtoMember(5)>
         Public Flags As String
+        <ProtoBuf.ProtoMember(6)>
+        Public UID As String
 
         Public Color As Color
-        <ProtoBuf.ProtoMember(6)>
+        <ProtoBuf.ProtoMember(7)>
         Private Property ColorSerialized() As Integer
             Get
                 Return Color.ToArgb()

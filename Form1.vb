@@ -160,7 +160,7 @@ Public Class Form1
         'm.Abort()
         bolStopLoop = True
         Me.Dispose()
-        End
+        ' End
     End Sub
     Private Sub Form1_KeyDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles MyBase.KeyDown
         If e.KeyCode = 16 Then bolShiftDown = True
@@ -1042,7 +1042,8 @@ Err:
                     'IF NOT PLAYING THEN RENDER NORMALLY*****************
 
 
-                    If UBound(Ball) > (VisibleBalls() * 2) Then
+                    ' If UBound(Ball) > (VisibleBalls() * 2) 
+                    If (UBound(Ball) - VisibleBalls()) > 1000 Then
                         Ball = CullBodies(Ball)
                     End If
 
@@ -1094,9 +1095,9 @@ Err:
                     If bolStoring Then
                         '  Dim BodyFrame
                         'RecordedBodies.Add(Ball)
-                        StartTimer()
+                        '   StartTimer()
                         RecordFrame(Ball)
-                        StopTimer()
+                        ' StopTimer()
                         'Using s As Stream = New MemoryStream()
 
                         '    ' Dim formatter As ProtoBuf.Serializer 'System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
@@ -1186,6 +1187,7 @@ Err:
             tmpCompBodies(s).Visible = Bodies(s).Visible
             tmpCompBodies(s).Flags = Bodies(s).Flags
             tmpCompBodies(s).Color = Bodies(s).Color
+            tmpCompBodies(s).UID = Bodies(s).UID
             'ReDim Preserve tmpCompBodies(UBound(tmpCompBodies) + 1)
             '    i += 1
             '  End If
@@ -1212,7 +1214,7 @@ Err:
             tmpCompBodies(s).Visible = Bodies(s).Visible
             tmpCompBodies(s).Flags = Bodies(s).Flags
             tmpCompBodies(s).Color = Bodies(s).Color
-
+            tmpCompBodies(s).UID = Bodies(s).UID
 
 
 
@@ -1270,6 +1272,7 @@ Err:
         If bolPlaying Then
 
             SeekBar.Value = e.ProgressPercentage
+            Me.Invalidate()
         End If
         If bolDraw And Not bolDrawing Then Drawr(PassBall) '  Me.Render.Image = Drawr(PassBall)
 

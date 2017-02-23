@@ -30,3 +30,5 @@ C:\GitHub\Physics Engine - Copy\Physics-2\obj\Release\Physics_Engine.Form1.resou
 C:\GitHub\Physics Engine - Copy\Physics-2\obj\Release\Physics_Engine.Resources.resources
 C:\GitHub\Physics Engine - Copy\Physics-2\obj\Release\Physics Engine.vbproj.GenerateResource.Cache
 C:\GitHub\Physics Engine - Copy\Physics-2\obj\Release\Physics Engine.vbprojResolveAssemblyReference.cache
+C:\GitHub\Physics Engine - Copy\Physics-2\bin\Release\protobuf-net.dll
+C:\GitHub\Physics Engine - Copy\Physics-2\obj\Release\Physics_Engine.frmAddBodies.resources

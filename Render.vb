@@ -55,7 +55,9 @@ Public Module Renderer
             For i = 0 To UBound(BallArray)
                 BodyLoc = New SPoint(Convert.ToSingle(BallArray(i).LocX), Convert.ToSingle(BallArray(i).LocY))
                 BodySize = Convert.ToSingle(BallArray(i).Size)
-                If bolStopWorker Then Exit Sub
+                If bolStopWorker Then
+                    Exit Sub
+                End If
                 If BallArray(i).Visible Then
                     If bolCulling And BodyLoc.X + FinalOffset.X < 0 Or bolCulling And BodyLoc.X + FinalOffset.X > Form1.Render.Width / pic_scale Or bolCulling And BodyLoc.Y + FinalOffset.Y < 0 Or bolCulling And BodyLoc.Y + FinalOffset.Y > Form1.Render.Height / pic_scale Then
                     Else
