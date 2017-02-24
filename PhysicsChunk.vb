@@ -1,4 +1,7 @@
 ﻿Option Explicit On
+Imports Cudafy
+Imports Cudafy.Host
+Imports Cudafy.Translator
 Imports System.Math
 Imports System.Threading.Tasks
 Imports System.Threading
@@ -39,7 +42,6 @@ Public NotInheritable Class PhysicsChunk
     Dim RGBMulti As Integer = 4
     Dim CalcColor As Integer
     Dim ColorsRGB As Integer = 255
-
 
     Public Function CalcPhysics() ' As List(Of BallParms)
         Dim TotMass As Double
@@ -192,6 +194,7 @@ Public NotInheritable Class PhysicsChunk
 
         '  MyBodys = OuterBody 'tmpBodys
     End Function
+
     Private Sub CollideBodies(ByRef Master As BallParms, ByRef Slave As BallParms, DistSqrt As Double, DistX As Double, DistY As Double, ForceX As Double, ForceY As Double)
         Dim VeKY As Double
         Dim VekX As Double
@@ -418,6 +421,7 @@ Public NotInheritable Class PhysicsChunk
 
 
     End Sub
+
     Private Function UIDtoInt(UID As String) As BigInteger
         Dim bytGUIDBytes As Byte() = System.Text.Encoding.Unicode.GetBytes(UID) 'adUserDirectoryRecord.Guid.ToByteArray()
         Array.Resize(bytGUIDBytes, 17)
@@ -564,6 +568,7 @@ Public NotInheritable Class PhysicsChunk
         End If
         Return tmpBallList
     End Function
+
     Private Function DupLoc(LstBodies As List(Of BallParms), Body As BallParms) As Boolean
         If LstBodies.Count < 1 Then Return False
         For Each bdy As BallParms In LstBodies
@@ -614,6 +619,7 @@ Public NotInheritable Class PhysicsChunk
 
         NewBalls.Clear()
     End Sub
+
     Private Function GetRandomNumber(ByVal Low As Double, ByVal High As Double) As Double
         ' Returns a random number,
         ' between the optional Low and High parameters

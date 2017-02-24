@@ -74,6 +74,7 @@ Partial Class Form1
         Me.SeekBar = New System.Windows.Forms.TrackBar()
         Me.lblRecFrames = New System.Windows.Forms.Label()
         Me.lblRecSize = New System.Windows.Forms.Label()
+        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -584,6 +585,10 @@ Partial Class Form1
         Me.lblRecSize.Text = "Rec Size(KB):"
         Me.lblRecSize.Visible = False
         '
+        'Timer1
+        '
+        Me.Timer1.Enabled = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -681,4 +686,5 @@ Partial Class Form1
     Friend WithEvents SeekBar As TrackBar
     Friend WithEvents lblRecFrames As Label
     Friend WithEvents lblRecSize As Label
+    Friend WithEvents Timer1 As Timer
 End Class

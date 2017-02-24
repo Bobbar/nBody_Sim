@@ -1,4 +1,7 @@
-﻿Imports System.Math
+﻿Imports Cudafy
+Imports Cudafy.Host
+Imports Cudafy.Translator
+Imports System.Math
 Imports System.Threading.Tasks
 Imports System.Threading
 Imports System.Drawing.Drawing2D
@@ -43,9 +46,10 @@ Public Module PhysicsLoop
     Public FPS As Single
     ' Public rd As Single
     Public bolStop As Boolean
-    '// Some Variables are not used by my code, forget them. I didnt have the time to make my code clean....
+
+    <Cudafy>
     <ProtoBuf.ProtoContract>
-   Public Structure BallParms
+    Public Structure BallParms
 
         <ProtoBuf.ProtoMember(1)>
         Public Size As Double
