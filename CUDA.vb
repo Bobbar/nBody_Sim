@@ -35,7 +35,7 @@ Public Module CUDA
     End Structure
 
     Public Sub InitGPU()
-        Dim GPUIndex As Integer = 3
+        Dim GPUIndex As Integer = 2
 
         Dim CUDAmodule As CudafyModule
 
@@ -81,6 +81,7 @@ Public Module CUDA
         'Calc Splits
         ' Ball = CullBodies(Ball)
         If Not bolPlaying Then
+#Region "OldShit2"
             'IF NOT PLAYING THEN RENDER NORMALLY*****************
 
 
@@ -125,17 +126,27 @@ Public Module CUDA
             '    Next
             '    If CompleteThreads = RunThreads Then bolThreadsDone = True
             'Loop
+#End Region
             Dim mb As Integer = 1024 * 1024
             Dim inBall() As Prim_Struct = CopyToPrim(Ball)
             'Dim chunk As New PhysicsChunk(UBound(Ball), 0, Ball)
             Dim gMemIn, gMemOut
             ' gMemIn = gpu.Allocate(inBall) 'Of Single)(mb)
             gMemOut = gpu.Allocate(inBall) 'Of Single)(mb)
+
             Dim outBall(inBall.Count - 1) As Prim_Struct
             ' Dim cMemout() As Prim_Struct
 
             Dim gpuinBall() As Prim_Struct = gpu.CopyToDevice(inBall)
-            gpu.Launch(1, 1, "CalcPhysics", gpuinBall, UBound(Ball))
+            Dim gpuOutBall() As Prim_Struct = gpu.CopyToDevice(inBall)
+            'Dim N As Integer = 20
+            'Dim elem_per_thread As Integer = N / 
+
+
+            gpu.Launch(1, 4, "CalcPhysics", gpuinBall, UBound(Ball), gpuOutBall)
+
+
+
             gpu.Synchronize()
 
 
@@ -145,9 +156,11 @@ Public Module CUDA
 
             ' Ball = outBall
 
-
+           ' Debug.Print(inBall(0).ForceX)
             Ball = CopyToBallParm(inBall)
+            gpu.FreeAll()
 
+#Region "OldShit1"
             '  Dim AllBodys As New List(Of BallParms)
             'For Each trd As PhysicsChunk In Threads
             '    AllBodys.AddRange(trd.MyBodys)
@@ -203,6 +216,7 @@ Public Module CUDA
 
             '    CalcDelay()
             'Next
+#End Region
         End If
 
         'END PLAYING CONDITION
@@ -240,49 +254,19 @@ Public Module CUDA
         'End Try
 
     End Sub
-    Private Function CopyToPrim(BallArr() As BallParms) As Prim_Struct()
-        Dim prim_ball(BallArr.Count - 1) As Prim_Struct
-        For i = 0 To UBound(BallArr)
-            prim_ball(i).ForceX = BallArr(i).ForceX
-            prim_ball(i).ForceY = BallArr(i).ForceY
-            prim_ball(i).LocX = BallArr(i).LocX
-            prim_ball(i).LocY = BallArr(i).LocY
-            prim_ball(i).Mass = BallArr(i).Mass
-            prim_ball(i).SpeedX = BallArr(i).SpeedX
-            prim_ball(i).SpeedY = BallArr(i).SpeedY
 
-
-
-
-
-        Next
-
-
-        Return prim_ball
-    End Function
-    Private Function CopyToBallParm(BallArr() As Prim_Struct) As BallParms()
-        Dim BallPar(BallArr.Count - 1) As BallParms
-        For i = 0 To UBound(BallArr)
-            BallPar(i).ForceX = BallArr(i).ForceX
-            BallPar(i).ForceY = BallArr(i).ForceY
-            BallPar(i).LocX = BallArr(i).LocX
-            BallPar(i).LocY = BallArr(i).LocY
-            BallPar(i).Mass = BallArr(i).Mass
-            BallPar(i).SpeedX = BallArr(i).SpeedX
-            BallPar(i).SpeedY = BallArr(i).SpeedY
-            BallPar(i).Visible = True
-            BallPar(i).Size = 3
-            BallPar(i).Color = Color.Orange
-
-
-
-        Next
-
-
-        Return BallPar
-    End Function
     <Cudafy>
-    Public Sub CalcPhysics(Body() As Prim_Struct, nBodies As Integer)
+    Public Sub CalcPhysics(gpThread As GThread, Body() As Prim_Struct, nBodies As Integer, OutBody() As Prim_Struct) ', LB As Integer, UB As Integer)
+        Dim STRIDE As Integer = 32
+        Dim elem_per_thread As Integer = nBodies / gpThread.blockIdx.x * gpThread.blockDim.x
+        Dim block_start_idx As Integer = elem_per_thread * gpThread.blockIdx.x * gpThread.blockDim.x
+        Dim thread_start_idx As Integer = block_start_idx + (gpThread.threadIdx.x / STRIDE) * elem_per_thread * STRIDE + ((gpThread.threadIdx.x + 0))
+        Dim thread_end_idx = thread_start_idx + elem_per_thread * STRIDE
+        If thread_end_idx > nBodies Then thread_end_idx = nBodies
+
+
+
+
 
         ' Dim Body() As Prim_Struct = dball
         Dim TotMass As Double
@@ -311,14 +295,15 @@ Public Module CUDA
         '  StartTimer()
         '  If UBound(OuterBody) > 1 Then
         ' BUB = uBoundBody
-        Dim UB As Integer = nBodies 'Body.Count - 1
-        For A = 1 To UB ' Each OuterBody(A) As BallParms In MyBodys 'A = lBoundBody To uBoundBody
+        Dim UB As Integer = thread_end_idx 'Body.Count - 1
+        Dim LB As Integer = thread_start_idx
+        For A = LB To UB ' Each OuterBody(A) As BallParms In MyBodys 'A = lBoundBody To uBoundBody
             Body(A).ForceX = 0
             Body(A).ForceY = 0
             '   Body(A).ForceTot = 0
             '  If OuterBody(A).Visible Then
             '  If OuterBody(A).MovinG = False Then
-            For B = 1 To UB
+            For B = 1 To nBodies
                 If A <> B Then
                     'If OuterBody(A).Index = 792 And Bodys(B).Index = 2002 Then
                     '    Debug.Print(DistSqrt & " - " & OuterBody(A).Size & " - " & Bodys(B).Size)
@@ -417,8 +402,6 @@ Public Module CUDA
 
 
 
-
-
         'result = Body
 
 
@@ -458,6 +441,48 @@ Public Module CUDA
 
         '  MyBodys = OuterBody 'tmpBodys
     End Sub
+    Private Function CopyToPrim(BallArr() As BallParms) As Prim_Struct()
+        Dim prim_ball(BallArr.Count - 1) As Prim_Struct
+        For i = 0 To UBound(BallArr)
+            prim_ball(i).ForceX = BallArr(i).ForceX
+            prim_ball(i).ForceY = BallArr(i).ForceY
+            prim_ball(i).LocX = BallArr(i).LocX
+            prim_ball(i).LocY = BallArr(i).LocY
+            prim_ball(i).Mass = BallArr(i).Mass
+            prim_ball(i).SpeedX = BallArr(i).SpeedX
+            prim_ball(i).SpeedY = BallArr(i).SpeedY
+
+
+
+
+
+        Next
+
+
+        Return prim_ball
+    End Function
+    Private Function CopyToBallParm(BallArr() As Prim_Struct) As BallParms()
+        Dim BallPar(BallArr.Count - 1) As BallParms
+        For i = 0 To UBound(BallArr)
+            BallPar(i).ForceX = BallArr(i).ForceX
+            BallPar(i).ForceY = BallArr(i).ForceY
+            BallPar(i).LocX = BallArr(i).LocX
+            BallPar(i).LocY = BallArr(i).LocY
+            BallPar(i).Mass = BallArr(i).Mass
+            BallPar(i).SpeedX = BallArr(i).SpeedX
+            BallPar(i).SpeedY = BallArr(i).SpeedY
+            BallPar(i).Visible = True
+            BallPar(i).Size = 3
+            BallPar(i).Color = Color.Orange
+
+
+
+        Next
+
+
+        Return BallPar
+    End Function
+
     '<Cudafy>
     'Private Function UpdateBodies(Bodies() As Prim_Struct) As Prim_Struct()
     '    Dim MyStep As Double = 0.03
