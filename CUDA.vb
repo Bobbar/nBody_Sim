@@ -168,7 +168,9 @@ Public Module CUDA
                 gpu.Allocate(DBVar)
                 Dim OutDBVar() As Debug_Struct = gpu.CopyToDevice(DBVar)
 
-            gpu.Launch(256, threads, "CalcPhysics", gpuinBall, UBound(Ball), threads, gpuOutBall, OutDBVar)
+            Dim nBlocks As Integer = (UBound(Ball) + threads - 1) / threads
+
+            gpu.Launch(nBlocks, threads, "CalcPhysics", gpuinBall, UBound(Ball), OutDBVar)
 
 
 
@@ -177,8 +179,8 @@ Public Module CUDA
 
                 ' Dim bal
                 gpu.CopyFromDevice(gpuinBall, inBall)
-                gpu.CopyFromDevice(gpuOutBall, outBall)
-                gpu.CopyFromDevice(OutDBVar, DBVar)
+            '   gpu.CopyFromDevice(gpuOutBall, outBall)
+            gpu.CopyFromDevice(OutDBVar, DBVar)
 
 
                 ' Ball = outBall
@@ -282,7 +284,7 @@ Public Module CUDA
     End Sub
 
     <Cudafy>
-    Public Sub CalcPhysics(gpThread As GThread, Body() As Prim_Struct, nBodies As Integer, RunThreads As Integer, OutBody() As Prim_Struct, DebugStuff() As Debug_Struct) ', LB As Integer, UB As Integer)
+    Public Sub CalcPhysics(gpThread As GThread, Body() As Prim_Struct, nBodies As Integer, DebugStuff() As Debug_Struct) ', LB As Integer, UB As Integer)
         'Dim STRIDE As Integer = 32
         'Dim elem_per_thread As Integer = nBodies / gpThread.blockIdx.x * gpThread.blockDim.x
         'Dim block_start_idx As Integer = elem_per_thread * gpThread.blockIdx.x * gpThread.blockDim.x
@@ -317,17 +319,18 @@ Public Module CUDA
 
 
 
-        Dim 
+        Dim A As Integer = gpThread.blockDim.x * gpThread.blockIdx.x + gpThread.threadIdx.x
+
 
 
 
         Dim tid As Integer = gpThread.threadIdx.x
-        Dim blkid As Integer = gpThread.blockIdx.x
+        'Dim blkid As Integer = gpThread.blockIdx.x
 
-        DebugStuff(tid).LB = LB
-        DebugStuff(tid).UB = UB
-        DebugStuff(tid).Other = tid
-        DebugStuff(tid).Other2 = blkid
+        ''DebugStuff(tid).LB = LB
+        ''DebugStuff(tid).UB = UB
+        'DebugStuff(tid).Other = tid
+        'DebugStuff(tid).Other2 = blkid
 
 
 
@@ -343,7 +346,7 @@ Public Module CUDA
         Dim Dist As Double
         Dim DistSqrt As Double
         Dim M1, M2 As Double
-        Dim MyStep As Double = 0.03
+        Dim MyStep As Double = 0.005
 
         '   Dim tmpBodys As New List(Of BallParms)
         '  Dim DistArray As New List(Of String)
@@ -362,94 +365,94 @@ Public Module CUDA
         ' BUB = uBoundBody
         'Dim UB As Integer = thread_end_idx 'Body.Count - 1
         'Dim LB As Integer = thread_start_idx
-        For A = LB To UB ' Each OuterBody(A) As BallParms In MyBodys 'A = lBoundBody To uBoundBody
-            OutBody(A).WhoTouchedMe = tid
-            OutBody(A).ForceX = 0
-            OutBody(A).ForceY = 0
-            '   Body(A).ForceTot = 0
-            '  If OuterBody(A).Visible Then
-            '  If OuterBody(A).MovinG = False Then
-            For B = 1 To nBodies
-                If A <> B Then
-                    'If OuterBody(A).Index = 792 And Bodys(B).Index = 2002 Then
-                    '    Debug.Print(DistSqrt & " - " & OuterBody(A).Size & " - " & Bodys(B).Size)
-                    'End If
+        '   For A = LB To UB ' Each OuterBody(A) As BallParms In MyBodys 'A = lBoundBody To uBoundBody
+        Body(A).WhoTouchedMe = tid
+        Body(A).ForceX = 0
+        Body(A).ForceY = 0
+        '   Body(A).ForceTot = 0
+        '  If OuterBody(A).Visible Then
+        '  If OuterBody(A).MovinG = False Then
+        For B = 1 To nBodies
+            If A <> B Then
+                'If OuterBody(A).Index = 792 And Bodys(B).Index = 2002 Then
+                '    Debug.Print(DistSqrt & " - " & OuterBody(A).Size & " - " & Bodys(B).Size)
+                'End If
 
 
-                    'If bolShawdow Then
-                    '    If InStr(1, OuterBody(A).Flags, "S") Then
-                    '        Dim m As Double, SlX As Double, SlY As Double
-                    '        SlX = Bodys(B).LocX - OuterBody(A).LocX
-                    '        SlY = Bodys(B).LocY - OuterBody(A).LocY
-                    '        m = SlY / SlX
-                    '        Bodys(B).ShadAngle = Math.Atan2(Bodys(B).LocY - OuterBody(A).LocY, Bodys(B).LocX - OuterBody(A).LocX)   'Math.Tan(SlX / SlY) 'Math.Atan2(SlY, SlX) * 180 / PI 'Math.Atan(SlX / SlY) * 180 / PI
+                'If bolShawdow Then
+                '    If InStr(1, OuterBody(A).Flags, "S") Then
+                '        Dim m As Double, SlX As Double, SlY As Double
+                '        SlX = Bodys(B).LocX - OuterBody(A).LocX
+                '        SlY = Bodys(B).LocY - OuterBody(A).LocY
+                '        m = SlY / SlX
+                '        Bodys(B).ShadAngle = Math.Atan2(Bodys(B).LocY - OuterBody(A).LocY, Bodys(B).LocX - OuterBody(A).LocX)   'Math.Tan(SlX / SlY) 'Math.Atan2(SlY, SlX) * 180 / PI 'Math.Atan(SlX / SlY) * 180 / PI
+                '    End If
+                'End If
+                'If Body(B).LocX = Body(A).LocX And Body(B).LocY = Body(A).LocY Then
+                '    '  CollideBodies(OuterBody(A), Bodys(B))
+                'End If
+                'If bGrav = 0 Then
+                'Else
+
+                DistX = Body(B).LocX - Body(A).LocX
+                DistY = Body(B).LocY - Body(A).LocY
+                Dist = (DistX * DistX) + (DistY * DistY)
+                DistSqrt = Sqrt(Dist)
+                If DistSqrt > 0 Then 'Gravity reaction
+                    '   If DistSqrt < (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) Then DistSqrt = (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) 'prevent screamers
+                    M1 = Body(A).Mass '^ 2
+                    M2 = Body(B).Mass ' ^ 2
+                    TotMass = M1 * M2
+                    Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS) ' (Dist * DistSqrt)
+
+
+                    ForceX = Force * DistX / DistSqrt
+                    ForceY = Force * DistY / DistSqrt
+                    ' Body(A).ForceTot += Force
+
+
+                    Body(A).ForceX += ForceX
+                    Body(A).ForceY += ForceY
+
+                    'OuterBody(A).SpeedX += MyStep * ForceX / M1
+                    'OuterBody(A).SpeedY += MyStep * ForceY / M1
+
+                    'If DistSqrt < 100 Then
+
+
+                    '        If DistSqrt <= (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) Then 'Collision reaction
+
+
+
+                    '            CollideBodies(OuterBody(A), Bodys(B), DistSqrt, DistX, DistY, ForceX, ForceY)
+
+                    '        End If
                     '    End If
-                    'End If
-                    'If Body(B).LocX = Body(A).LocX And Body(B).LocY = Body(A).LocY Then
-                    '    '  CollideBodies(OuterBody(A), Bodys(B))
-                    'End If
-                    'If bGrav = 0 Then
-                    'Else
-
-                    DistX = Body(B).LocX - OutBody(A).LocX
-                    DistY = Body(B).LocY - OutBody(A).LocY
-                    Dist = (DistX * DistX) + (DistY * DistY)
-                    DistSqrt = Sqrt(Dist)
-                    If DistSqrt > 0 Then 'Gravity reaction
-                        '   If DistSqrt < (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) Then DistSqrt = (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) 'prevent screamers
-                        M1 = OutBody(A).Mass '^ 2
-                        M2 = Body(B).Mass ' ^ 2
-                        TotMass = M1 * M2
-                        Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS) ' (Dist * DistSqrt)
-
-
-                        ForceX = Force * DistX / DistSqrt
-                        ForceY = Force * DistY / DistSqrt
-                        ' Body(A).ForceTot += Force
-
-
-                        OutBody(A).ForceX += ForceX
-                        OutBody(A).ForceY += ForceY
-
-                        'OuterBody(A).SpeedX += MyStep * ForceX / M1
-                        'OuterBody(A).SpeedY += MyStep * ForceY / M1
-
-                        'If DistSqrt < 100 Then
-
-
-                        '        If DistSqrt <= (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) Then 'Collision reaction
-
-
-
-                        '            CollideBodies(OuterBody(A), Bodys(B), DistSqrt, DistX, DistY, ForceX, ForceY)
-
-                        '        End If
-                        '    End If
-                    Else
-                    End If
-                    '  End If
+                Else
                 End If
-                ' UpdateBody(OuterBody(A))
+                '  End If
+            End If
+            ' UpdateBody(OuterBody(A))
 
 
-            Next B
-            '  End If
-            ' End If
+        Next B
+        '  End If
+        ' End If
 
-            'OuterBody(A).LocX = OuterBody(A).LocX + (MyStep * OuterBody(A).SpeedX)
-            'OuterBody(A).LocY = OuterBody(A).LocY + (MyStep * OuterBody(A).SpeedY)
-            ' tmpBodys.Add(OuterBody(A))
-            'CalcColor = ColorsRGB - (OuterBody(A).ForceTot * RGBMulti)
-            'If OuterBody(A).ForceTot > OuterBody(A).Mass * 4 And Not OuterBody(A).Flags.Contains("BH") Then ' And OuterBody(A).Size < 10 
-            '    OuterBody(A).InRoche = True
-            '    NewBalls.AddRange(FractureBall(OuterBody(A)))
-            'ElseIf (OuterBody(A).ForceTot * 2) < OuterBody(A).Mass * 4 Then ' And OuterBody(A).Size > 10
-            '    OuterBody(A).InRoche = False
+        'OuterBody(A).LocX = OuterBody(A).LocX + (MyStep * OuterBody(A).SpeedX)
+        'OuterBody(A).LocY = OuterBody(A).LocY + (MyStep * OuterBody(A).SpeedY)
+        ' tmpBodys.Add(OuterBody(A))
+        'CalcColor = ColorsRGB - (OuterBody(A).ForceTot * RGBMulti)
+        'If OuterBody(A).ForceTot > OuterBody(A).Mass * 4 And Not OuterBody(A).Flags.Contains("BH") Then ' And OuterBody(A).Size < 10 
+        '    OuterBody(A).InRoche = True
+        '    NewBalls.AddRange(FractureBall(OuterBody(A)))
+        'ElseIf (OuterBody(A).ForceTot * 2) < OuterBody(A).Mass * 4 Then ' And OuterBody(A).Size > 10
+        '    OuterBody(A).InRoche = False
 
-            'End If
-            '    DistArray.Add(A.ToString + " - " + DistSqrt.ToString)
+        'End If
+        '    DistArray.Add(A.ToString + " - " + DistSqrt.ToString)
 
-        Next A
+        ' Next A
         ' End If
 
         ''    ShrinkBallArray()
@@ -457,19 +460,19 @@ Public Module CUDA
         ''End If
         ' UpdateBodies(Body)
 
-        For i As Integer = LB To UB 'UBound(Bodies)
-            OutBody(i).SpeedX += MyStep * OutBody(i).ForceX / OutBody(i).Mass
-            OutBody(i).SpeedY += MyStep * OutBody(i).ForceY / OutBody(i).Mass
-            OutBody(i).LocX += MyStep * OutBody(i).SpeedX
-            OutBody(i).LocY += MyStep * OutBody(i).SpeedY
+        For i As Integer = 1 To nBodies 'UBound(Bodies)
+            Body(i).SpeedX += MyStep * Body(i).ForceX / Body(i).Mass
+            Body(i).SpeedY += MyStep * Body(i).ForceY / Body(i).Mass
+            Body(i).LocX += MyStep * Body(i).SpeedX
+            Body(i).LocY += MyStep * Body(i).SpeedY
 
         Next
 
 
 
         'Body(1).Mass = 9999
-        '  OutBody(1).Mass = gpThread.threadIdx.x 'UB 'gpThread.blockIdx.x
-        'OutBody(2).Mass = 'LB 'gpThread.blockDim.x
+        '  Body(1).Mass = gpThread.threadIdx.x 'UB 'gpThread.blockIdx.x
+        'Body(2).Mass = 'LB 'gpThread.blockDim.x
 
         'result = Body
 
