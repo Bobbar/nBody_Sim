@@ -29,7 +29,12 @@ Public Module CUDA
         Public SpeedY As Double
         Public ForceX As Double
         Public ForceY As Double
-        Public WhoTouchedMe As Integer
+        Public Color As Integer
+        Public Size As Double
+        Public Visible As Integer
+        Public InRoche As Integer
+
+        '   Public WhoTouchedMe As Integer
 
 
 
@@ -170,6 +175,7 @@ Public Module CUDA
 
             Dim nBlocks As Integer = (UBound(Ball) + threads - 1) / threads
             StartTimer()
+
             gpu.Launch(nBlocks, threads, "CalcPhysics", gpuinBall, UBound(Ball)) ', OutDBVar)
             StopTimer()
 
@@ -188,6 +194,17 @@ Public Module CUDA
             ' Ball = outBall
 
             ' Debug.Print(inBall(0).ForceX)
+
+
+
+            For i As Integer = 1 To UBound(inBall)
+                inBall(i).SpeedX += StepMulti * inBall(i).ForceX / inBall(i).Mass
+                inBall(i).SpeedY += StepMulti * inBall(i).ForceY / inBall(i).Mass
+                inBall(i).LocX += StepMulti * inBall(i).SpeedX
+                inBall(i).LocY += StepMulti * inBall(i).SpeedY
+
+            Next
+
 
 
             Ball = CopyToBallParm(inBall)
@@ -329,7 +346,7 @@ Public Module CUDA
 
 
 
-        Dim tid As Integer = gpThread.threadIdx.x
+        '  Dim tid As Integer = gpThread.threadIdx.x
         'Dim blkid As Integer = gpThread.blockIdx.x
 
         ''DebugStuff(tid).LB = LB
@@ -371,7 +388,7 @@ Public Module CUDA
         'Dim UB As Integer = thread_end_idx 'Body.Count - 1
         'Dim LB As Integer = thread_start_idx
         '   For A = LB To UB ' Each OuterBody(A) As BallParms In MyBodys 'A = lBoundBody To uBoundBody
-        Body(A).WhoTouchedMe = tid
+        'Body(A).WhoTouchedMe = tid
         Body(A).ForceX = 0
         Body(A).ForceY = 0
         '   Body(A).ForceTot = 0
@@ -449,10 +466,10 @@ Public Module CUDA
 
             Next B
 
-            Body(A).SpeedX += MyStep * Body(A).ForceX / Body(A).Mass
-            Body(A).SpeedY += MyStep * Body(A).ForceY / Body(A).Mass
-            Body(A).LocX += MyStep * Body(A).SpeedX
-            Body(A).LocY += MyStep * Body(A).SpeedY
+            'Body(A).SpeedX += MyStep * Body(A).ForceX / Body(A).Mass
+            'Body(A).SpeedY += MyStep * Body(A).ForceY / Body(A).Mass
+            'Body(A).LocX += MyStep * Body(A).SpeedX
+            'Body(A).LocY += MyStep * Body(A).SpeedY
 
 
         End If
@@ -534,6 +551,234 @@ Public Module CUDA
 
         '  MyBodys = OuterBody 'tmpBodys
     End Sub
+    Private Sub CollideBodies(ByRef Master As Prim_Struct, ByRef Slave As Prim_Struct, DistSqrt As Double, DistX As Double, DistY As Double, ForceX As Double, ForceY As Double)
+        Dim VeKY As Double
+        Dim VekX As Double
+        Dim V1x As Double
+        Dim V2x As Double
+        Dim M1 As Double
+        Dim M2 As Double
+        Dim V1y As Double
+        Dim V2y As Double
+        'Dim TotMass As Double
+        ' Dim Force, ForceX, ForceY As Double
+        Dim EPS As Double = 2
+
+        ' Dim NewVelX1, NewVelY1, NewVelX2, NewVelY2 As Double
+
+
+        Dim V1 As Double
+        Dim V2 As Double
+        Dim U2 As Double
+        Dim U1 As Double
+        'Dim DistX As Double
+        'Dim DistY As Double
+        'Dim Dist As Double
+        ' Dim DistSqrt As Double
+        Dim PrevSpdX, PrevSpdY As Double
+
+        Dim Area1 As Double, Area2 As Double
+
+        'DistX = Slave.LocX - Master.LocX
+        'DistY = Slave.LocY - Master.LocY
+        'Dist = (DistX * DistX) + (DistY * DistY)
+        'DistSqrt = Sqrt(Dist)
+        ' Debug.Print("Col dist:" & DistSqrt)
+
+        If DistSqrt > 0 Then
+
+            V1x = Master.SpeedX
+            V1y = Master.SpeedY
+            V2x = Slave.SpeedX
+            V2y = Slave.SpeedY
+
+            M1 = Master.Mass
+            M2 = Slave.Mass
+
+            VekX = DistX / 2 ' (Ball(A).LocX - Ball(B).LocX) / 2
+            VeKY = DistY / 2 '(Ball(A).LocY - Ball(B).LocY) / 2
+
+            VekX = VekX / (DistSqrt / 2) 'LenG
+            VeKY = VeKY / (DistSqrt / 2) 'LenG
+
+            V1 = VekX * V1x + VeKY * V1y
+            V2 = VekX * V2x + VeKY * V2y
+
+            U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
+
+            U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
+            'If Not Master.InRoche Then
+
+
+            '  If Master.Mass <> Slave.Mass Then
+            If Not Master.InRoche And Slave.InRoche Then
+
+                If Master.Mass > Slave.Mass Then
+
+
+                    PrevSpdX = Master.SpeedX
+                    PrevSpdY = Master.SpeedY
+
+                    Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+                    Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+                    Slave.Visible = False
+
+
+
+                    Area1 = PI * (Master.Size ^ 2)
+                    Area2 = PI * (Slave.Size ^ 2)
+                    Area1 = Area1 + Area2
+                    Master.Size = Sqrt(Area1 / PI)
+                    Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+
+                ElseIf Master.Mass = Slave.Mass Then
+
+                    If UIDtoInt(Master.UID) > UIDtoInt(Slave.UID) Then
+
+                        PrevSpdX = Master.SpeedX
+                        PrevSpdY = Master.SpeedY
+
+                        Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+                        Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+                        Slave.Visible = False
+
+
+
+                        Area1 = PI * (Master.Size ^ 2)
+                        Area2 = PI * (Slave.Size ^ 2)
+                        Area1 = Area1 + Area2
+                        Master.Size = Sqrt(Area1 / PI)
+                        Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+                    Else
+                        Master.Visible = False
+
+                    End If
+
+
+
+
+                    '  Master.Visible = False
+
+
+                End If
+            ElseIf Not Master.InRoche And Not Slave.InRoche Then
+                If Master.Mass > Slave.Mass Then
+
+                    PrevSpdX = Master.SpeedX
+                    PrevSpdY = Master.SpeedY
+
+                    Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+                    Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+                    Slave.Visible = False
+
+
+
+                    Area1 = PI * (Master.Size ^ 2)
+                    Area2 = PI * (Slave.Size ^ 2)
+                    Area1 = Area1 + Area2
+                    Master.Size = Sqrt(Area1 / PI)
+                    Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+                ElseIf Master.Mass = Slave.Mass Then
+
+                    '  If Master.Index > Slave.Index Then
+                    If UIDtoInt(Master.UID) > UIDtoInt(Slave.UID) Then
+                        'Debug.Print(UIDtoInt(Master.UID).ToString)
+                        'Debug.Print(UIDtoInt(Slave.UID).ToString)
+                        PrevSpdX = Master.SpeedX
+                        PrevSpdY = Master.SpeedY
+
+                        Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+                        Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+                        Slave.Visible = False
+
+
+
+                        Area1 = PI * (Master.Size ^ 2)
+                        Area2 = PI * (Slave.Size ^ 2)
+                        Area1 = Area1 + Area2
+                        Master.Size = Sqrt(Area1 / PI)
+                        Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+                    Else
+                        Master.Visible = False
+
+                    End If
+
+                Else
+
+
+                    Master.Visible = False
+
+                End If
+
+
+            ElseIf Master.InRoche And Slave.InRoche Then
+
+                'TotMass = Master.Mass * Slave.Mass
+                'Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS)
+                'ForceX = Force * DistX / DistSqrt
+                'ForceY = Force * DistY / DistSqrt
+                Dim multi As Integer = 20
+                Master.ForceX -= ForceX * multi
+                Master.ForceY -= ForceY * multi
+                Slave.ForceX -= ForceX * multi
+                Slave.ForceY -= ForceY * multi
+
+
+                Dim Friction As Double = 0.8
+                Master.SpeedX += (U1 - V1) * VekX * Friction
+                Master.SpeedY += (U1 - V1) * VeKY * Friction
+
+
+                Slave.SpeedX += (U2 - V2) * VekX * Friction
+                Slave.SpeedY += (U2 - V2) * VeKY * Friction
+
+            ElseIf Master.InRoche And Not Slave.InRoche Then
+
+                Master.Visible = False
+
+
+
+
+
+            End If
+
+            ' End If
+
+
+
+
+
+        Else ' if bodies are at exact same position
+
+            'Master.SpeedX = Master.SpeedX + (U1 - V1) * VekX
+            ' Master.SpeedY = Master.SpeedY + (U1 - V1) * VeKY
+
+            If Master.Mass > Slave.Mass Then
+                Area1 = PI * (Master.Size ^ 2)
+                Area2 = PI * (Slave.Size ^ 2)
+                Area1 = Area1 + Area2
+                Master.Size = Sqrt(Area1 / PI)
+                Master.Mass = Master.Mass + Slave.Mass 'Sqr(Ball(B).Mass)
+                Slave.Visible = False
+            Else
+                Area1 = PI * (Master.Size ^ 2)
+                Area2 = PI * (Slave.Size ^ 2)
+                Area1 = Area1 + Area2
+                Slave.Size = Sqrt(Area1 / PI)
+                Slave.Mass = Slave.Mass + Master.Mass 'Sqr(Ball(B).Mass)
+                Master.Visible = False
+            End If
+
+
+
+
+
+        End If
+
+
+    End Sub
+
+
     Public Function CopyToPrim(BallArr() As BallParms) As Prim_Struct()
         Dim prim_ball(BallArr.Count - 1) As Prim_Struct
         For i = 0 To UBound(BallArr)
@@ -544,10 +789,10 @@ Public Module CUDA
             prim_ball(i).Mass = BallArr(i).Mass
             prim_ball(i).SpeedX = BallArr(i).SpeedX
             prim_ball(i).SpeedY = BallArr(i).SpeedY
-
-
-
-
+            prim_ball(i).Color = BallArr(i).Color.ToArgb
+            prim_ball(i).Size = BallArr(i).Size
+            prim_ball(i).Visible = Convert.ToInt32(BallArr(i).Visible)
+            prim_ball(i).InRoche = Convert.ToInt32(BallArr(i).InRoche)
 
         Next
 
@@ -565,11 +810,10 @@ Public Module CUDA
             BallPar(i).SpeedX = BallArr(i).SpeedX
             BallPar(i).SpeedY = BallArr(i).SpeedY
             BallPar(i).Visible = True
-            BallPar(i).Size = 3
-            BallPar(i).Color = Color.Orange
-
-
-
+            BallPar(i).Size = BallArr(i).Size
+            BallPar(i).Color = Color.FromArgb(BallArr(i).Color)
+            BallPar(i).Visible = Convert.ToBoolean(BallArr(i).Visible)
+            BallPar(i).InRoche = Convert.ToBoolean(BallArr(i).InRoche)
         Next
 
 

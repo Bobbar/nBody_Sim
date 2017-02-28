@@ -33,7 +33,6 @@ Public Module Renderer
         gr.ScaleTransform(pic_scale, pic_scale)
     End Sub
     Public Sub Drawr(ByVal BallArray() As BallParms) ' As Bitmap
-
         Dim BodyLoc, Body2Loc As SPoint
         Dim BodySize, Body2Size As Single
         Dim FollowLoc As New SPoint

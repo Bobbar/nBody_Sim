@@ -33,3 +33,7 @@ C:\GitHub\Physics Engine - Copy\Physics-2\obj\Release\Physics Engine.vbprojResol
 C:\GitHub\Physics Engine - Copy\Physics-2\bin\Release\protobuf-net.dll
 C:\GitHub\Physics Engine - Copy\Physics-2\obj\Release\Physics_Engine.frmAddBodies.resources
 C:\GitHub\Physics Engine - Copy\Physics-2\bin\Release\Cudafy.NET.dll
+C:\GitHub\Physics Engine - Copy\Physics-2\bin\Release\Gravity Physics.exe.manifest
+C:\GitHub\Physics Engine - Copy\Physics-2\bin\Release\Gravity Physics.application
+C:\GitHub\Physics Engine - Copy\Physics-2\obj\Release\Gravity Physics.exe.manifest
+C:\GitHub\Physics Engine - Copy\Physics-2\obj\Release\Gravity Physics.application

@@ -160,3 +160,7 @@ C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Physics_Engine.frmAddBodies.
 C:\GitHub\Physics Engine - Copy\Physics-2\bin\Debug\protobuf-net.dll
 C:\GitHub\Physics Engine - Copy\Physics-2\bin\Debug\Cudafy.NET.dll
 C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Physics Engine.vbprojResolveAssemblyReference.cache
+C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Gravity Physics.exe.manifest
+C:\GitHub\Physics Engine - Copy\Physics-2\bin\Debug\Gravity Physics.exe.manifest
+C:\GitHub\Physics Engine - Copy\Physics-2\bin\Debug\Gravity Physics.application
+C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Gravity Physics.application
