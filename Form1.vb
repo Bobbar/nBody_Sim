@@ -1979,6 +1979,7 @@ Err:
         InitGPU()
 
         Do Until bolStopWorker
+            bolRendering = True
             ExecDelay()
 
             StartCalc()

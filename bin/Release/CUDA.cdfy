@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CudafyModule Version="1.29.5576.13786" Name="CUDA" DebugInfo="false" HasCudaSourceCode="false" HasPTX="false" HasBinary="false">
+  <CudaSourceCode></CudaSourceCode>
+  <PTXMODULES />
+  <BinaryModules />
+  <SourceCodes>
+    <SourceCodeFile ID="c76ba4fd-afbe-44ff-9696-dd34794194c8" Language="OpenCL" Arch="OpenCL">I2lmIGRlZmluZWQoY2xfa2hyX2ZwNjQpDQojcHJhZ21hIE9QRU5DTCBFWFRFTlNJT04gY2xfa2hyX2ZwNjQ6IGVuYWJsZQ0KI2VsaWYgZGVmaW5lZChjbF9hbWRfZnA2NCkNCiNwcmFnbWEgT1BFTkNMIEVYVEVOU0lPTiBjbF9hbWRfZnA2NDogZW5hYmxlDQojZW5kaWYNCnN0cnVjdCBDVURBUHJpbV9TdHJ1Y3QNCnsNCglkb3VibGUgTG9jWDsNCglkb3VibGUgTG9jWTsNCglkb3VibGUgTWFzczsNCglkb3VibGUgU3BlZWRYOw0KCWRvdWJsZSBTcGVlZFk7DQoJZG91YmxlIEZvcmNlWDsNCglkb3VibGUgRm9yY2VZOw0KCWludCBXaG9Ub3VjaGVkTWU7DQp9Ow0KDQpzdHJ1Y3QgQ1VEQURlYnVnX1N0cnVjdA0Kew0KCWludCBVQjsNCglpbnQgTEI7DQoJaW50IE90aGVyOw0KCWludCBPdGhlcjI7DQp9Ow0KDQoNCi8vIFBoeXNpY3NfRW5naW5lLkNVREENCl9fa2VybmVsICB2b2lkIENhbGNQaHlzaWNzKGdsb2JhbCBzdHJ1Y3QgQ1VEQVByaW1fU3RydWN0KiBCb2R5LCBpbnQgQm9keUxlbjAsIGludCBuQm9kaWVzKTsNCg0KLy8gUGh5c2ljc19FbmdpbmUuQ1VEQQ0KX19rZXJuZWwgIHZvaWQgQ2FsY1BoeXNpY3MoZ2xvYmFsIHN0cnVjdCBDVURBUHJpbV9TdHJ1Y3QqIEJvZHksIGludCBCb2R5TGVuMCwgaW50IG5Cb2RpZXMpDQp7DQoJaW50IG51bSA9IGdldF9sb2NhbF9zaXplKDApICogZ2V0X2dyb3VwX2lkKDApICsgZ2V0X2xvY2FsX2lkKDApOw0KCWludCB4ID0gZ2V0X2xvY2FsX2lkKDApOw0KCWRvdWJsZSBudW0yID0gMC4wNTsNCglkb3VibGUgbnVtMyA9IDEuMDI7DQoJQm9keVsobnVtKV0uV2hvVG91Y2hlZE1lID0geDsNCglCb2R5WyhudW0pXS5Gb3JjZVggPSAwLjA7DQoJQm9keVsobnVtKV0uRm9yY2VZID0gMC4wOw0KCWlmIChudW0gPCBuQm9kaWVzKQ0KCXsNCgkJZm9yIChpbnQgaSA9IDE7IGkgPD0gbkJvZGllczsgaSA9IGkgKyAxKQ0KCQl7DQoJCQlpZiAobnVtICE9IGkpDQoJCQl7DQoJCQkJZG91YmxlIG51bTQgPSBCb2R5WyhpKV0uTG9jWCAtIEJvZHlbKG51bSldLkxvY1g7DQoJCQkJZG91YmxlIG51bTUgPSBCb2R5WyhpKV0uTG9jWSAtIEJvZHlbKG51bSldLkxvY1k7DQoJCQkJZG91YmxlIG51bTYgPSBzcXJ0KG51bTQgKiBudW00ICsgbnVtNSAqIG51bTUpOw0KCQkJCWlmIChudW02ID4gMC4wKQ0KCQkJCXsNCgkJCQkJZG91YmxlIGFyZ18xMEJfMCA9IEJvZHlbKG51bSldLk1hc3M7DQoJCQkJCWRvdWJsZSBtYXNzID0gQm9keVsoaSldLk1hc3M7DQoJCQkJCWRvdWJsZSBleHByXzExOCA9IGFyZ18xMEJfMCAqIG1hc3MgLyAobnVtNiAqIG51bTYgKyBudW0zICogbnVtMyk7DQoJCQkJCWRvdWJsZSBudW03ID0gZXhwcl8xMTggKiBudW00IC8gbnVtNjsNCgkJCQkJZG91YmxlIG51bTggPSBleHByXzExOCAqIG51bTUgLyBudW02Ow0KCQkJCQlpbnQgZXhwcl8xMzNfY3BfMF9jcF8xID0gbnVtOw0KCQkJCQlCb2R5WyhleHByXzEzM19jcF8wX2NwXzEpXS5Gb3JjZVggPSBCb2R5WyhleHByXzEzM19jcF8wX2NwXzEpXS5Gb3JjZVggKyBudW03Ow0KCQkJCQlpbnQgZXhwcl8xNDhfY3BfMF9jcF8xID0gbnVtOw0KCQkJCQlCb2R5WyhleHByXzE0OF9jcF8wX2NwXzEpXS5Gb3JjZVkgPSBCb2R5WyhleHByXzE0OF9jcF8wX2NwXzEpXS5Gb3JjZVkgKyBudW04Ow0KCQkJCX0NCgkJCX0NCgkJfQ0KCQlpbnQgZXhwcl8xNkNfY3BfMF9jcF8xID0gbnVtOw0KCQlCb2R5WyhleHByXzE2Q19jcF8wX2NwXzEpXS5TcGVlZFggPSBCb2R5WyhleHByXzE2Q19jcF8wX2NwXzEpXS5TcGVlZFggKyBudW0yICogQm9keVsobnVtKV0uRm9yY2VYIC8gQm9keVsobnVtKV0uTWFzczsNCgkJaW50IGV4cHJfMTlDX2NwXzBfY3BfMSA9IG51bTsNCgkJQm9keVsoZXhwcl8xOUNfY3BfMF9jcF8xKV0uU3BlZWRZID0gQm9keVsoZXhwcl8xOUNfY3BfMF9jcF8xKV0uU3BlZWRZICsgbnVtMiAqIEJvZHlbKG51bSldLkZvcmNlWSAvIEJvZHlbKG51bSldLk1hc3M7DQoJCWludCBleHByXzFDQ19jcF8wX2NwXzEgPSBudW07DQoJCUJvZHlbKGV4cHJfMUNDX2NwXzBfY3BfMSldLkxvY1ggPSBCb2R5WyhleHByXzFDQ19jcF8wX2NwXzEpXS5Mb2NYICsgbnVtMiAqIEJvZHlbKG51bSldLlNwZWVkWDsNCgkJaW50IGV4cHJfMUVGX2NwXzBfY3BfMSA9IG51bTsNCgkJQm9keVsoZXhwcl8xRUZfY3BfMF9jcF8xKV0uTG9jWSA9IEJvZHlbKGV4cHJfMUVGX2NwXzBfY3BfMSldLkxvY1kgKyBudW0yICogQm9keVsobnVtKV0uU3BlZWRZOw0KCX0NCn0NCg==</SourceCodeFile>
+  </SourceCodes>
+  <Functions>
+    <CudafyKernelMethod Name="CalcPhysics" Type="Global" IsDummy="false" DummyBehaviour="Default">
+      <Type>Physics_Engine.CUDA</Type>
+      <Assembly>Gravity Physics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Assembly>
+      <AssemblyName>Gravity Physics</AssemblyName>
+      <AssemblyPath>C:\GitHub\Physics Engine - Copy\Physics-2\bin\Release\Gravity Physics.exe</AssemblyPath>
+      <Checksum>806657713</Checksum>
+      <Parameters>
+        <ReturnType>System.Void</ReturnType>
+        <Parameter Type="Cudafy.GThread" Name="gpThread" Position="0" />
+        <Parameter Type="Physics_Engine.CUDA+Prim_Struct[]" Name="Body" Position="1" />
+        <Parameter Type="System.Int32" Name="nBodies" Position="2" />
+      </Parameters>
+    </CudafyKernelMethod>
+  </Functions>
+  <Constants />
+  <Types>
+    <CudafyType Name="Prim_Struct" IsDummy="false" DummyBehaviour="Default">
+      <Type>Physics_Engine.CUDA+Prim_Struct</Type>
+      <Assembly>Gravity Physics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Assembly>
+      <AssemblyName>Gravity Physics</AssemblyName>
+      <AssemblyPath>C:\GitHub\Physics Engine - Copy\Physics-2\bin\Release\Gravity Physics.exe</AssemblyPath>
+      <Checksum>806657713</Checksum>
+    </CudafyType>
+    <CudafyType Name="Debug_Struct" IsDummy="false" DummyBehaviour="Default">
+      <Type>Physics_Engine.CUDA+Debug_Struct</Type>
+      <Assembly>Gravity Physics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Assembly>
+      <AssemblyName>Gravity Physics</AssemblyName>
+      <AssemblyPath>C:\GitHub\Physics Engine - Copy\Physics-2\bin\Release\Gravity Physics.exe</AssemblyPath>
+      <Checksum>806657713</Checksum>
+    </CudafyType>
+  </Types>
+</CudafyModule>

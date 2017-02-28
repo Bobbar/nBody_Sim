@@ -94,56 +94,56 @@ Public Module CUDA
         ' Ball = CullBodies(Ball)
         If Not bolPlaying Then
 #Region "OldShit2"
-                'IF NOT PLAYING THEN RENDER NORMALLY*****************
+            'IF NOT PLAYING THEN RENDER NORMALLY*****************
 
 
-                '    ' If UBound(Ball) > (VisibleBalls() * 2) 
-                '    If (UBound(Ball) - VisibleBalls()) > 1000 Then
-                '        Ball = CullBodies(Ball)
-                '    End If
+            '    ' If UBound(Ball) > (VisibleBalls() * 2) 
+            '    If (UBound(Ball) - VisibleBalls()) > 1000 Then
+            '        Ball = CullBodies(Ball)
+            '    End If
 
-                '' BodyDiv = Int(UBound(Ball) / RunThreads)
-                'Dim ExtraBodys As Integer = UBound(Ball) - (BodyDiv * RunThreads)
-                '    ' Debug.Print(ExtraBodys)
-                '    Dim Threads As New List(Of PhysicsChunk)
-                '    Dim UB, LB As Integer
-                'For i As Integer = 1 To RunThreads
-                '    If i = 1 Then
-                '        Threads.Add(New PhysicsChunk(BodyDiv, 0, Ball))
-                '    Else
-                '        LB = (BodyDiv * (i - 1)) + 1
-                '        UB = BodyDiv * (i)
-                '        If i = RunThreads Then UB += ExtraBodys
-                '        Threads.Add(New PhysicsChunk(UB, LB, Ball))
-                '    End If
-                'Next
+            '' BodyDiv = Int(UBound(Ball) / RunThreads)
+            'Dim ExtraBodys As Integer = UBound(Ball) - (BodyDiv * RunThreads)
+            '    ' Debug.Print(ExtraBodys)
+            '    Dim Threads As New List(Of PhysicsChunk)
+            '    Dim UB, LB As Integer
+            'For i As Integer = 1 To RunThreads
+            '    If i = 1 Then
+            '        Threads.Add(New PhysicsChunk(BodyDiv, 0, Ball))
+            '    Else
+            '        LB = (BodyDiv * (i - 1)) + 1
+            '        UB = BodyDiv * (i)
+            '        If i = RunThreads Then UB += ExtraBodys
+            '        Threads.Add(New PhysicsChunk(UB, LB, Ball))
+            '    End If
+            'Next
 
-                'Dim rThreads As New List(Of Thread)
-                'For Each trd As PhysicsChunk In Threads
-                '    rThreads.Add(New Thread(New ThreadStart(AddressOf trd.CalcPhysics)))
-                'Next
+            'Dim rThreads As New List(Of Thread)
+            'For Each trd As PhysicsChunk In Threads
+            '    rThreads.Add(New Thread(New ThreadStart(AddressOf trd.CalcPhysics)))
+            'Next
 
 
 
-                'For Each rtrd As Thread In rThreads
-                '    rtrd.Start()
-                'Next
+            'For Each rtrd As Thread In rThreads
+            '    rtrd.Start()
+            'Next
 
-                'Dim bolThreadsDone As Boolean = False
-                'Do Until bolThreadsDone 'rThread1.ThreadState = ThreadState.Stopped And rThread2.ThreadState = ThreadState.Stopped And rThread3.ThreadState = ThreadState.Stopped And rThread4.ThreadState = ThreadState.Stopped And rThread5.ThreadState = ThreadState.Stopped And rThread6.ThreadState = ThreadState.Stopped And rThread7.ThreadState = ThreadState.Stopped And rThread8.ThreadState = ThreadState.Stopped
-                '    Thread.Sleep(1)
-                '    Dim CompleteThreads As Integer = 0
-                '    For Each rtrd As Thread In rThreads
-                '        If rtrd.ThreadState = ThreadState.Stopped Then CompleteThreads += 1
-                '    Next
-                '    If CompleteThreads = RunThreads Then bolThreadsDone = True
-                'Loop
+            'Dim bolThreadsDone As Boolean = False
+            'Do Until bolThreadsDone 'rThread1.ThreadState = ThreadState.Stopped And rThread2.ThreadState = ThreadState.Stopped And rThread3.ThreadState = ThreadState.Stopped And rThread4.ThreadState = ThreadState.Stopped And rThread5.ThreadState = ThreadState.Stopped And rThread6.ThreadState = ThreadState.Stopped And rThread7.ThreadState = ThreadState.Stopped And rThread8.ThreadState = ThreadState.Stopped
+            '    Thread.Sleep(1)
+            '    Dim CompleteThreads As Integer = 0
+            '    For Each rtrd As Thread In rThreads
+            '        If rtrd.ThreadState = ThreadState.Stopped Then CompleteThreads += 1
+            '    Next
+            '    If CompleteThreads = RunThreads Then bolThreadsDone = True
+            'Loop
 #End Region
-                Dim mb As Integer = 1024 * 1024
-                Dim inBall() As Prim_Struct = CopyToPrim(Ball)
-                ' Dim outBall() As Prim_Struct
-                'Dim chunk As New PhysicsChunk(UBound(Ball), 0, Ball)
-                Dim gMemIn, gMemOut
+            'Dim mb As Integer = 1024 * 1024
+            Dim inBall() As Prim_Struct = CopyToPrim(Ball)
+            ' Dim outBall() As Prim_Struct
+            'Dim chunk As New PhysicsChunk(UBound(Ball), 0, Ball)
+            '  Dim gMemIn, gMemOut
             ' gMemIn = gpu.Allocate(inBall) 'Of Single)(mb)
             gpu.Allocate(inBall) 'Of Single)(mb)
 
@@ -164,14 +164,14 @@ Public Module CUDA
 
 
 
-            Dim DBVar(threads) As Debug_Struct
-                gpu.Allocate(DBVar)
-                Dim OutDBVar() As Debug_Struct = gpu.CopyToDevice(DBVar)
+            '  Dim DBVar(threads) As Debug_Struct
+            'gpu.Allocate(DBVar)
+            ' Dim OutDBVar() As Debug_Struct = gpu.CopyToDevice(DBVar)
 
             Dim nBlocks As Integer = (UBound(Ball) + threads - 1) / threads
-
-            gpu.Launch(nBlocks, threads, "CalcPhysics", gpuinBall, UBound(Ball), OutDBVar)
-
+            StartTimer()
+            gpu.Launch(nBlocks, threads, "CalcPhysics", gpuinBall, UBound(Ball)) ', OutDBVar)
+            StopTimer()
 
 
             gpu.Synchronize()
@@ -180,6 +180,7 @@ Public Module CUDA
             ' Dim bal
 
             gpu.CopyFromDevice(gpuinBall, inBall)
+
             '   gpu.CopyFromDevice(gpuOutBall, outBall)
             '   gpu.CopyFromDevice(OutDBVar, DBVar)
 
@@ -187,7 +188,10 @@ Public Module CUDA
             ' Ball = outBall
 
             ' Debug.Print(inBall(0).ForceX)
+
+
             Ball = CopyToBallParm(inBall)
+
             gpu.FreeAll()
 
 #Region "OldShit1"
@@ -285,7 +289,7 @@ Public Module CUDA
     End Sub
 
     <Cudafy>
-    Public Sub CalcPhysics(gpThread As GThread, Body() As Prim_Struct, nBodies As Integer, DebugStuff() As Debug_Struct) ', LB As Integer, UB As Integer)
+    Public Sub CalcPhysics(gpThread As GThread, Body() As Prim_Struct, nBodies As Integer) ', DebugStuff() As Debug_Struct) ', LB As Integer, UB As Integer)
         'Dim STRIDE As Integer = 32
         'Dim elem_per_thread As Integer = nBodies / gpThread.blockIdx.x * gpThread.blockDim.x
         'Dim block_start_idx As Integer = elem_per_thread * gpThread.blockIdx.x * gpThread.blockDim.x
