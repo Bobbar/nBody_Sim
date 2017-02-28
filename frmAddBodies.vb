@@ -158,7 +158,7 @@ Public Class frmAddBodies
 
         For i As Integer = 0 To NumberOfBodies
             ReDim Preserve Ball(UBound(Ball) + 1)
-            Ball(UBound(Ball)).UID = Guid.NewGuid.ToString
+            Ball(UBound(Ball)).UID = Now.Ticks 'Guid.NewGuid.ToString
             Ball(UBound(Ball)).Color = Color.Orange 'RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
             Ball(UBound(Ball)).LocX = GetRandomNumber(1, Form1.Render.Width / pic_scale) - ScaleOffset.X - RelBallPosMod.X ' * pic_scale

@@ -36,7 +36,7 @@ Public Module CUDA
         Public InRoche As Integer
         Public BlackHole As Integer
         Public UID As Long
-        '   Public WhoTouchedMe As Integer
+        ' Public TimesTouched As Integer
 
 
 
@@ -212,14 +212,8 @@ Public Module CUDA
 
             Next
 
+            UpdateBodies(inBall)
 
-            For i As Integer = 1 To UBound(inBall)
-                inBall(i).SpeedX += StepMulti * inBall(i).ForceX / inBall(i).Mass
-                inBall(i).SpeedY += StepMulti * inBall(i).ForceY / inBall(i).Mass
-                inBall(i).LocX += StepMulti * inBall(i).SpeedX
-                inBall(i).LocY += StepMulti * inBall(i).SpeedY
-
-            Next
 
             Dim MyBodys As New List(Of Prim_Struct)
             '  MyBodys.AddRange(inBall)
@@ -338,6 +332,14 @@ Public Module CUDA
         'End Try
 
     End Sub
+    Private Sub UpdateBodies(ByRef Body() As Prim_Struct)
+        For i As Integer = 1 To UBound(Body)
+            Body(i).SpeedX += StepMulti * Body(i).ForceX / Body(i).Mass
+            Body(i).SpeedY += StepMulti * Body(i).ForceY / Body(i).Mass
+            Body(i).LocX += StepMulti * Body(i).SpeedX
+            Body(i).LocY += StepMulti * Body(i).SpeedY
+        Next
+    End Sub
 
     <Cudafy>
     Public Sub CalcPhysics(gpThread As GThread, Body() As Prim_Struct, nBodies As Integer) ', DebugStuff() As Debug_Struct) ', LB As Integer, UB As Integer)
@@ -423,6 +425,7 @@ Public Module CUDA
         'Dim LB As Integer = thread_start_idx
         '   For A = LB To UB ' Each OuterBody(A) As BallParms In MyBodys 'A = lBoundBody To uBoundBody
         'Body(A).WhoTouchedMe = tid
+        '  Body(A).TimesTouched += 1
         Body(A).ForceX = 0
         Body(A).ForceY = 0
         Body(A).ForceTot = 0
