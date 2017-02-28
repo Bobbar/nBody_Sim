@@ -183,7 +183,7 @@ Public Module CUDA
             Dim nBlocks As Integer = (UBound(Ball) + threads - 1) / threads
             ' StartTimer()
 
-            gpu.Launch(nBlocks, threads, "CalcPhysics", gpuinBall, UBound(Ball)) ', OutDBVar)
+            gpu.Launch(nBlocks, threads, "CalcPhysics", gpuinBall, UBound(Ball), StepMulti) ', OutDBVar)
             '  StopTimer()
 
 
@@ -217,7 +217,7 @@ Public Module CUDA
 
             Next
 
-            UpdateBodies(inBall)
+            'UpdateBodies(inBall)
 
 
             Dim MyBodys As New List(Of Prim_Struct)
@@ -347,7 +347,7 @@ Public Module CUDA
     End Sub
 
     <Cudafy>
-    Public Sub CalcPhysics(gpThread As GThread, Body() As Prim_Struct, nBodies As Integer) ', DebugStuff() As Debug_Struct) ', LB As Integer, UB As Integer)
+    Public Sub CalcPhysics(gpThread As GThread, Body() As Prim_Struct, nBodies As Integer, TimeStep As Double) ', DebugStuff() As Debug_Struct) ', LB As Integer, UB As Integer)
         'Dim STRIDE As Integer = 32
         'Dim elem_per_thread As Integer = nBodies / gpThread.blockIdx.x * gpThread.blockDim.x
         'Dim block_start_idx As Integer = elem_per_thread * gpThread.blockIdx.x * gpThread.blockDim.x
@@ -409,7 +409,7 @@ Public Module CUDA
         Dim Dist As Double
         Dim DistSqrt As Double
         Dim M1, M2 As Double
-        Dim MyStep As Double = 0.05
+        ' Dim MyStep As Double = 0.05
 
         '   Dim tmpBodys As New List(Of BallParms)
         '  Dim DistArray As New List(Of String)
@@ -539,6 +539,11 @@ Public Module CUDA
         ''If UBound(Ball) > 10000 Then
         ''End If
         ' UpdateBodies(Body)
+
+        Body(A).SpeedX += TimeStep * Body(A).ForceX / Body(A).Mass
+        Body(A).SpeedY += TimeStep * Body(A).ForceY / Body(A).Mass
+        Body(A).LocX += TimeStep * Body(A).SpeedX
+        Body(A).LocY += TimeStep * Body(A).SpeedY
 
         '''''''For i As Integer = 1 To nBodies 'UBound(Bodies)
         '''''''    Body(i).SpeedX += MyStep * Body(i).ForceX / Body(i).Mass
