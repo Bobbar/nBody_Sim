@@ -147,6 +147,11 @@ Public Module CUDA
             'Loop
 #End Region
             'Dim mb As Integer = 1024 * 1024
+
+            If (UBound(Ball) - VisibleBalls()) > 1000 Then
+                Ball = CullBodies(Ball)
+            End If
+
             Dim inBall() As Prim_Struct = CopyToPrim(Ball)
             ' Dim outBall() As Prim_Struct
             'Dim chunk As New PhysicsChunk(UBound(Ball), 0, Ball)
@@ -176,10 +181,10 @@ Public Module CUDA
             ' Dim OutDBVar() As Debug_Struct = gpu.CopyToDevice(DBVar)
 
             Dim nBlocks As Integer = (UBound(Ball) + threads - 1) / threads
-            StartTimer()
+            ' StartTimer()
 
             gpu.Launch(nBlocks, threads, "CalcPhysics", gpuinBall, UBound(Ball)) ', OutDBVar)
-            StopTimer()
+            '  StopTimer()
 
 
             gpu.Synchronize()
@@ -232,10 +237,10 @@ Public Module CUDA
 
 
 
-            inBall = MyBodys.ToArray
+            ' inBall = MyBodys.ToArray
 
 
-            Ball = CopyToBallParm(inBall)
+            Ball = CopyToBallParm(MyBodys.ToArray)
 
             gpu.FreeAll()
 
@@ -754,14 +759,14 @@ Public Module CUDA
                 'Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS)
                 'ForceX = Force * DistX / DistSqrt
                 'ForceY = Force * DistY / DistSqrt
-                Dim multi As Integer = 20
+                Dim multi As Integer = 10
                 Body(Master).ForceX -= ForceX * multi
                 Body(Master).ForceY -= ForceY * multi
                 Body(Slave).ForceX -= ForceX * multi
                 Body(Slave).ForceY -= ForceY * multi
 
 
-                Dim Friction As Double = 0.8
+                Dim Friction As Double = 0.6
                 Body(Master).SpeedX += (U1 - V1) * VekX * Friction
                 Body(Master).SpeedY += (U1 - V1) * VeKY * Friction
 
