@@ -91,7 +91,7 @@ Public Class frmAddBodies
         For i As Integer = 0 To NumberOfBodies
             ReDim Preserve Ball(UBound(Ball) + 1)
             ' Ball(UBound(Ball)).Index = UBound(Ball)
-            Ball(UBound(Ball)).UID = Guid.NewGuid.ToString
+            Ball(UBound(Ball)).UID = Now.Ticks 'Guid.NewGuid.ToString
             Ball(UBound(Ball)).Color = RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
 
@@ -136,8 +136,8 @@ Public Class frmAddBodies
         Next
         If bolIncludeCenterMass Then
             ReDim Preserve Ball(UBound(Ball) + 1)
-            Ball(UBound(Ball)).UID = Guid.NewGuid.ToString
-            Ball(UBound(Ball)).Color = Color.Black 'RandomRGBColor() 'colDefBodyColor
+            Ball(UBound(Ball)).UID = Now.Ticks 'Guid.NewGuid.ToString
+            Ball(UBound(Ball)).Color = Color.DarkRed 'RandomRGBColor() 'colDefBodyColor
             Ball(UBound(Ball)).Visible = True
             Ball(UBound(Ball)).LocX = newEllipse.Location.X ' Form1.Render.Width / 2 / pic_scale - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
             Ball(UBound(Ball)).LocY = newEllipse.Location.Y 'Form1.Render.Height / 2 / pic_scale - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale

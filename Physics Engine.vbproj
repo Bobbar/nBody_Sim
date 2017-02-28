@@ -180,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="bin\Debug\CUDAFYSOURCETEMP.cu" />
     <None Include="packages.config" />
     <None Include="Physics Engine_TemporaryKey.pfx" />
     <None Include="Resources\app.config" />

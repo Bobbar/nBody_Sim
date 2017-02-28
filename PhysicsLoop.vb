@@ -68,7 +68,7 @@ Public Module PhysicsLoop
         <ProtoBuf.ProtoMember(8)>
         Public ForceTot As Double
         <ProtoBuf.ProtoMember(9)>
-        Public UID As String
+        Public UID As Long 'String
         <ProtoBuf.ProtoMember(10)>
         Public MovinG As Boolean
         <ProtoBuf.ProtoMember(11)>
@@ -139,7 +139,7 @@ Public Module PhysicsLoop
         <ProtoBuf.ProtoMember(5)>
         Public Flags As String
         <ProtoBuf.ProtoMember(6)>
-        Public UID As String
+        Public UID As Long 'String
 
         Public Color As Color
         <ProtoBuf.ProtoMember(7)>
