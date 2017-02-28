@@ -29,10 +29,12 @@ Public Module CUDA
         Public SpeedY As Double
         Public ForceX As Double
         Public ForceY As Double
+        Public ForceTot As Double
         Public Color As Integer
         Public Size As Double
         Public Visible As Integer
         Public InRoche As Integer
+        Public BlackHole As Integer
         Public UID As Long
         '   Public WhoTouchedMe As Integer
 
@@ -195,6 +197,20 @@ Public Module CUDA
 
             ' Debug.Print(inBall(0).ForceX)
 
+            Dim NewBalls As New List(Of Prim_Struct)
+
+            For a As Integer = 1 To UBound(inBall)
+
+                If inBall(a).ForceTot > inBall(a).Mass * 4 And inBall(a).BlackHole = 0 Then ' And OuterBody(A).Size < 10 
+                    inBall(a).InRoche = True
+                    NewBalls.AddRange(FractureBall(inBall(a)))
+                ElseIf (inBall(a).ForceTot * 2) < inBall(a).Mass * 4 Then ' And OuterBody(A).Size > 10
+                    inBall(a).InRoche = False
+
+                End If
+
+
+            Next
 
 
             For i As Integer = 1 To UBound(inBall)
@@ -205,6 +221,24 @@ Public Module CUDA
 
             Next
 
+            Dim MyBodys As New List(Of Prim_Struct)
+            '  MyBodys.AddRange(inBall)
+            If NewBalls.Count > 0 Then
+                MyBodys.Clear()
+                MyBodys.AddRange(inBall)
+
+                MyBodys.AddRange(NewBalls)
+                '  OuterBody = MyBodys.ToArray
+                'AddNewBalls(NewBalls)
+                '  tmpBodys.AddRange(NewBalls)
+            Else
+                MyBodys.Clear()
+                MyBodys.AddRange(inBall)
+            End If
+
+
+
+            inBall = MyBodys.ToArray
 
 
             Ball = CopyToBallParm(inBall)
@@ -391,7 +425,7 @@ Public Module CUDA
         'Body(A).WhoTouchedMe = tid
         Body(A).ForceX = 0
         Body(A).ForceY = 0
-        '   Body(A).ForceTot = 0
+        Body(A).ForceTot = 0
         '  If OuterBody(A).Visible Then
         '  If OuterBody(A).MovinG = False Then
 
@@ -432,7 +466,7 @@ Public Module CUDA
 
                         ForceX = Force * DistX / DistSqrt
                         ForceY = Force * DistY / DistSqrt
-                        ' Body(A).ForceTot += Force
+                        Body(A).ForceTot += Force
 
 
                         Body(A).ForceX += ForceX
@@ -481,13 +515,13 @@ Public Module CUDA
         'OuterBody(A).LocY = OuterBody(A).LocY + (MyStep * OuterBody(A).SpeedY)
         ' tmpBodys.Add(OuterBody(A))
         'CalcColor = ColorsRGB - (OuterBody(A).ForceTot * RGBMulti)
-        'If OuterBody(A).ForceTot > OuterBody(A).Mass * 4 And Not OuterBody(A).Flags.Contains("BH") Then ' And OuterBody(A).Size < 10 
-        '    OuterBody(A).InRoche = True
-        '    NewBalls.AddRange(FractureBall(OuterBody(A)))
-        'ElseIf (OuterBody(A).ForceTot * 2) < OuterBody(A).Mass * 4 Then ' And OuterBody(A).Size > 10
-        '    OuterBody(A).InRoche = False
+        ''If Body(A).ForceTot > Body(A).Mass * 4 And Body(A).BlackHole = 0 Then ' And OuterBody(A).Size < 10 
+        ''    Body(A).InRoche = True
+        ''    NewBalls.AddRange(FractureBall(Body(A)))
+        ''ElseIf (Body(A).ForceTot * 2) < Body(A).Mass * 4 Then ' And OuterBody(A).Size > 10
+        ''    Body(A).InRoche = False
 
-        'End If
+        ''End If
         '    DistArray.Add(A.ToString + " - " + DistSqrt.ToString)
 
         ' Next A
@@ -552,7 +586,7 @@ Public Module CUDA
         '  MyBodys = OuterBody 'tmpBodys
     End Sub
     <Cudafy>
-    Public Function CollideBodies(Body() As Prim_Struct, Master As Integer, Slave As Integer, DistSqrt As Double, DistX As Double, DistY As Double, ForceX As Double, ForceY As Double) As Prim_Struct()
+    Public Sub CollideBodies(Body() As Prim_Struct, Master As Integer, Slave As Integer, DistSqrt As Double, DistX As Double, DistY As Double, ForceX As Double, ForceY As Double) ' As Prim_Struct()
         Dim VeKY As Double
         Dim VekX As Double
         Dim V1x As Double
@@ -774,10 +808,128 @@ Public Module CUDA
 
 
         End If
-        Return Body
+        ' Return Body
 
+    End Sub
+
+    Private Function FractureBall(ByRef Body As Prim_Struct) As List(Of Prim_Struct)
+        Dim NewBallSize As Single
+        Dim NewBallMass As Single
+        Dim Divisor As Single
+        Dim PrevSize As Single
+        Dim PrevMass As Single
+        Dim TotBMass As Double
+        Dim Area As Double
+        Dim tmpBallList As New List(Of Prim_Struct)
+
+        Dim RadUPX As Double, RadDNX As Double, RadUPY As Double, RadDNY As Double
+        ' i = UBound(Ball)
+        If Body.Visible = 1 And Body.Size > 1 Then
+            Divisor = Int(Body.Size)
+            If Divisor <= 1 Then Divisor = 2
+            PrevSize = Body.Size
+            PrevMass = Body.Mass
+            'PrevSize = Sqr(PrevSize / pi)
+            Area = PI * (Body.Size ^ 2)
+            Area = Area / Divisor
+            NewBallSize = fnRadius(Area)  'fnRadius(fnArea(Body.Size) / 2)  'Sqr(Area / pi) 'Body.Size / Divisor
+
+            NewBallMass = PrevMass / Divisor  '(Body.Mass / Divisor)
+            Body.Visible = False
+            '
+            '                                            Body.Size = NewBallSize
+            '                                            Body.Mass = NewBallMass
+            '                                            Body.Flags = "B"
+            RadUPX = (Body.LocX) + PrevSize / 2 + Body.SpeedX * StepMulti
+            RadDNX = (Body.LocX) - PrevSize / 2 + Body.SpeedX * StepMulti
+            RadUPY = (Body.LocY) + PrevSize / 2 + Body.SpeedY * StepMulti
+            RadDNY = (Body.LocY) - PrevSize / 2 + Body.SpeedY * StepMulti
+
+            'RadUPX = (Body.LocX) + PrevSize + Body.SpeedX * StepMulti
+            'RadDNX = (Body.LocX) - PrevSize + Body.SpeedX * StepMulti
+            'RadUPY = (Body.LocY) + PrevSize + Body.SpeedY * StepMulti
+            'RadDNY = (Body.LocY) - PrevSize + Body.SpeedY * StepMulti
+
+
+            Dim CenterPoint As New Point(Body.LocX, Body.LocY)
+            Dim u As Long
+            For h = 1 To Divisor
+                Dim tmpBall As Prim_Struct
+                ' ReDim Preserve Ball(UBound(Ball) + 1)
+                '  u = UBound(Ball)
+
+                tmpBall.Size = NewBallSize '(2 * Rnd()) + 0.2
+                tmpBall.Mass = NewBallMass
+                TotBMass = TotBMass + NewBallMass
+                tmpBall.SpeedX = Body.SpeedX
+                tmpBall.SpeedY = Body.SpeedY
+                'If Not InStr(1, Body.Flags, "R") Then Ball(u).Flags = Body.Flags + "R"
+                'Ball(u).Flags = Body.Flags + "R"
+                tmpBall.Color = Body.Color 'vbWhite
+                tmpBall.BlackHole = 0
+                '  tmpBall.Index = UBound(Ball) + 1
+                tmpBall.UID = Now.Ticks 'Guid.NewGuid.ToString
+                '  tmpBall.IsFragment = True
+                tmpBall.InRoche = 1
+                tmpBall.Visible = 1
+                '  Ball(u).LocY = Body.LocY + Ball(u).Size * 2
+
+
+                tmpBall.LocX = GetRandomNumber((RadDNX), RadUPX)
+                tmpBall.LocY = GetRandomNumber((RadDNY), RadUPY)
+
+
+
+                If DupLoc(tmpBallList, tmpBall) Then
+                    ' Debug.Print("Dup failure")
+                    Do Until Not DupLoc(tmpBallList, tmpBall)
+
+
+                        tmpBall.LocX = GetRandomNumber((RadDNX), RadUPX)
+                        tmpBall.LocY = GetRandomNumber((RadDNY), RadUPY)
+
+                    Loop
+
+
+                End If
+
+
+                'Dim tmpLoc As New Point(GetRandomNumber((RadDNX), RadUPX), GetRandomNumber((RadDNY), RadUPY))
+                'Dim DistX As Double = CenterPoint.X - tmpLoc.X
+                'Dim DistY As Double = CenterPoint.Y - tmpLoc.Y
+                'Dim Dist As Double = (DistX * DistX) + (DistY * DistY)
+                'Dim DistSqrt = Sqrt(Dist)
+
+                'Do Until DistSqrt <= PrevSize * 2 And DistSqrt <> 0
+                '    tmpLoc = New Point(GetRandomNumber((RadDNX), RadUPX), GetRandomNumber((RadDNY), RadUPY))
+                '    DistX = CenterPoint.X - tmpLoc.X
+                '    DistY = CenterPoint.Y - tmpLoc.Y
+                '    Dist = (DistX * DistX) + (DistY * DistY)
+                '    DistSqrt = Sqrt(Dist)
+
+                '    'If DistSqrt < PrevSize / 2 And DistSqrt <> 0 Then
+
+
+
+                '    'End If
+                'Loop
+                'tmpBall.LocX = tmpLoc.X
+                'tmpBall.LocY = tmpLoc.Y
+                tmpBallList.Add(tmpBall)
+
+
+            Next h
+        End If
+        Return tmpBallList
     End Function
+    Private Function DupLoc(LstBodies As List(Of Prim_Struct), Body As Prim_Struct) As Boolean
+        If LstBodies.Count < 1 Then Return False
+        For Each bdy As Prim_Struct In LstBodies
+            If Body.LocX = bdy.LocX And Body.LocY = bdy.LocY Then Return True
+        Next
 
+        Return False
+    End Function
 
     Public Function CopyToPrim(BallArr() As BallParms) As Prim_Struct()
         Dim prim_ball(BallArr.Count - 1) As Prim_Struct
@@ -794,6 +946,13 @@ Public Module CUDA
             prim_ball(i).Visible = Convert.ToInt32(BallArr(i).Visible)
             prim_ball(i).InRoche = Convert.ToInt32(BallArr(i).InRoche)
             prim_ball(i).UID = BallArr(i).UID
+            prim_ball(i).ForceTot = BallArr(i).ForceTot
+            If BallArr(i).Flags IsNot Nothing Then
+                prim_ball(i).BlackHole = Convert.ToInt32(BallArr(i).Flags.Contains("BH"))
+            Else
+                prim_ball(i).BlackHole = 0
+            End If
+
         Next
 
 
@@ -815,7 +974,11 @@ Public Module CUDA
             BallPar(i).Visible = Convert.ToBoolean(BallArr(i).Visible)
             BallPar(i).InRoche = Convert.ToBoolean(BallArr(i).InRoche)
             BallPar(i).UID = BallArr(i).UID
-
+            If BallArr(i).BlackHole = 1 Then
+                BallPar(i).Flags = "BH"
+            Else
+                BallPar(i).Flags = ""
+            End If
 
         Next
 
