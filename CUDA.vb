@@ -144,19 +144,19 @@ Public Module CUDA
                 ' Dim outBall() As Prim_Struct
                 'Dim chunk As New PhysicsChunk(UBound(Ball), 0, Ball)
                 Dim gMemIn, gMemOut
-                ' gMemIn = gpu.Allocate(inBall) 'Of Single)(mb)
-                gMemOut = gpu.Allocate(inBall) 'Of Single)(mb)
+            ' gMemIn = gpu.Allocate(inBall) 'Of Single)(mb)
+            gpu.Allocate(inBall) 'Of Single)(mb)
 
 
 
-                Dim outBall() As Prim_Struct = inBall
-                ' Dim cMemout() As Prim_Struct
+            '     Dim outBall() As Prim_Struct = inBall
+            ' Dim cMemout() As Prim_Struct
 
-                Dim gpuinBall() As Prim_Struct = gpu.CopyToDevice(inBall)
+            Dim gpuinBall() As Prim_Struct = gpu.CopyToDevice(inBall)
 
-                gpu.Allocate(outBall)
+            ' gpu.Allocate(outBall)
 
-                Dim gpuOutBall() As Prim_Struct = gpu.CopyToDevice(outBall)
+            ' Dim gpuOutBall() As Prim_Struct = gpu.CopyToDevice(outBall)
             'Dim N As Integer = 20
 
             Dim threads As Integer = 256
@@ -177,17 +177,18 @@ Public Module CUDA
             gpu.Synchronize()
 
 
-                ' Dim bal
-                gpu.CopyFromDevice(gpuinBall, inBall)
+            ' Dim bal
+
+            gpu.CopyFromDevice(gpuinBall, inBall)
             '   gpu.CopyFromDevice(gpuOutBall, outBall)
-            gpu.CopyFromDevice(OutDBVar, DBVar)
+            '   gpu.CopyFromDevice(OutDBVar, DBVar)
 
 
-                ' Ball = outBall
+            ' Ball = outBall
 
-                ' Debug.Print(inBall(0).ForceX)
-                Ball = CopyToBallParm(outBall)
-            '    gpu.FreeAll()
+            ' Debug.Print(inBall(0).ForceX)
+            Ball = CopyToBallParm(inBall)
+            gpu.FreeAll()
 
 #Region "OldShit1"
             '  Dim AllBodys As New List(Of BallParms)
@@ -346,7 +347,7 @@ Public Module CUDA
         Dim Dist As Double
         Dim DistSqrt As Double
         Dim M1, M2 As Double
-        Dim MyStep As Double = 0.005
+        Dim MyStep As Double = 0.05
 
         '   Dim tmpBodys As New List(Of BallParms)
         '  Dim DistArray As New List(Of String)
@@ -372,70 +373,86 @@ Public Module CUDA
         '   Body(A).ForceTot = 0
         '  If OuterBody(A).Visible Then
         '  If OuterBody(A).MovinG = False Then
-        For B = 1 To nBodies
-            If A <> B Then
-                'If OuterBody(A).Index = 792 And Bodys(B).Index = 2002 Then
-                '    Debug.Print(DistSqrt & " - " & OuterBody(A).Size & " - " & Bodys(B).Size)
-                'End If
+
+        If A < nBodies Then
+            For B = 1 To nBodies
+                If A <> B Then
+                    'If OuterBody(A).Index = 792 And Bodys(B).Index = 2002 Then
+                    '    Debug.Print(DistSqrt & " - " & OuterBody(A).Size & " - " & Bodys(B).Size)
+                    'End If
 
 
-                'If bolShawdow Then
-                '    If InStr(1, OuterBody(A).Flags, "S") Then
-                '        Dim m As Double, SlX As Double, SlY As Double
-                '        SlX = Bodys(B).LocX - OuterBody(A).LocX
-                '        SlY = Bodys(B).LocY - OuterBody(A).LocY
-                '        m = SlY / SlX
-                '        Bodys(B).ShadAngle = Math.Atan2(Bodys(B).LocY - OuterBody(A).LocY, Bodys(B).LocX - OuterBody(A).LocX)   'Math.Tan(SlX / SlY) 'Math.Atan2(SlY, SlX) * 180 / PI 'Math.Atan(SlX / SlY) * 180 / PI
-                '    End If
-                'End If
-                'If Body(B).LocX = Body(A).LocX And Body(B).LocY = Body(A).LocY Then
-                '    '  CollideBodies(OuterBody(A), Bodys(B))
-                'End If
-                'If bGrav = 0 Then
-                'Else
-
-                DistX = Body(B).LocX - Body(A).LocX
-                DistY = Body(B).LocY - Body(A).LocY
-                Dist = (DistX * DistX) + (DistY * DistY)
-                DistSqrt = Sqrt(Dist)
-                If DistSqrt > 0 Then 'Gravity reaction
-                    '   If DistSqrt < (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) Then DistSqrt = (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) 'prevent screamers
-                    M1 = Body(A).Mass '^ 2
-                    M2 = Body(B).Mass ' ^ 2
-                    TotMass = M1 * M2
-                    Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS) ' (Dist * DistSqrt)
-
-
-                    ForceX = Force * DistX / DistSqrt
-                    ForceY = Force * DistY / DistSqrt
-                    ' Body(A).ForceTot += Force
-
-
-                    Body(A).ForceX += ForceX
-                    Body(A).ForceY += ForceY
-
-                    'OuterBody(A).SpeedX += MyStep * ForceX / M1
-                    'OuterBody(A).SpeedY += MyStep * ForceY / M1
-
-                    'If DistSqrt < 100 Then
-
-
-                    '        If DistSqrt <= (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) Then 'Collision reaction
-
-
-
-                    '            CollideBodies(OuterBody(A), Bodys(B), DistSqrt, DistX, DistY, ForceX, ForceY)
-
-                    '        End If
+                    'If bolShawdow Then
+                    '    If InStr(1, OuterBody(A).Flags, "S") Then
+                    '        Dim m As Double, SlX As Double, SlY As Double
+                    '        SlX = Bodys(B).LocX - OuterBody(A).LocX
+                    '        SlY = Bodys(B).LocY - OuterBody(A).LocY
+                    '        m = SlY / SlX
+                    '        Bodys(B).ShadAngle = Math.Atan2(Bodys(B).LocY - OuterBody(A).LocY, Bodys(B).LocX - OuterBody(A).LocX)   'Math.Tan(SlX / SlY) 'Math.Atan2(SlY, SlX) * 180 / PI 'Math.Atan(SlX / SlY) * 180 / PI
                     '    End If
-                Else
+                    'End If
+                    'If Body(B).LocX = Body(A).LocX And Body(B).LocY = Body(A).LocY Then
+                    '    '  CollideBodies(OuterBody(A), Bodys(B))
+                    'End If
+                    'If bGrav = 0 Then
+                    'Else
+
+                    DistX = Body(B).LocX - Body(A).LocX
+                    DistY = Body(B).LocY - Body(A).LocY
+                    Dist = (DistX * DistX) + (DistY * DistY)
+                    DistSqrt = Sqrt(Dist)
+                    If DistSqrt > 0 Then 'Gravity reaction
+                        '   If DistSqrt < (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) Then DistSqrt = (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) 'prevent screamers
+                        M1 = Body(A).Mass '^ 2
+                        M2 = Body(B).Mass ' ^ 2
+                        TotMass = M1 * M2
+                        Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS) ' (Dist * DistSqrt)
+
+
+                        ForceX = Force * DistX / DistSqrt
+                        ForceY = Force * DistY / DistSqrt
+                        ' Body(A).ForceTot += Force
+
+
+                        Body(A).ForceX += ForceX
+                        Body(A).ForceY += ForceY
+
+                        'OuterBody(A).SpeedX += MyStep * ForceX / M1
+                        'OuterBody(A).SpeedY += MyStep * ForceY / M1
+
+                        'If DistSqrt < 100 Then
+
+
+                        '        If DistSqrt <= (OuterBody(A).Size / 2) + (Bodys(B).Size / 2) Then 'Collision reaction
+
+
+
+                        '            CollideBodies(OuterBody(A), Bodys(B), DistSqrt, DistX, DistY, ForceX, ForceY)
+
+                        '        End If
+                        '    End If
+                    Else
+                    End If
+                    '  End If
                 End If
-                '  End If
-            End If
-            ' UpdateBody(OuterBody(A))
+                ' UpdateBody(OuterBody(A))
 
 
-        Next B
+
+
+
+
+
+            Next B
+
+            Body(A).SpeedX += MyStep * Body(A).ForceX / Body(A).Mass
+            Body(A).SpeedY += MyStep * Body(A).ForceY / Body(A).Mass
+            Body(A).LocX += MyStep * Body(A).SpeedX
+            Body(A).LocY += MyStep * Body(A).SpeedY
+
+
+        End If
+
         '  End If
         ' End If
 
@@ -460,13 +477,13 @@ Public Module CUDA
         ''End If
         ' UpdateBodies(Body)
 
-        For i As Integer = 1 To nBodies 'UBound(Bodies)
-            Body(i).SpeedX += MyStep * Body(i).ForceX / Body(i).Mass
-            Body(i).SpeedY += MyStep * Body(i).ForceY / Body(i).Mass
-            Body(i).LocX += MyStep * Body(i).SpeedX
-            Body(i).LocY += MyStep * Body(i).SpeedY
+        '''''''For i As Integer = 1 To nBodies 'UBound(Bodies)
+        '''''''    Body(i).SpeedX += MyStep * Body(i).ForceX / Body(i).Mass
+        '''''''    Body(i).SpeedY += MyStep * Body(i).ForceY / Body(i).Mass
+        '''''''    Body(i).LocX += MyStep * Body(i).SpeedX
+        '''''''    Body(i).LocY += MyStep * Body(i).SpeedY
 
-        Next
+        '''''''Next
 
 
 
