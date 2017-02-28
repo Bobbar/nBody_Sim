@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CudafyModule Version="1.29.5576.13786" Name="CUDA" DebugInfo="false" HasCudaSourceCode="false" HasPTX="false" HasBinary="false">
+  <CudaSourceCode></CudaSourceCode>
+  <PTXMODULES />
+  <BinaryModules />
+  <SourceCodes>
+    <SourceCodeFile ID="c319e5c3-eeab-4649-be32-d4cfc51f3794" Language="Cuda" Arch="Unknown">I2lmIGRlZmluZWQoY2xfa2hyX2ZwNjQpDQojcHJhZ21hIE9QRU5DTCBFWFRFTlNJT04gY2xfa2hyX2ZwNjQ6IGVuYWJsZQ0KI2VsaWYgZGVmaW5lZChjbF9hbWRfZnA2NCkNCiNwcmFnbWEgT1BFTkNMIEVYVEVOU0lPTiBjbF9hbWRfZnA2NDogZW5hYmxlDQojZW5kaWYNCnN0cnVjdCBDVURBUHJpbV9TdHJ1Y3QNCnsNCglkb3VibGUgTG9jWDsNCglkb3VibGUgTG9jWTsNCglkb3VibGUgTWFzczsNCglkb3VibGUgU3BlZWRYOw0KCWRvdWJsZSBTcGVlZFk7DQoJZG91YmxlIEZvcmNlWDsNCglkb3VibGUgRm9yY2VZOw0KfTsNCg0Kc3RydWN0IENVREFEZWJ1Z19TdHJ1Y3QNCnsNCglpbnQgVUI7DQoJaW50IExCOw0KCWludCBPdGhlcjsNCn07DQoNCg0KLy8gUGh5c2ljc19FbmdpbmUuQ1VEQQ0KX19rZXJuZWwgIHZvaWQgQ2FsY1BoeXNpY3MoZ2xvYmFsIHN0cnVjdCBDVURBUHJpbV9TdHJ1Y3QqIEJvZHksIGludCBCb2R5TGVuMCwgaW50IG5Cb2RpZXMsIGludCBSdW5UaHJlYWRzLCBnbG9iYWwgc3RydWN0IENVREFQcmltX1N0cnVjdCogT3V0Qm9keSwgaW50IE91dEJvZHlMZW4wLCBnbG9iYWwgc3RydWN0IENVREFEZWJ1Z19TdHJ1Y3QqIERlYnVnU3R1ZmYsIGludCBEZWJ1Z1N0dWZmTGVuMCk7DQoNCi8vIFBoeXNpY3NfRW5naW5lLkNVREENCl9fa2VybmVsICB2b2lkIENhbGNQaHlzaWNzKGdsb2JhbCBzdHJ1Y3QgQ1VEQVByaW1fU3RydWN0KiBCb2R5LCBpbnQgQm9keUxlbjAsIGludCBuQm9kaWVzLCBpbnQgUnVuVGhyZWFkcywgZ2xvYmFsIHN0cnVjdCBDVURBUHJpbV9TdHJ1Y3QqIE91dEJvZHksIGludCBPdXRCb2R5TGVuMCwgZ2xvYmFsIHN0cnVjdCBDVURBRGVidWdfU3RydWN0KiBEZWJ1Z1N0dWZmLCBpbnQgRGVidWdTdHVmZkxlbjApDQp7DQoJaW50IG51bSA9IChpbnQpcmludCgoZG91YmxlKW5Cb2RpZXMgLyAoZG91YmxlKVJ1blRocmVhZHMpOw0KCWludCBudW0yID0gbkJvZGllcyAtIG51bSAqIFJ1blRocmVhZHM7DQoJaW50IHggPSBnZXRfbG9jYWxfaWQoMCk7DQoJYm9vbCBmbGFnID0geCA9PSAwOw0KCWludCBudW0zOw0KCWludCBudW00Ow0KCWlmIChmbGFnKQ0KCXsNCgkJbnVtMyA9IDA7DQoJCW51bTQgPSBudW07DQoJfQ0KCWVsc2UNCgl7DQoJCW51bTMgPSBudW0gKiAoeCAtIDEpICsgMTsNCgkJbnVtNCA9IG51bSAqIHg7DQoJCWJvb2wgZmxhZzIgPSB4ID09IFJ1blRocmVhZHM7DQoJCWlmIChmbGFnMikNCgkJew0KCQkJbnVtNCArPSBudW0yOw0KCQl9DQoJfQ0KCWRvdWJsZSBudW01ID0gMC4wMzsNCglkb3VibGUgbnVtNiA9IDEuMDI7DQoJaW50IG51bTcgPSBudW0zOw0KCWludCBudW04ID0gbnVtNDsNCglmb3IgKGludCBpID0gbnVtNzsgaSA8PSBudW04OyBpKyspDQoJew0KCQlCb2R5WyhpKV0uRm9yY2VYID0gMC4wOw0KCQlCb2R5WyhpKV0uRm9yY2VZID0gMC4wOw0KCQlmb3IgKGludCBqID0gMTsgaiA8PSBuQm9kaWVzOyBqKyspDQoJCXsNCgkJCWJvb2wgZmxhZzMgPSBpICE9IGo7DQoJCQlpZiAoZmxhZzMpDQoJCQl7DQoJCQkJZG91YmxlIG51bTkgPSBCb2R5WyhqKV0uTG9jWCAtIE91dEJvZHlbKGkpXS5Mb2NYOw0KCQkJCWRvdWJsZSBudW0xMCA9IEJvZHlbKGopXS5Mb2NZIC0gT3V0Qm9keVsoaSldLkxvY1k7DQoJCQkJZG91YmxlIGQgPSBudW05ICogbnVtOSArIG51bTEwICogbnVtMTA7DQoJCQkJZG91YmxlIG51bTExID0gc3FydChkKTsNCgkJCQlib29sIGZsYWc0ID0gbnVtMTEgPiAwLjA7DQoJCQkJaWYgKGZsYWc0KQ0KCQkJCXsNCgkJCQkJZG91YmxlIG1hc3MgPSBPdXRCb2R5WyhpKV0uTWFzczsNCgkJCQkJZG91YmxlIG1hc3MyID0gQm9keVsoaildLk1hc3M7DQoJCQkJCWRvdWJsZSBudW0xMiA9IG1hc3MgKiBtYXNzMjsNCgkJCQkJZG91YmxlIG51bTEzID0gbnVtMTIgLyAobnVtMTEgKiBudW0xMSArIG51bTYgKiBudW02KTsNCgkJCQkJZG91YmxlIG51bTE0ID0gbnVtMTMgKiBudW05IC8gbnVtMTE7DQoJCQkJCWRvdWJsZSBudW0xNSA9IG51bTEzICogbnVtMTAgLyBudW0xMTsNCgkJCQkJaW50IGV4cHJfMTdDX2NwXzBfY3BfMSA9IGk7DQoJCQkJCU91dEJvZHlbKGV4cHJfMTdDX2NwXzBfY3BfMSldLkZvcmNlWCA9IE91dEJvZHlbKGV4cHJfMTdDX2NwXzBfY3BfMSldLkZvcmNlWCArIG51bTE0Ow0KCQkJCQlpbnQgZXhwcl8xOTRfY3BfMF9jcF8xID0gaTsNCgkJCQkJT3V0Qm9keVsoZXhwcl8xOTRfY3BfMF9jcF8xKV0uRm9yY2VZID0gT3V0Qm9keVsoZXhwcl8xOTRfY3BfMF9jcF8xKV0uRm9yY2VZICsgbnVtMTU7DQoJCQkJfQ0KCQkJfQ0KCQl9DQoJfQ0KCWludCBudW0xNiA9IG51bTM7DQoJaW50IG51bTE3ID0gbnVtNDsNCglmb3IgKGludCBrID0gbnVtMTY7IGsgPD0gbnVtMTc7IGsrKykNCgl7DQoJCWludCBleHByXzFFMF9jcF8wX2NwXzEgPSBrOw0KCQlPdXRCb2R5WyhleHByXzFFMF9jcF8wX2NwXzEpXS5TcGVlZFggPSBPdXRCb2R5WyhleHByXzFFMF9jcF8wX2NwXzEpXS5TcGVlZFggKyBudW01ICogT3V0Qm9keVsoayldLkZvcmNlWCAvIE91dEJvZHlbKGspXS5NYXNzOw0KCQlpbnQgZXhwcl8yMTZfY3BfMF9jcF8xID0gazsNCgkJT3V0Qm9keVsoZXhwcl8yMTZfY3BfMF9jcF8xKV0uU3BlZWRZID0gT3V0Qm9keVsoZXhwcl8yMTZfY3BfMF9jcF8xKV0uU3BlZWRZICsgbnVtNSAqIE91dEJvZHlbKGspXS5Gb3JjZVkgLyBPdXRCb2R5WyhrKV0uTWFzczsNCgkJaW50IGV4cHJfMjRDX2NwXzBfY3BfMSA9IGs7DQoJCU91dEJvZHlbKGV4cHJfMjRDX2NwXzBfY3BfMSldLkxvY1ggPSBPdXRCb2R5WyhleHByXzI0Q19jcF8wX2NwXzEpXS5Mb2NYICsgbnVtNSAqIE91dEJvZHlbKGspXS5TcGVlZFg7DQoJCWludCBleHByXzI3M19jcF8wX2NwXzEgPSBrOw0KCQlPdXRCb2R5WyhleHByXzI3M19jcF8wX2NwXzEpXS5Mb2NZID0gT3V0Qm9keVsoZXhwcl8yNzNfY3BfMF9jcF8xKV0uTG9jWSArIG51bTUgKiBPdXRCb2R5WyhrKV0uU3BlZWRZOw0KCX0NCglEZWJ1Z1N0dWZmWyhnZXRfbG9jYWxfaWQoMCkpXS5MQiA9IG51bTM7DQogICAgICAgIERlYnVnU3R1ZmZbKGdldF9sb2NhbF9pZCgwKSldLlVCID0gbnVtNDsNCn0NCg==</SourceCodeFile>
+  </SourceCodes>
+  <Functions>
+    <CudafyKernelMethod Name="CalcPhysics" Type="Global" IsDummy="false" DummyBehaviour="Default">
+      <Type>Physics_Engine.CUDA</Type>
+      <Assembly>Gravity Physics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Assembly>
+      <AssemblyName>Gravity Physics</AssemblyName>
+      <AssemblyPath>C:\GitHub\Physics Engine - Copy\Physics-2\bin\Debug\Gravity Physics.exe</AssemblyPath>
+      <Checksum>982674963</Checksum>
+      <Parameters>
+        <ReturnType>System.Void</ReturnType>
+        <Parameter Type="Cudafy.GThread" Name="gpThread" Position="0" />
+        <Parameter Type="Physics_Engine.CUDA+Prim_Struct[]" Name="Body" Position="1" />
+        <Parameter Type="System.Int32" Name="nBodies" Position="2" />
+        <Parameter Type="System.Int32" Name="RunThreads" Position="3" />
+        <Parameter Type="Physics_Engine.CUDA+Prim_Struct[]" Name="OutBody" Position="4" />
+        <Parameter Type="Physics_Engine.CUDA+Debug_Struct[]" Name="DebugStuff" Position="5" />
+      </Parameters>
+    </CudafyKernelMethod>
+  </Functions>
+  <Constants />
+  <Types>
+    <CudafyType Name="Prim_Struct" IsDummy="false" DummyBehaviour="Default">
+      <Type>Physics_Engine.CUDA+Prim_Struct</Type>
+      <Assembly>Gravity Physics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Assembly>
+      <AssemblyName>Gravity Physics</AssemblyName>
+      <AssemblyPath>C:\GitHub\Physics Engine - Copy\Physics-2\bin\Debug\Gravity Physics.exe</AssemblyPath>
+      <Checksum>982674963</Checksum>
+    </CudafyType>
+    <CudafyType Name="Debug_Struct" IsDummy="false" DummyBehaviour="Default">
+      <Type>Physics_Engine.CUDA+Debug_Struct</Type>
+      <Assembly>Gravity Physics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Assembly>
+      <AssemblyName>Gravity Physics</AssemblyName>
+      <AssemblyPath>C:\GitHub\Physics Engine - Copy\Physics-2\bin\Debug\Gravity Physics.exe</AssemblyPath>
+      <Checksum>982674963</Checksum>
+    </CudafyType>
+  </Types>
+</CudafyModule>

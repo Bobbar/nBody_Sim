@@ -159,3 +159,4 @@ C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Physics Engine.vbproj.Genera
 C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Physics_Engine.frmAddBodies.resources
 C:\GitHub\Physics Engine - Copy\Physics-2\bin\Debug\protobuf-net.dll
 C:\GitHub\Physics Engine - Copy\Physics-2\bin\Debug\Cudafy.NET.dll
+C:\GitHub\Physics Engine - Copy\Physics-2\obj\Debug\Physics Engine.vbprojResolveAssemblyReference.cache

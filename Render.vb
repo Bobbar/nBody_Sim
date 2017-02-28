@@ -152,7 +152,7 @@ Public Module Renderer
         End If
 
         Form1.Render.Image = bm
-
+        Form1.Render.Invalidate()
         bolDrawing = False
         '   Return bm
     End Sub

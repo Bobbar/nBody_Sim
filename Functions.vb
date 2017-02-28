@@ -68,30 +68,31 @@ Module Functions
         Return False
     End Function
 
-    'Private Sub ExecDelay()
-    '    Do While bolStopLoop
-    '        Thread.Sleep(100)
-    '    Loop
-    '    StartTick = Now.Ticks
-    '    Thread.Sleep(intDelay)
+    Public Sub ExecDelay()
+        Do While bolStopLoop
+            Thread.Sleep(100)
+        Loop
+        StartTick = Now.Ticks
+        '  intDelay = 200
+        Thread.Sleep(intDelay)
 
-    'End Sub
-    'Private Sub CalcDelay()
-    '    EndTick = Now.Ticks
-    '    ElapTick = EndTick - StartTick
-    '    RenderTime = ElapTick / 10000
-    '    FPS = 10000000 / ElapTick
-    '    If FPS > intTargetFPS Then
-    '        intDelay = intDelay + 1
-    '    Else
-    '        If intDelay > 0 Then
-    '            intDelay = intDelay - 1
-    '        Else
-    '            intDelay = 0
-    '        End If
-    '    End If
+    End Sub
+    Public Sub CalcDelay()
+        EndTick = Now.Ticks
+        ElapTick = EndTick - StartTick
+        RenderTime = ElapTick / 10000
+        FPS = 10000000 / ElapTick
+        If FPS > intTargetFPS Then
+            intDelay = intDelay + 1
+        Else
+            If intDelay > 0 Then
+                intDelay = intDelay - 1
+            Else
+                intDelay = 0
+            End If
+        End If
 
-    'End Sub
+    End Sub
     Public Function VisibleBalls() As Integer
         Dim tot As Integer = 0
         For i As Integer = 0 To UBound(Ball)

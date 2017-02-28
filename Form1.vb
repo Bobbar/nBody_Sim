@@ -1943,7 +1943,10 @@ Err:
 
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         If UBound(Ball) > 0 Then
-            StartCalc()
+            If Not bolLoopRunning Then
+                StartCalc()
+                UI_Worker.RunWorkerAsync()
+            End If
         End If
     End Sub
 
@@ -1969,6 +1972,25 @@ Err:
     End Sub
 
     Private Sub PhysicsWorker_RunWorkerCompleted(sender As Object, e As RunWorkerCompletedEventArgs) Handles PhysicsWorker.RunWorkerCompleted
+
+    End Sub
+
+    Private Sub PhysicsWorker_DoWork(sender As Object, e As DoWorkEventArgs) Handles PhysicsWorker.DoWork
+        InitGPU()
+
+        Do Until bolStopWorker
+            ExecDelay()
+
+            StartCalc()
+
+
+
+            bolRendering = False
+            ' If Not bolDrawing Then Drawr(Ball)
+            CalcDelay()
+
+            PhysicsWorker.ReportProgress(1, Ball)
+        Loop
 
     End Sub
 End Class
