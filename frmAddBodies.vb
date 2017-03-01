@@ -170,6 +170,7 @@ Public Class frmAddBodies
             Ball(UBound(Ball)).LocY = GetRandomNumber(1, Form1.Render.Height / pic_scale) - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
             Ball(UBound(Ball)).SpeedX = 0
             Ball(UBound(Ball)).SpeedY = 0
+            ' Ball(UBound(Ball)).bTimestep = StepMulti
             ' Ball(UBound(Ball)).Flags = ""
             Ball(UBound(Ball)).Size = GetRandomNumber(MinSize, MaxSize)
             If BodyMass > 0 Then
