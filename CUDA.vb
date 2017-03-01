@@ -152,19 +152,19 @@ Public Module CUDA
                 Ball = CullBodies(Ball)
             End If
 
-            Dim inBall() As Prim_Struct = CopyToPrim(Ball)
+            '  Dim inBall() As Prim_Struct = CopyToPrim(Ball)
             ' Dim outBall() As Prim_Struct
             'Dim chunk As New PhysicsChunk(UBound(Ball), 0, Ball)
             '  Dim gMemIn, gMemOut
             ' gMemIn = gpu.Allocate(inBall) 'Of Single)(mb)
-            gpu.Allocate(inBall) 'Of Single)(mb)
+            gpu.Allocate(Ball) 'Of Single)(mb)
 
 
 
             '     Dim outBall() As Prim_Struct = inBall
             ' Dim cMemout() As Prim_Struct
 
-            Dim gpuinBall() As Prim_Struct = gpu.CopyToDevice(inBall)
+            Dim gpuinBall() As Prim_Struct = gpu.CopyToDevice(Ball)
 
             ' gpu.Allocate(outBall)
 
@@ -192,7 +192,7 @@ Public Module CUDA
 
             ' Dim bal
 
-            gpu.CopyFromDevice(gpuinBall, inBall)
+            gpu.CopyFromDevice(gpuinBall, Ball)
 
             '   gpu.CopyFromDevice(gpuOutBall, outBall)
             '   gpu.CopyFromDevice(OutDBVar, DBVar)
@@ -202,15 +202,16 @@ Public Module CUDA
 
             ' Debug.Print(inBall(0).ForceX)
 
+
             Dim NewBalls As New List(Of Prim_Struct)
+            For a As Integer = 1 To UBound(Ball)
 
-            For a As Integer = 1 To UBound(inBall)
+                If Ball(a).ForceTot > Ball(a).Mass * 4 And Ball(a).BlackHole = 0 Then ' And OuterBody(A).Size < 10 
+                    Ball(a).InRoche = 1
 
-                If inBall(a).ForceTot > inBall(a).Mass * 4 And inBall(a).BlackHole = 0 Then ' And OuterBody(A).Size < 10 
-                    inBall(a).InRoche = True
-                    NewBalls.AddRange(FractureBall(inBall(a)))
-                ElseIf (inBall(a).ForceTot * 2) < inBall(a).Mass * 4 Then ' And OuterBody(A).Size > 10
-                    inBall(a).InRoche = False
+                    NewBalls.AddRange(FractureBall(Ball(a)))
+                ElseIf (Ball(a).ForceTot * 2) < Ball(a).Mass * 4 Then ' And OuterBody(A).Size > 10
+                    Ball(a).InRoche = 0
 
                 End If
 
@@ -220,19 +221,24 @@ Public Module CUDA
             'UpdateBodies(inBall)
 
 
-            Dim MyBodys As New List(Of Prim_Struct)
+            ' Dim MyBodys As New List(Of Prim_Struct)
             '  MyBodys.AddRange(inBall)
             If NewBalls.Count > 0 Then
-                MyBodys.Clear()
-                MyBodys.AddRange(inBall)
+                Dim origLen As Integer = UBound(Ball)
+                Array.Resize(Ball, (origLen + NewBalls.Count + 1))
+                Array.Copy(NewBalls.ToArray, 0, Ball, origLen + 1, (NewBalls.Count))
 
-                MyBodys.AddRange(NewBalls)
+                'MyBodys.Clear()
+
+
+                'MyBodys.AddRange(Ball)
+
+                'MyBodys.AddRange(NewBalls)
                 '  OuterBody = MyBodys.ToArray
                 'AddNewBalls(NewBalls)
                 '  tmpBodys.AddRange(NewBalls)
-            Else
-                MyBodys.Clear()
-                MyBodys.AddRange(inBall)
+                ' Else
+                '
             End If
 
 
@@ -240,7 +246,7 @@ Public Module CUDA
             ' inBall = MyBodys.ToArray
 
 
-            Ball = CopyToBallParm(MyBodys.ToArray)
+            ' Ball = CopyToBallParm(MyBodys.ToArray)
 
             gpu.FreeAll()
 
@@ -668,7 +674,7 @@ Public Module CUDA
 
                     Body(Master).SpeedX = Body(Master).SpeedX + (U1 - V1) * VekX
                     Body(Master).SpeedY = Body(Master).SpeedY + (U1 - V1) * VeKY
-                    Body(Slave).Visible = False
+                    Body(Slave).Visible = 0
 
 
 
@@ -687,7 +693,7 @@ Public Module CUDA
 
                         Body(Master).SpeedX = Body(Master).SpeedX + (U1 - V1) * VekX
                         Body(Master).SpeedY = Body(Master).SpeedY + (U1 - V1) * VeKY
-                        Body(Slave).Visible = False
+                        Body(Slave).Visible = 0
 
 
 
@@ -697,7 +703,7 @@ Public Module CUDA
                         Body(Master).Size = Sqrt(Area1 / PI)
                         Body(Master).Mass = Body(Master).Mass + Body(Slave).Mass 'Sqr(Ball(B).Mass)
                     Else
-                        Body(Master).Visible = False
+                        Body(Master).Visible = 0
 
                     End If
 
@@ -716,7 +722,7 @@ Public Module CUDA
 
                     Body(Master).SpeedX = Body(Master).SpeedX + (U1 - V1) * VekX
                     Body(Master).SpeedY = Body(Master).SpeedY + (U1 - V1) * VeKY
-                    Body(Slave).Visible = False
+                    Body(Slave).Visible = 0
 
 
 
@@ -736,8 +742,7 @@ Public Module CUDA
 
                         Body(Master).SpeedX = Body(Master).SpeedX + (U1 - V1) * VekX
                         Body(Master).SpeedY = Body(Master).SpeedY + (U1 - V1) * VeKY
-                        Body(Slave).Visible = False
-
+                        Body(Slave).Visible = 0
 
 
                         Area1 = PI * (Body(Master).Size ^ 2)
@@ -746,14 +751,14 @@ Public Module CUDA
                         Body(Master).Size = Sqrt(Area1 / PI)
                         Body(Master).Mass = Body(Master).Mass + Body(Slave).Mass 'Sqr(Ball(B).Mass)
                     Else
-                        Body(Master).Visible = False
+                        Body(Master).Visible = 0
 
                     End If
 
                 Else
 
 
-                    Body(Master).Visible = False
+                    Body(Master).Visible = 0
 
                 End If
 
@@ -764,14 +769,14 @@ Public Module CUDA
                 'Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS)
                 'ForceX = Force * DistX / DistSqrt
                 'ForceY = Force * DistY / DistSqrt
-                Dim multi As Integer = 10
+                Dim multi As Integer = 20
                 Body(Master).ForceX -= ForceX * multi
                 Body(Master).ForceY -= ForceY * multi
                 Body(Slave).ForceX -= ForceX * multi
                 Body(Slave).ForceY -= ForceY * multi
 
 
-                Dim Friction As Double = 0.6
+                Dim Friction As Double = 0.8
                 Body(Master).SpeedX += (U1 - V1) * VekX * Friction
                 Body(Master).SpeedY += (U1 - V1) * VeKY * Friction
 
@@ -781,7 +786,7 @@ Public Module CUDA
 
             ElseIf Body(Master).InRoche = 1 And Body(Slave).InRoche = 0 Then
 
-                Body(Master).Visible = False
+                Body(Master).Visible = 0
 
 
 
@@ -806,14 +811,14 @@ Public Module CUDA
                 Area1 = Area1 + Area2
                 Body(Master).Size = Sqrt(Area1 / PI)
                 Body(Master).Mass = Body(Master).Mass + Body(Slave).Mass 'Sqr(Ball(B).Mass)
-                Body(Slave).Visible = False
+                Body(Slave).Visible = 0
             Else
                 Area1 = PI * (Body(Master).Size ^ 2)
                 Area2 = PI * (Body(Slave).Size ^ 2)
                 Area1 = Area1 + Area2
                 Body(Slave).Size = Sqrt(Area1 / PI)
                 Body(Slave).Mass = Body(Slave).Mass + Body(Master).Mass 'Sqr(Ball(B).Mass)
-                Body(Master).Visible = False
+                Body(Master).Visible = 0
             End If
 
 
@@ -848,7 +853,7 @@ Public Module CUDA
             NewBallSize = fnRadius(Area)  'fnRadius(fnArea(Body.Size) / 2)  'Sqr(Area / pi) 'Body.Size / Divisor
 
             NewBallMass = PrevMass / Divisor  '(Body.Mass / Divisor)
-            Body.Visible = False
+            Body.Visible = 0
             '
             '                                            Body.Size = NewBallSize
             '                                            Body.Mass = NewBallMass

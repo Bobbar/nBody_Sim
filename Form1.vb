@@ -39,33 +39,33 @@ Public Class Form1
             HighestArr = Math.Max(Loop3I, Loop2I)
         End If
     End Function
-    Public Sub ShrinkBallArray()
-        'On Error Resume Next
-        ' Debug.Print("Cleaning Ball Array")
-        Dim TempArray() As BallParms
-        '       t.Abort()
-        '  bolStopLoop = True
-        't.Join()
-        '
-        ReDim TempArray(UBound(Ball))
-        Array.Copy(Ball, TempArray, Ball.Length)
-        ReDim Ball(0)
-        For i = 0 To UBound(TempArray)
-            If TempArray(i).Visible = True Then
-                ReDim Preserve Ball(UBound(Ball) + 1)
-                Ball(UBound(Ball)) = TempArray(i)
-                ' Debug.Print(InStr(1, Ball(UBound(Ball)).Flags, "F"))
-                If InStr(1, Ball(UBound(Ball)).Flags, "F") > 0 Then
-                    lngFollowBall = UBound(Ball)
-                End If
-                'Debug.Print lngFollowBall & " " & Ball(lngFollowBall).Flags
-            End If
-        Next i
-        '  bolStopLoop = False
-        't.Resume()
-        '  t = New Threading.Thread(AddressOf Me.MainLoop)
-        '  t.Start()
-    End Sub
+    'Public Sub ShrinkBallArray()
+    '    'On Error Resume Next
+    '    ' Debug.Print("Cleaning Ball Array")
+    '    Dim TempArray() As BallParms
+    '    '       t.Abort()
+    '    '  bolStopLoop = True
+    '    't.Join()
+    '    '
+    '    ReDim TempArray(UBound(Ball))
+    '    Array.Copy(Ball, TempArray, Ball.Length)
+    '    ReDim Ball(0)
+    '    For i = 0 To UBound(TempArray)
+    '        If TempArray(i).Visible = True Then
+    '            ReDim Preserve Ball(UBound(Ball) + 1)
+    '            Ball(UBound(Ball)) = TempArray(i)
+    '            ' Debug.Print(InStr(1, Ball(UBound(Ball)).Flags, "F"))
+    '            If InStr(1, Ball(UBound(Ball)).Flags, "F") > 0 Then
+    '                lngFollowBall = UBound(Ball)
+    '            End If
+    '            'Debug.Print lngFollowBall & " " & Ball(lngFollowBall).Flags
+    '        End If
+    '    Next i
+    '    '  bolStopLoop = False
+    '    't.Resume()
+    '    '  t = New Threading.Thread(AddressOf Me.MainLoop)
+    '    '  t.Start()
+    'End Sub
 
     Public Function SegmentsIntersect(ByVal X1 As Double,
     ByVal Y1 As Double, ByVal X2 As Double, ByVal Y2 As _
@@ -190,18 +190,18 @@ Public Class Form1
             bolStopDraw = True
             ReDim Preserve Ball(UBound(Ball) + 1)
             Debug.Print("Index: " & UBound(Ball))
-            Ball(UBound(Ball)).Color = RandomRGBColor()
+            Ball(UBound(Ball)).Color = RandomRGBColor().ToArgb
             Ball(UBound(Ball)).LocX = ScaleMousePosRelative(New SPoint(e.Location)).X - (Ball(UBound(Ball)).Size / 2)  ' ScaleMousePosRelative(e.Location).X - Ball(UBound(Ball)).Size / 2
             Ball(UBound(Ball)).LocY = ScaleMousePosRelative(New SPoint(e.Location)).Y - (Ball(UBound(Ball)).Size / 2)
             Ball(UBound(Ball)).SpeedX = 0
             Ball(UBound(Ball)).SpeedY = 0
             Ball(UBound(Ball)).Size = 1
-            Ball(UBound(Ball)).Flags = ""
+            'Ball(UBound(Ball)).Flags = ""
             '  Ball(UBound(Ball)).IsFragment = False
             '  Ball(UBound(Ball)).Index = UBound(Ball)
-            Ball(UBound(Ball)).UID = Guid.NewGuid.ToString
+            Ball(UBound(Ball)).UID = RndIntUID(UBound(Ball)) 'Guid.NewGuid.ToString
             Ball(UBound(Ball)).Mass = fnMass(Ball(UBound(Ball)).Size)
-            Ball(UBound(Ball)).Visible = True
+            Ball(UBound(Ball)).Visible = 1
             '  Ball(UBound(Ball)).Flags = Ball(UBound(Ball)).Flags + "BH"
             MouseIndex = UBound(Ball)
             Timer3.Enabled = True
@@ -242,7 +242,7 @@ Public Class Form1
                         txtSpeedY.Text = Ball(Sel).SpeedY
                         txtSize.Text = Ball(Sel).Size
                         txtMass.Text = Ball(Sel).Mass
-                        txtFlag.Text = Ball(Sel).Flags
+                        'txtFlag.Text = Ball(Sel).Flags
                         PubSel = Sel
                         'Debug.Print("Mass: " & Ball(i).Mass & " units")
                         ' Debug.Print("Index: " & i)
@@ -273,7 +273,7 @@ Public Class Form1
                 Next
             End If
             If MoV = 1 Then
-                Ball(Sel).MovinG = True
+                'Ball(Sel).MovinG = True
                 Ball(Sel).LocX = ScaleMousePosRelative(New SPoint(e.Location)).X
                 Ball(Sel).LocY = ScaleMousePosRelative(New SPoint(e.Location)).Y
                 'ax(Sel) = 0
@@ -310,7 +310,7 @@ Public Class Form1
 Err:
 
     End Sub
-    Private Function MouseOver(MousePos As SPoint, Ball As BallParms) As Boolean
+    Private Function MouseOver(MousePos As SPoint, Ball As Prim_Struct) As Boolean
         'ScaleMousePos(e.X) > Ball(i).LocX And ScaleMousePos(e.X) < Ball(i).LocX + Ball(i).Size And ScaleMousePos(e.Y) > Ball(i).LocY And ScaleMousePos(e.Y) < Ball(i).LocY + Ball(i).Size And Not bolShiftDown Then
         ' MouseOver(New Point(e.Location), New Point(Ball(i).LocX, Ball(i).LocY + Ball(i).Size))
         Dim Dist As Double = Math.Sqrt((ScaleMousePosRelative(MousePos).X - Ball.LocX) ^ 2 + (ScaleMousePosRelative(MousePos).Y - Ball.LocY) ^ 2)
@@ -325,26 +325,26 @@ Err:
         On Error Resume Next
         Timer3.Enabled = False
         bolStopDraw = False
-        For i = 0 To UBound(Ball)
-            Ball(i).MovinG = False
-        Next
+        'For i = 0 To UBound(Ball)
+        '    Ball(i).MovinG = False
+        'Next
         Sel = -1
         MoV = 0
-        If Windows.Forms.MouseButtons.Left And bolShiftDown Then
-            'Dim MouseXDiff As Double
-            'Dim MouseYDiff As Double
-            'MouseUpX = e.X
-            'MouseUpY = e.Y
-            'MouseXDiff = MouseUpX - MouseDnX
-            'MouseYDiff = MouseUpY - MouseDnY
-            'RelBallPosMod.X = RelBallPosMod.X + MouseXDiff
-            'RelBallPosMod.Y = RelBallPosMod.Y + MouseYDiff
-            '   Debug.Print(RelBallPosMod.ToString)
-            'For i = 1 To UBound(Ball)
-            '    Ball(i).LocX = Ball(i).LocX + MouseXDiff
-            '    Ball(i).LocY = Ball(i).LocY + MouseYDiff
-            'Next
-        End If
+        'If Windows.Forms.MouseButtons.Left And bolShiftDown Then
+        '    Dim MouseXDiff As Double
+        '    Dim MouseYDiff As Double
+        '    MouseUpX = e.X
+        '    MouseUpY = e.Y
+        '    MouseXDiff = MouseUpX - MouseDnX
+        '    MouseYDiff = MouseUpY - MouseDnY
+        '    RelBallPosMod.X = RelBallPosMod.X + MouseXDiff
+        '    RelBallPosMod.Y = RelBallPosMod.Y + MouseYDiff
+        '    Debug.Print(RelBallPosMod.ToString)
+        '    For i = 1 To UBound(Ball)
+        '        Ball(i).LocX = Ball(i).LocX + MouseXDiff
+        '        Ball(i).LocY = Ball(i).LocY + MouseYDiff
+        '    Next
+        'End If
         If bolAltDown And lngFollowBall > 0 Then
             'Dim DiffX As Double, DiffY As Double
             'Dim g As Long
@@ -443,7 +443,7 @@ Err:
         ' t2 = New Threading.Thread(AddressOf Me.MainLoop2)
         ' t3 = New Threading.Thread(AddressOf Me.MainLoop3)
         '    m = New Threading.Thread(AddressOf Me.MasterLoop)
-        s = New Threading.Thread(AddressOf Me.ShrinkBallArray)
+        '  s = New Threading.Thread(AddressOf Me.ShrinkBallArray)
         Thread1Done = False
         Thread2Done = False
         Thread3Done = False
@@ -513,7 +513,7 @@ Err:
         txtSpeedY.Text = Ball(lngFollowBall).SpeedY
         txtSize.Text = Ball(lngFollowBall).Size
         txtMass.Text = Ball(lngFollowBall).Mass
-        txtFlag.Text = Ball(lngFollowBall).Flags
+        '  txtFlag.Text = Ball(lngFollowBall).Flags
         'End If
         'If bolBallsRemoved Then ShrinkBallArray()
     End Sub
@@ -625,7 +625,7 @@ Err:
         Ball(PubSel).SpeedY = txtSpeedY.Text
         Ball(PubSel).Size = txtSize.Text
         Ball(PubSel).Mass = txtMass.Text
-        Ball(PubSel).Flags = txtFlag.Text
+        '  Ball(PubSel).Flags = txtFlag.Text
     End Sub
     Private Sub Painter_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs)
     End Sub
@@ -677,21 +677,21 @@ Err:
         Dim Sel As Long
         If UpDown1.Value < UpDownVal Then 'down click
             UpDownVal = UpDown1.Value
-            Ball(lngFollowBall).Flags = Replace$(Ball(lngFollowBall).Flags, "F", "")
+            ' Ball(lngFollowBall).Flags = Replace$(Ball(lngFollowBall).Flags, "F", "")
             Sel = UpDown1.Value
-            If Ball(Sel).Visible = False Or InStr(1, Ball(Sel).Flags, "P") > 0 Then
-                Do Until Ball(Sel).Visible And InStr(1, Ball(Sel).Flags, "P") = 0 Or Sel = UpDown1.Minimum
+            If Ball(Sel).Visible = 0 Then
+                Do Until Ball(Sel).Visible Or Sel = UpDown1.Minimum
                     Sel = Sel - 1
                 Loop
             End If
             UpDown1.Value = Sel
             lngFollowBall = Sel
-            Ball(lngFollowBall).Flags = Ball(lngFollowBall).Flags + "F"
+            ' Ball(lngFollowBall).Flags = Ball(lngFollowBall).Flags + "F"
             txtSpeedX.Text = Ball(Sel).SpeedX
             txtSpeedY.Text = Ball(Sel).SpeedY
             txtSize.Text = Ball(Sel).Size
             txtMass.Text = Ball(Sel).Mass
-            txtFlag.Text = Ball(Sel).Flags
+            '  txtFlag.Text = Ball(Sel).Flags
             PubSel = Sel
             Dim DiffX As Double, DiffY As Double
             FollowX = Ball(lngFollowBall).LocX
@@ -707,16 +707,16 @@ Err:
             bolFollow = True
         Else
             UpDownVal = UpDown1.Value
-            Ball(lngFollowBall).Flags = Replace$(Ball(lngFollowBall).Flags, "F", "")
+            '  Ball(lngFollowBall).Flags = Replace$(Ball(lngFollowBall).Flags, "F", "")
             Sel = UpDown1.Value
-            If Ball(Sel).Visible = False Or InStr(1, Ball(Sel).Flags, "P") > 0 Then
-                Do Until Ball(Sel).Visible And InStr(1, Ball(Sel).Flags, "P") = 0 Or Sel = UpDown1.Maximum
+            If Ball(Sel).Visible = 0 Then
+                Do Until Ball(Sel).Visible Or Sel = UpDown1.Maximum
                     Sel = Sel + 1
                 Loop
             End If
             UpDown1.Value = Sel
             lngFollowBall = Sel
-            Ball(lngFollowBall).Flags = Ball(lngFollowBall).Flags + "F"
+            '  Ball(lngFollowBall).Flags = Ball(lngFollowBall).Flags + "F"
             txtSpeedX.Text = Ball(Sel).SpeedX
             txtSpeedY.Text = Ball(Sel).SpeedY
             txtSize.Text = Ball(Sel).Size
@@ -995,12 +995,12 @@ Err:
     '    '   StopTimer()
     '    '  Loop
     'End Sub
-    Private Sub pThreadCompletion(ByVal sender As Object,
-                                   ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs)
-        ' Debug.Print("Render complete " & Now.Ticks)
-        Dim PassBall() As BallParms = e.Result
-        If bolDraw And Not bolDrawing Then Drawr(PassBall) '  Me.Render.Image = Drawr(PassBall)
-    End Sub
+    'Private Sub pThreadCompletion(ByVal sender As Object,
+    '                               ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs)
+    '    ' Debug.Print("Render complete " & Now.Ticks)
+    '    Dim PassBall() As BallParms = e.Result
+    '    If bolDraw And Not bolDrawing Then Drawr(PassBall) '  Me.Render.Image = Drawr(PassBall)
+    'End Sub
     'Public ThreadNum As Integer ' = 1
     'Private StartTick, EndTick, ElapTick As Long
     'Public SeekIndex As Integer = 0
@@ -1243,7 +1243,7 @@ Err:
         'Dim tmpBodys As New List(Of BallParms)
         'tmpBodys.AddRange(e.UserState)
 
-        Dim PassBall() As BallParms = e.UserState ' tmpBodys.ToArray
+        Dim PassBall() As Prim_Struct = e.UserState ' tmpBodys.ToArray
         If bolPlaying Then
 
             SeekBar.Value = e.ProgressPercentage
@@ -1566,20 +1566,20 @@ Err:
 
 
     'End Sub
-    Private Sub AddNewBalls(ByRef NewBalls As List(Of BallParms))
+    'Private Sub AddNewBalls(ByRef NewBalls As List(Of BallParms))
 
-        For Each AddBall As BallParms In NewBalls
-            ReDim Preserve Ball(UBound(Ball) + 1)
-            Dim u As Integer = UBound(Ball)
+    '    For Each AddBall As BallParms In NewBalls
+    '        ReDim Preserve Ball(UBound(Ball) + 1)
+    '        Dim u As Integer = UBound(Ball)
 
-            Ball(u) = AddBall
+    '        Ball(u) = AddBall
 
 
 
-        Next
+    '    Next
 
-        NewBalls.Clear()
-    End Sub
+    '    NewBalls.Clear()
+    'End Sub
 
 
     Private Sub tmrRender_Tick(sender As Object, e As EventArgs) Handles tmrRender.Tick
@@ -1774,20 +1774,21 @@ Err:
     End Sub
 
     Private Sub tsmLoad_Click(sender As Object, e As EventArgs) Handles tsmLoad.Click
-        Dim OpenDialog As New OpenFileDialog()
-        OpenDialog.Filter = "Body State File|*.sta"
-        OpenDialog.Title = "Open State File"
-        If OpenDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
-            ' Dim sr As New System.IO.StreamReader(OpenFileDialog1.FileName)
-            Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            Dim fStream As New FileStream(OpenDialog.FileName, FileMode.OpenOrCreate)
+        MsgBox("Disabled")
+        'Dim OpenDialog As New OpenFileDialog()
+        'OpenDialog.Filter = "Body State File|*.sta"
+        'OpenDialog.Title = "Open State File"
+        'If OpenDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
+        '    ' Dim sr As New System.IO.StreamReader(OpenFileDialog1.FileName)
+        '    Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+        '    Dim fStream As New FileStream(OpenDialog.FileName, FileMode.OpenOrCreate)
 
-            'fStream.Position = 0 ' reset stream pointer
-            ' Ball = bf.Deserialize(fStream) ' read from file
+        '    'fStream.Position = 0 ' reset stream pointer
+        '    ' Ball = bf.Deserialize(fStream) ' read from file
 
-            Ball = ProtoBuf.Serializer.Deserialize(Of BallParms())(fStream)
-            'sr.Close()
-        End If
+        '    Ball = ProtoBuf.Serializer.Deserialize(Of BallParms())(fStream)
+        '    'sr.Close()
+        'End If
 
     End Sub
 

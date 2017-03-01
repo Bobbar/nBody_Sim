@@ -11,7 +11,7 @@ Public Module Renderer
     Public CircleOInfluence As Single = 10000
     Public bolDrawing As Boolean = False
     Public bolCulling As Boolean = True
-    Public FollowGUID As String
+    Public FollowGUID As Long
     'Public RenderWindowDimsH As Integer
     'Public RenderWindowDimsW As Integer
     Public RenderWindowDims As New Point(Form1.Render.Width, Form1.Render.Height)
@@ -32,7 +32,7 @@ Public Module Renderer
         gr.ResetTransform()
         gr.ScaleTransform(pic_scale, pic_scale)
     End Sub
-    Public Sub Drawr(ByVal BallArray() As BallParms) ' As Bitmap
+    Public Sub Drawr(ByVal BallArray() As Prim_Struct) ' As Bitmap
         Dim BodyLoc, Body2Loc As SPoint
         Dim BodySize, Body2Size As Single
         Dim FollowLoc As New SPoint
@@ -65,7 +65,7 @@ Public Module Renderer
                         If bolInvert Then
                             myBrush = New SolidBrush(Color.Black)
                         Else
-                            myBrush = New SolidBrush(BallArray(i).Color)
+                            myBrush = New SolidBrush(Color.FromArgb(BallArray(i).Color))
                         End If
                         'If BallArray(i).Flags.IndexOf("S") < 1 And BallArray(i).ShadAngle <> 0 And BallArray(i).Flags.IndexOf("R") < 1 And Form1.chkShadow.Checked Then
                         'If bolShawdow Then
@@ -107,7 +107,7 @@ Public Module Renderer
                             ' If BallArray(lngFollowBall).LocY <> Ball(lngFollowBall).LocY Then Debug.Print("Loc ERROR")
                         End If
                         gr.FillEllipse(myBrush, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
-                        If InStr(1, BallArray(i).Flags, "BH") > 0 Then
+                        If BallArray(i).BlackHole = 1 Then
                             ' Dim myPen As New Pen(Color.Red)
                             gr.DrawEllipse(myPen, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
                         End If
@@ -156,7 +156,7 @@ Public Module Renderer
         '   Return bm
     End Sub
     Private Function FollowBodyLoc() As SPoint
-        For Each b As BallParms In Ball
+        For Each b As Prim_Struct In Ball
             If b.UID = FollowGUID Then
                 Return New SPoint(b.LocX, b.LocY)
 

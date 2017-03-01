@@ -578,47 +578,47 @@ Public NotInheritable Class PhysicsChunk
         Return False
     End Function
 
-    Public Sub ShrinkBallArray()
-        'On Error Resume Next
-        ' Debug.Print("Cleaning Ball Array")
-        Dim TempArray() As BallParms
-        '       t.Abort()
-        '  bolStopLoop = True
-        't.Join()
-        '
-        ReDim TempArray(UBound(Ball))
-        Array.Copy(Ball, TempArray, Ball.Length)
-        ReDim Ball(0)
-        For i = 0 To UBound(TempArray)
-            If TempArray(i).Visible = True Then
-                ReDim Preserve Ball(UBound(Ball) + 1)
-                Ball(UBound(Ball)) = TempArray(i)
-                ' Debug.Print(InStr(1, Ball(UBound(Ball)).Flags, "F"))
-                If InStr(1, Ball(UBound(Ball)).Flags, "F") > 0 Then
-                    lngFollowBall = UBound(Ball)
-                End If
-                'Debug.Print lngFollowBall & " " & Ball(lngFollowBall).Flags
-            End If
-        Next i
-        '  bolStopLoop = False
-        't.Resume()
-        '  t = New Threading.Thread(AddressOf Me.MainLoop)
-        '  t.Start()
-    End Sub
-    Private Sub AddNewBalls(ByRef NewBalls As List(Of BallParms))
+    'Public Sub ShrinkBallArray()
+    '    'On Error Resume Next
+    '    ' Debug.Print("Cleaning Ball Array")
+    '    Dim TempArray() As BallParms
+    '    '       t.Abort()
+    '    '  bolStopLoop = True
+    '    't.Join()
+    '    '
+    '    ReDim TempArray(UBound(Ball))
+    '    Array.Copy(Ball, TempArray, Ball.Length)
+    '    ReDim Ball(0)
+    '    For i = 0 To UBound(TempArray)
+    '        If TempArray(i).Visible = True Then
+    '            ReDim Preserve Ball(UBound(Ball) + 1)
+    '            Ball(UBound(Ball)) = TempArray(i)
+    '            ' Debug.Print(InStr(1, Ball(UBound(Ball)).Flags, "F"))
+    '            If InStr(1, Ball(UBound(Ball)).Flags, "F") > 0 Then
+    '                lngFollowBall = UBound(Ball)
+    '            End If
+    '            'Debug.Print lngFollowBall & " " & Ball(lngFollowBall).Flags
+    '        End If
+    '    Next i
+    '    '  bolStopLoop = False
+    '    't.Resume()
+    '    '  t = New Threading.Thread(AddressOf Me.MainLoop)
+    '    '  t.Start()
+    'End Sub
+    'Private Sub AddNewBalls(ByRef NewBalls As List(Of BallParms))
 
-        For Each AddBall As BallParms In NewBalls
-            ReDim Preserve Ball(UBound(Ball) + 1)
-            Dim u As Integer = UBound(Ball)
+    '    For Each AddBall As BallParms In NewBalls
+    '        ReDim Preserve Ball(UBound(Ball) + 1)
+    '        Dim u As Integer = UBound(Ball)
 
-            Ball(u) = AddBall
+    '        Ball(u) = AddBall
 
 
 
-        Next
+    '    Next
 
-        NewBalls.Clear()
-    End Sub
+    '    NewBalls.Clear()
+    'End Sub
 
     Private Function GetRandomNumber(ByVal Low As Double, ByVal High As Double) As Double
         ' Returns a random number,

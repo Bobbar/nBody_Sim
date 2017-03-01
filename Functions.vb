@@ -31,7 +31,7 @@ Module Functions
     Public Function GetDistance(PointA As SPoint, PointB As SPoint) As Single
         Return Math.Sqrt((PointA.X - PointB.X) ^ 2 + (PointA.Y - PointB.Y) ^ 2)
     End Function
-    Public Function GetDistanceOfBalls(BallA As BallParms, BallB As BallParms) As Single
+    Public Function GetDistanceOfBalls(BallA As Prim_Struct, BallB As Prim_Struct) As Single
         Return Math.Sqrt((BallA.LocX - BallB.LocX) ^ 2 + (BallA.LocY - BallB.LocY) ^ 2)
     End Function
     Public Sub StartTimer()
@@ -100,8 +100,8 @@ Module Functions
         Next
         Return tot
     End Function
-    Public Function CullBodies(Bodies() As BallParms) As BallParms()
-        Dim tmpBodies(0) As BallParms
+    Public Function CullBodies(Bodies() As Prim_Struct) As Prim_Struct()
+        Dim tmpBodies(0) As Prim_Struct
         For i = 0 To UBound(Bodies)
             If Bodies(i).Visible Then
                 ReDim Preserve tmpBodies(UBound(tmpBodies) + 1)
@@ -110,5 +110,10 @@ Module Functions
             End If
         Next
         Return tmpBodies
+    End Function
+
+    Public Function RndIntUID(BdyIndex As Integer) As Integer
+        Dim rnd As Random = New Random
+        Return rnd.Next + BdyIndex
     End Function
 End Module

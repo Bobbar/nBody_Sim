@@ -152,7 +152,7 @@ Public Module PhysicsLoop
             End Set
         End Property
     End Structure
-    Public Ball() As BallParms
+    Public Ball() As Prim_Struct 'BallParms
     Public RecordedBodies As New List(Of BallParms())
     Public CompRecBodies As New List(Of Body_Rec_Parms())
     'Private _nestedArray As List(Of BallParms())
