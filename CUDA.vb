@@ -37,7 +37,7 @@ Public Module CUDA
         Public InRoche As Integer
         Public BlackHole As Integer
         Public UID As Long
-        ' Public TimesTouched As Integer
+        Public ThreadID As Integer
 
 
 
@@ -55,12 +55,12 @@ Public Module CUDA
     End Structure
 
     Public Sub InitGPU()
-        Dim GPUIndex As Integer = 2
+        Dim GPUIndex As Integer = 2 '2
 
         Dim CUDAmodule As CudafyModule
 
-        gpu = CudafyHost.GetDevice(eGPUType.OpenCL, GPUIndex)
-        CudafyTranslator.Language = eLanguage.OpenCL
+        gpu = CudafyHost.GetDevice(eGPUType.OpenCL, GPUIndex) 'eGPUType.Cuda, GPUIndex)
+        CudafyTranslator.Language = eLanguage.OpenCL 'eLanguage.Cuda 
         CUDAmodule = CudafyTranslator.Cudafy()
         gpu.LoadModule(CUDAmodule)
 
@@ -186,7 +186,7 @@ Public Module CUDA
             Dim nBlocks As Integer = (UBound(Ball) + threads - 1) / threads
             ' StartTimer()
 
-            gpu.Launch(nBlocks, threads, "CalcPhysics", gpuinBall, UBound(Ball), StepMulti) ', OutDBVar)
+            gpu.Launch(nBlocks, threads).CalcPhysics(gpuinBall, UBound(Ball), StepMulti) ', OutDBVar)
             '  StopTimer()
 
 
@@ -221,7 +221,7 @@ Public Module CUDA
 
             Next
 
-            'UpdateBodies(inBall)
+            '    UpdateBodies(Ball)
 
 
             ' Dim MyBodys As New List(Of Prim_Struct)
@@ -395,6 +395,7 @@ Public Module CUDA
         Body(A).ForceX = 0
         Body(A).ForceY = 0
         Body(A).ForceTot = 0
+        ' Body(A).ThreadID = gpThread.threadIdx.x
         '  If OuterBody(A).Visible Then
         '  If OuterBody(A).MovinG = False Then
 
@@ -448,132 +449,7 @@ Public Module CUDA
 
 
                             If DistSqrt <= (Body(A).Size / 2) + (Body(B).Size / 2) Then 'Collision reaction
-                                ' CollideBodies(Body, A, B, DistSqrt, DistX, DistY, ForceX, ForceY)
-
-
-                                Dim VeKY As Double
-                                Dim VekX As Double
-                                Dim V1x As Double
-                                Dim V2x As Double
-                                'Dim M1 As Double
-                                'Dim M2 As Double
-                                Dim V1y As Double
-                                Dim V2y As Double
-                                'Dim EPS As Double = 2
-                                Dim V1 As Double
-                                Dim V2 As Double
-                                Dim U2 As Double
-                                Dim U1 As Double
-                                Dim PrevSpdX, PrevSpdY As Double
-                                Dim Area1 As Double, Area2 As Double
-                                If DistSqrt > 0 Then
-                                    V1x = Body(A).SpeedX
-                                    V1y = Body(A).SpeedY
-                                    V2x = Body(B).SpeedX
-                                    V2y = Body(B).SpeedY
-                                    M1 = Body(A).Mass
-                                    M2 = Body(B).Mass
-                                    VekX = DistX / 2 ' (Ball(A).LocX - Ball(B).LocX) / 2
-                                    VeKY = DistY / 2 '(Ball(A).LocY - Ball(B).LocY) / 2
-                                    VekX = VekX / (DistSqrt / 2) 'LenG
-                                    VeKY = VeKY / (DistSqrt / 2) 'LenG
-                                    V1 = VekX * V1x + VeKY * V1y
-                                    V2 = VekX * V2x + VeKY * V2y
-                                    U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-                                    U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
-                                    If Body(A).InRoche = 0 And Body(B).InRoche = 1 Then
-                                        If Body(A).Mass > Body(B).Mass Then
-                                            PrevSpdX = Body(A).SpeedX
-                                            PrevSpdY = Body(A).SpeedY
-                                            Body(A).SpeedX = Body(A).SpeedX + (U1 - V1) * VekX
-                                            Body(A).SpeedY = Body(A).SpeedY + (U1 - V1) * VeKY
-                                            Body(B).Visible = 0
-                                            Area1 = PI * (Body(A).Size ^ 2)
-                                            Area2 = PI * (Body(B).Size ^ 2)
-                                            Area1 = Area1 + Area2
-                                            Body(A).Size = Sqrt(Area1 / PI)
-                                            Body(A).Mass = Body(A).Mass + Body(B).Mass 'Sqr(Ball(B).Mass)
-                                        ElseIf Body(A).Mass = Body(B).Mass Then
-                                            If Body(A).UID > Body(B).UID Then
-                                                PrevSpdX = Body(A).SpeedX
-                                                PrevSpdY = Body(A).SpeedY
-                                                Body(A).SpeedX = Body(A).SpeedX + (U1 - V1) * VekX
-                                                Body(A).SpeedY = Body(A).SpeedY + (U1 - V1) * VeKY
-                                                Body(B).Visible = 0
-                                                Area1 = PI * (Body(A).Size ^ 2)
-                                                Area2 = PI * (Body(B).Size ^ 2)
-                                                Area1 = Area1 + Area2
-                                                Body(A).Size = Sqrt(Area1 / PI)
-                                                Body(A).Mass = Body(A).Mass + Body(B).Mass 'Sqr(Ball(B).Mass)
-                                            Else
-                                                Body(A).Visible = 0
-                                            End If
-                                            '  Body(A).Visible = False
-                                        End If
-                                    ElseIf Body(A).InRoche = 0 And Body(B).InRoche = 0 Then
-                                        If Body(A).Mass > Body(B).Mass Then
-                                            PrevSpdX = Body(A).SpeedX
-                                            PrevSpdY = Body(A).SpeedY
-                                            Body(A).SpeedX = Body(A).SpeedX + (U1 - V1) * VekX
-                                            Body(A).SpeedY = Body(A).SpeedY + (U1 - V1) * VeKY
-                                            Body(B).Visible = 0
-                                            Area1 = PI * (Body(A).Size ^ 2)
-                                            Area2 = PI * (Body(B).Size ^ 2)
-                                            Area1 = Area1 + Area2
-                                            Body(A).Size = Sqrt(Area1 / PI)
-                                            Body(A).Mass = Body(A).Mass + Body(B).Mass 'Sqr(Ball(B).Mass)
-                                        ElseIf Body(A).Mass = Body(B).Mass Then
-                                            If Body(A).UID > Body(B).UID Then
-                                                PrevSpdX = Body(A).SpeedX
-                                                PrevSpdY = Body(A).SpeedY
-                                                Body(A).SpeedX = Body(A).SpeedX + (U1 - V1) * VekX
-                                                Body(A).SpeedY = Body(A).SpeedY + (U1 - V1) * VeKY
-                                                Body(B).Visible = 0
-                                                Area1 = PI * (Body(A).Size ^ 2)
-                                                Area2 = PI * (Body(B).Size ^ 2)
-                                                Area1 = Area1 + Area2
-                                                Body(A).Size = Sqrt(Area1 / PI)
-                                                Body(A).Mass = Body(A).Mass + Body(B).Mass 'Sqr(Ball(B).Mass)
-                                            Else
-                                                Body(A).Visible = 0
-                                            End If
-                                        Else
-                                            Body(A).Visible = 0
-                                        End If
-                                    ElseIf Body(A).InRoche = 1 And Body(B).InRoche = 1 Then
-                                        Dim multi As Integer = 20
-                                        Body(A).ForceX -= ForceX * multi
-                                        Body(A).ForceY -= ForceY * multi
-                                        Body(B).ForceX -= ForceX * multi
-                                        Body(B).ForceY -= ForceY * multi
-                                        Dim Friction As Double = 0.8
-                                        Body(A).SpeedX += (U1 - V1) * VekX * Friction
-                                        Body(A).SpeedY += (U1 - V1) * VeKY * Friction
-                                        Body(B).SpeedX += (U2 - V2) * VekX * Friction
-                                        Body(B).SpeedY += (U2 - V2) * VeKY * Friction
-                                    ElseIf Body(A).InRoche = 1 And Body(B).InRoche = 0 Then
-                                        Body(A).Visible = 0
-                                    End If
-                                    ' End If
-                                Else ' if bodies are at exact same position
-                                    If Body(A).Mass > Body(B).Mass Then
-                                        Area1 = PI * (Body(A).Size ^ 2)
-                                        Area2 = PI * (Body(B).Size ^ 2)
-                                        Area1 = Area1 + Area2
-                                        Body(A).Size = Sqrt(Area1 / PI)
-                                        Body(A).Mass = Body(A).Mass + Body(B).Mass 'Sqr(Ball(B).Mass)
-                                        Body(B).Visible = 0
-                                    Else
-                                        Area1 = PI * (Body(A).Size ^ 2)
-                                        Area2 = PI * (Body(B).Size ^ 2)
-                                        Area1 = Area1 + Area2
-                                        Body(B).Size = Sqrt(Area1 / PI)
-                                        Body(B).Mass = Body(B).Mass + Body(A).Mass 'Sqr(Ball(B).Mass)
-                                        Body(A).Visible = 0
-                                    End If
-                                End If
-                                ' Return Body
-
+                                CollideBodies(Body, A, B, DistSqrt, DistX, DistY, ForceX, ForceY)
 
 
                             End If

@@ -223,9 +223,10 @@ Public Class Form1
                     If MouseOver(New SPoint(e.Location), Ball(i)) And Ball(i).Visible Then
                         'Debug.Print(Render.PointToClient(New Point(Ball(i).LocX, Ball(i).LocY)).ToString)
                         ' Debug.Print("BLoc: " & Ball(i).LocX & "-" & Ball(i).LocY)
-                        Debug.Print("Body UID: " & Ball(i).UID & "  Body Loc: " & Ball(i).LocX & "," & Ball(i).LocY)
+                        Debug.Print("Body Index: " & i & "  Body UID: " & Ball(i).UID & "  Body Loc: " & Ball(i).LocX & "," & Ball(i).LocY)
                         Debug.Print("Mass: " & Ball(i).Mass & " " & "Size: " & Ball(i).Size)
                         Debug.Print("InRoche: " & Ball(i).InRoche.ToString & " " & "RocheF: " & Ball(i).ForceTot)
+
                         If Not bolAltDown And bolShiftDown Then MoV = 1
                         Sel = i
                         'If bolShiftDown Then
@@ -465,8 +466,6 @@ Err:
         On Error Resume Next
         Ball(MouseIndex).Size = Ball(MouseIndex).Size + 0.5
         Ball(MouseIndex).Mass = fnMass(Ball(MouseIndex).Size) ' ^ 2
-    End Sub
-    Private Sub Render_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Render.Click
     End Sub
     Private Sub Label3_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
     End Sub
