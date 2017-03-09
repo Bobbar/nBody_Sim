@@ -86,14 +86,14 @@ Public Class frmAddBodies
         ExtraEllipses.Add(newEllipse)
 
 
+        ReDim Ball(NumberOfBodies)
 
-
-        For i As Integer = 0 To NumberOfBodies
-            ReDim Preserve Ball(UBound(Ball) + 1)
+        For i As Integer = 0 To NumberOfBodies - 1
+            ' ReDim Preserve Ball(UBound(Ball) + 1)
             ' Ball(UBound(Ball)).Index = UBound(Ball)
-            Ball(UBound(Ball)).UID = RndIntUID(UBound(Ball)) 'Guid.NewGuid.ToString
-            Ball(UBound(Ball)).Color = RandomRGBColor().ToArgb 'colDefBodyColor
-            Ball(UBound(Ball)).Visible = 1
+            Ball(i).UID = RndIntUID(i) 'Guid.NewGuid.ToString
+            Ball(i).Color = RandomRGBColor().ToArgb 'colDefBodyColor
+            Ball(i).Visible = 1
 
             px = GetRandomNumber(newEllipse.Location.X - newEllipse.Size, newEllipse.Location.X + newEllipse.Size) ' - ScaleOffset.X - RelBallPosMod.X
             py = GetRandomNumber(newEllipse.Location.Y - newEllipse.Size, newEllipse.Location.Y + newEllipse.Size) ' - ScaleOffset.Y - RelBallPosMod.Y
@@ -120,33 +120,33 @@ Public Class frmAddBodies
             Dim vy As Double = Sign(px) * Sin(thetav) * magv
 
 
-            Ball(UBound(Ball)).LocX = px
-            Ball(UBound(Ball)).LocY = py
+            Ball(i).LocX = px
+            Ball(i).LocY = py
 
-            Ball(UBound(Ball)).SpeedX = vx
-            Ball(UBound(Ball)).SpeedY = vy
+            Ball(i).SpeedX = vx
+            Ball(i).SpeedY = vy
             ' Ball(UBound(Ball)).Flags = ""
-            Ball(UBound(Ball)).Size = GetRandomNumber(MinSize, MaxSize)
+            Ball(i).Size = GetRandomNumber(MinSize, MaxSize)
             If BodyMass > 0 Then
-                Ball(UBound(Ball)).Mass = BodyMass
+                Ball(i).Mass = BodyMass
             Else
-                Ball(UBound(Ball)).Mass = fnMass(Ball(UBound(Ball)).Size) ' * 2
+                Ball(i).Mass = fnMass(Ball(i).Size) ' * 2
             End If
 
         Next
         If bolIncludeCenterMass Then
-            ReDim Preserve Ball(UBound(Ball) + 1)
-            Ball(UBound(Ball)).UID = RndIntUID(UBound(Ball)) 'Guid.NewGuid.ToString
-            Ball(UBound(Ball)).Color = Color.Black.ToArgb 'RandomRGBColor() 'colDefBodyColor
-            Ball(UBound(Ball)).Visible = 1
-            Ball(UBound(Ball)).LocX = newEllipse.Location.X ' Form1.Render.Width / 2 / pic_scale - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
-            Ball(UBound(Ball)).LocY = newEllipse.Location.Y 'Form1.Render.Height / 2 / pic_scale - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
-            Ball(UBound(Ball)).SpeedX = 0
-            Ball(UBound(Ball)).SpeedY = 0
-            Ball(UBound(Ball)).BlackHole = 1
+            '  ReDim Preserve Ball(UBound(Ball) + 1)
+            Ball(NumberOfBodies).UID = RndIntUID(NumberOfBodies) 'Guid.NewGuid.ToString
+            Ball(NumberOfBodies).Color = Color.Black.ToArgb 'RandomRGBColor() 'colDefBodyColor
+            Ball(NumberOfBodies).Visible = 1
+            Ball(NumberOfBodies).LocX = newEllipse.Location.X ' Form1.Render.Width / 2 / pic_scale - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
+            Ball(NumberOfBodies).LocY = newEllipse.Location.Y 'Form1.Render.Height / 2 / pic_scale - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
+            Ball(NumberOfBodies).SpeedX = 0
+            Ball(NumberOfBodies).SpeedY = 0
+            Ball(NumberOfBodies).BlackHole = 1
             'Ball(UBound(Ball)).Flags = "BH"
-            Ball(UBound(Ball)).Size = 15
-            Ball(UBound(Ball)).Mass = MassOfCenterMass 'fnMass(Ball(UBound(Ball)).Size) ' * 2
+            Ball(NumberOfBodies).Size = 15
+            Ball(NumberOfBodies).Mass = MassOfCenterMass 'fnMass(Ball(UBound(Ball)).Size) ' * 2
         End If
 
 

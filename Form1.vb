@@ -1550,10 +1550,10 @@ Err:
 
     Private Sub tmrRender_Tick(sender As Object, e As EventArgs) Handles tmrRender.Tick
 
-        If bolStop Or bolRendering Then
-            If bolPlaying Then
-                '    Ball = ConvertFrame(CompRecBodies(SeekIndex)) 'RecordedBodies(SeekIndex)
-            End If
+        If bolStop Then
+            'If bolPlaying Then
+            '    '    Ball = ConvertFrame(CompRecBodies(SeekIndex)) 'RecordedBodies(SeekIndex)
+            'End If
             Drawr(Ball)
             SetUIInfo()
         End If
