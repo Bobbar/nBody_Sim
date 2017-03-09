@@ -183,13 +183,13 @@ Public Class Form1
     End Sub
     Private Sub Render_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Render.MouseDown
         On Error Resume Next
-        Debug.Print("RenLoc: " & e.Location.ToString)
-        Debug.Print("OffLoc: " & ScaleMousePosRelative(New SPoint(e.Location.X, e.Location.Y)).ToString)
+        'Debug.Print("RenLoc: " & e.Location.ToString)
+        'Debug.Print("OffLoc: " & ScaleMousePosRelative(New SPoint(e.Location.X, e.Location.Y)).ToString)
 
         If e.Button = Windows.Forms.MouseButtons.Right Then
             bolStopDraw = True
             ReDim Preserve Ball(UBound(Ball) + 1)
-            Debug.Print("Index: " & UBound(Ball))
+            ' Debug.Print("Index: " & UBound(Ball))
             Ball(UBound(Ball)).Color = RandomRGBColor().ToArgb
             Ball(UBound(Ball)).LocX = ScaleMousePosRelative(New SPoint(e.Location)).X - (Ball(UBound(Ball)).Size / 2)  ' ScaleMousePosRelative(e.Location).X - Ball(UBound(Ball)).Size / 2
             Ball(UBound(Ball)).LocY = ScaleMousePosRelative(New SPoint(e.Location)).Y - (Ball(UBound(Ball)).Size / 2)
@@ -220,13 +220,16 @@ Public Class Form1
             If Sel = -1 Then
                 For i = 1 To UBound(Ball)
                     'Debug.Print "LocX: " & Ball(i).LocX & vbCrLf & "LocY: " & Ball(i).LocY & vbCrLf & "SpeedX: " & Ball(i).SpeedX & vbCrLf & "SpeedY: " & Ball(i).SpeedY
-                    If MouseOver(New SPoint(e.Location), Ball(i)) And Ball(i).Visible Then
+                    If MouseOver(New SPoint(e.Location), Ball(i)) Then
                         'Debug.Print(Render.PointToClient(New Point(Ball(i).LocX, Ball(i).LocY)).ToString)
                         ' Debug.Print("BLoc: " & Ball(i).LocX & "-" & Ball(i).LocY)
+                        Debug.Print("-----")
                         Debug.Print("Body Index: " & i & "  Body UID: " & Ball(i).UID & "  Body Loc: " & Ball(i).LocX & "," & Ball(i).LocY)
                         Debug.Print("Mass: " & Ball(i).Mass & " " & "Size: " & Ball(i).Size)
                         Debug.Print("InRoche: " & Ball(i).InRoche.ToString & " " & "RocheF: " & Ball(i).ForceTot)
-
+                        Debug.Print("ThreadID: " & Ball(i).ThreadID & " " & "BlockID: " & Ball(i).BlockID)
+                        Debug.Print("Visible: " & Ball(i).Visible)
+                        Debug.Print("LastColID: " & Ball(i).LastColID)
                         If Not bolAltDown And bolShiftDown Then MoV = 1
                         Sel = i
                         'If bolShiftDown Then
@@ -237,7 +240,7 @@ Public Class Form1
                             lngFollowBall = Sel
                             FollowGUID = Ball(Sel).UID
                             ' Ball(Sel).Flags = Ball(Sel).Flags + "F"
-                            tmrFollow.Enabled = True
+                            ' tmrFollow.Enabled = True
                         End If
                         txtSpeedX.Text = Ball(Sel).SpeedX
                         txtSpeedY.Text = Ball(Sel).SpeedY
@@ -368,45 +371,7 @@ Err:
         If gravity = 0.5 Then gravity = 0 : Exit Sub
         gravity = 0.5
     End Sub
-    Private Sub Timer2_Tick_1(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        lblFPS.Text = "FPS: " & Round(FPS, 0) ' * 8
-        lblDelay.Text = "Delay: " & intDelay
-        lblBalls.Text = "Balls: " & UBound(Ball)
-        UpDown1.Maximum = UBound(Ball)
-        'TrueFPS = FPS * 8
-        'If FPS * 8 > intTargetFPS Then
-        '    intDelay = intDelay + 1
-        'Else
-        '    If intDelay > 0 Then
-        '        intDelay = intDelay - 1
-        '    Else
-        '        intDelay = 0
-        '    End If
-        'End If
-        '  
-        ' FPS = 0
-        lblVisBalls.Text = "Visible: " & VisibleBalls()
-        lblScale.Text = "Scale: " & Round(pic_scale, 2)
-        ScreenCenterX = Me.Render.Width / 2
-        ScreenCenterY = Me.Render.Height / 2
-        ScaleOffset.X = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).X
-        ScaleOffset.Y = ScaleMousePosExact(New SPoint(ScreenCenterX, ScreenCenterY)).Y
-        RenderWindowDims.X = CInt(Me.Render.Width)
-        RenderWindowDims.Y = CInt(Me.Render.Height)
-        If UBound(Ball) > 0 And Not PhysicsWorker.IsBusy And Not bolStopWorker Then
-            PhysicsWorker.RunWorkerAsync()
-        End If
-        'If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
-        '    UpdateScale()
-        'End If
-        '  Application.DoEvents()
-    End Sub
 
-    Private Sub Label12_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label12.Click
-
-    End Sub
-    Private Sub Form1_Leave(sender As Object, e As EventArgs) Handles Me.Leave
-    End Sub
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
 
@@ -487,7 +452,7 @@ Err:
             '   SeekIndex = SeekBar.Value
             Button3.Text = "Start"
 
-            tmrFollow.Enabled = False
+            ' tmrFollow.Enabled = False
             't.Suspend()
             ' t2.Suspend()
             ' t3.Suspend()
@@ -495,7 +460,7 @@ Err:
         Else
             Button3.Text = "Stop"
 
-            tmrFollow.Enabled = True
+            '    tmrFollow.Enabled = True
             ' t.Resume()
             '  t2.Resume()
             ' t3.Resume()
@@ -636,7 +601,7 @@ Err:
     Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
         Dim TotalMass As Double
         For i = 1 To UBound(Ball)
-            If Ball(i).Visible Then TotalMass = TotalMass + Ball(i).Mass
+            If Ball(i).Visible = 1 Then TotalMass = TotalMass + Ball(i).Mass
         Next i
         Debug.Print("Total Mass: " & TotalMass)
         MsgBox("Total Mass: " & TotalMass)
@@ -679,12 +644,13 @@ Err:
             ' Ball(lngFollowBall).Flags = Replace$(Ball(lngFollowBall).Flags, "F", "")
             Sel = UpDown1.Value
             If Ball(Sel).Visible = 0 Then
-                Do Until Ball(Sel).Visible Or Sel = UpDown1.Minimum
+                Do Until Ball(Sel).Visible = 1 Or Sel = UpDown1.Minimum
                     Sel = Sel - 1
                 Loop
             End If
             UpDown1.Value = Sel
             lngFollowBall = Sel
+            FollowGUID = Ball(Sel).UID
             ' Ball(lngFollowBall).Flags = Ball(lngFollowBall).Flags + "F"
             txtSpeedX.Text = Ball(Sel).SpeedX
             txtSpeedY.Text = Ball(Sel).SpeedY
@@ -709,12 +675,13 @@ Err:
             '  Ball(lngFollowBall).Flags = Replace$(Ball(lngFollowBall).Flags, "F", "")
             Sel = UpDown1.Value
             If Ball(Sel).Visible = 0 Then
-                Do Until Ball(Sel).Visible Or Sel = UpDown1.Maximum
+                Do Until Ball(Sel).Visible = 1 Or Sel = UpDown1.Maximum
                     Sel = Sel + 1
                 Loop
             End If
             UpDown1.Value = Sel
-            lngFollowBall = Sel
+            lngFollowBall =
+                 FollowGUID = Ball(Sel).UID
             '  Ball(lngFollowBall).Flags = Ball(lngFollowBall).Flags + "F"
             txtSpeedX.Text = Ball(Sel).SpeedX
             txtSpeedY.Text = Ball(Sel).SpeedY
@@ -1980,7 +1947,7 @@ Err:
 
         Do Until bolStopWorker
             bolRendering = True
-            ExecDelay()
+
 
             StartCalc()
 
@@ -1991,7 +1958,12 @@ Err:
             CalcDelay()
 
             PhysicsWorker.ReportProgress(1, Ball)
+            ExecDelay()
         Loop
 
+    End Sub
+
+    Private Sub tsmShowAll_Click(sender As Object, e As EventArgs) Handles tsmShowAll.Click
+        bolShowAll = tsmShowAll.Checked
     End Sub
 End Class

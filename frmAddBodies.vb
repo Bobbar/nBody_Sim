@@ -164,7 +164,7 @@ Public Class frmAddBodies
             '  Thread.Sleep(1)
             'Debug.Print(Ball(UBound(Ball)).UID.ToString)
 
-            Ball(UBound(Ball)).Color = Color.Orange.ToArgb 'RandomRGBColor() 'colDefBodyColor
+            Ball(UBound(Ball)).Color = RandomRGBColor().ToArgb 'colDefBodyColor ' Color.Orange.ToArgb
             Ball(UBound(Ball)).Visible = 1
             Ball(UBound(Ball)).LocX = GetRandomNumber(1, Form1.Render.Width / pic_scale) - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
             Ball(UBound(Ball)).LocY = GetRandomNumber(1, Form1.Render.Height / pic_scale) - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale

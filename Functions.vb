@@ -94,22 +94,30 @@ Module Functions
 
     End Sub
     Public Function VisibleBalls() As Integer
-        Dim tot As Integer = 0
-        For i As Integer = 0 To UBound(Ball)
-            If Ball(i).Visible Then tot += 1
-        Next
-        Return tot
+        'Dim tot As Integer = 0
+        'For i As Integer = 0 To UBound(Ball)
+
+        '    If Ball(i).Visible = 1 And i <= UBound(Ball) Then tot += 1
+        'Next
+        'Return tot
+        Return VisBalls
     End Function
     Public Function CullBodies(Bodies() As Prim_Struct) As Prim_Struct()
-        Dim tmpBodies(0) As Prim_Struct
-        For i = 0 To UBound(Bodies)
-            If Bodies(i).Visible Then
-                ReDim Preserve tmpBodies(UBound(tmpBodies) + 1)
-                tmpBodies(UBound(tmpBodies)) = Bodies(i)
+        '    StartTimer()
 
+
+        'Dim tmpBodies(0) As Prim_Struct
+        Dim tmpBodies As New List(Of Prim_Struct)
+        For i As Integer = 0 To UBound(Bodies)
+            If Bodies(i).Visible = 1 Then
+
+                tmpBodies.Add(Bodies(i))
+                'ReDim Preserve tmpBodies(UBound(tmpBodies) + 1)
+                'tmpBodies(UBound(tmpBodies)) = Bodies(i)
             End If
         Next
-        Return tmpBodies
+        '  StopTimer()
+        Return tmpBodies.ToArray
     End Function
 
     Public Function RndIntUID(BdyIndex As Integer) As Integer
