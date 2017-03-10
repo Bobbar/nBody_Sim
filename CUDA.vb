@@ -42,7 +42,6 @@ Public Module CUDA
         Public BlockID As Integer
         Public BlockDIM As Integer
         Public LastColID As Integer
-        Public Counter As UInteger
     End Structure
     '<Cudafy>
     Public Ball() As Prim_Struct 'BallParms
@@ -81,114 +80,114 @@ Public Module CUDA
 
         bolRendering = True
 
-        If Not bolPlaying Then
+        ' If Not bolPlaying Then
+        ' Dim Ball() As Prim_Struct ' = Ball
+        ' If ((Ball.Length - 1) - VisibleBalls()) > 1000 Then
+        'StartTimer()
+        Ball = CullBodies(Ball)
+        '  StopTimer()
+        ' End If
+        '  VisBalls = UBound(Ball)
 
-            If (UBound(Ball) - VisibleBalls()) > 1000 Then
-                Ball = CullBodies(Ball)
+        'Make a local copy of the body array.
+        'This is done so that changes can be updated to the rest of the program one frame at a time.
+        ' Dim Ball() As Prim_Struct = Ball
 
-            End If
-            VisBalls = UBound(Ball)
+        'Allocate the input array and collect the pointer.
+        'This is the array the threads will read from, but not ever write to.
+        Dim gpuInBall() As Prim_Struct = gpu.Allocate(Ball)
 
-            'Make a local copy of the body array.
-            'This is done so that changes can be updated to the rest of the program one frame at a time.
-            Dim CalcBall() As Prim_Struct = Ball
+        'Declare and init the output array.
+        Dim OutBall() As Prim_Struct = New Prim_Struct(Ball.Length - 1) {}
 
-            'Allocate the input array and collect the pointer.
-            'This is the array the threads will read from, but not ever write to.
-            Dim gpuInBall() As Prim_Struct = gpu.Allocate(CalcBall)
+        'Allocate the output array.
+        'This is the array the threads will write to. Each thread works one element of this array.
+        Dim gpuOutBall() As Prim_Struct = gpu.Allocate(OutBall)
 
-            'Declare and init the output array.
-            Dim OutBall() As Prim_Struct = New Prim_Struct(CalcBall.Length - 1) {}
+        'Copy the body array to the device
+        gpu.CopyToDevice(Ball, gpuInBall)
 
-            'Allocate the output array.
-            'This is the array the threads will write to. Each thread works one element of this array.
-            Dim gpuOutBall() As Prim_Struct = gpu.Allocate(OutBall)
+        'Number of threads per block
+        Dim threads As Integer = 256 '256 is max for OpenCL AMD device.
 
-            'Copy the body array to the device
-            gpu.CopyToDevice(CalcBall, gpuInBall)
+        'Calc number of blocks needed based on number of bodys and threads.
+        Dim nBlocks As Integer = ((Ball.Length - 1) + threads - 1) / threads
 
-            'Number of threads per block
-            Dim threads As Integer = 256 '256 is max for OpenCL AMD device.
+        'Launch the kernel to calculate body forces.
+        gpu.Launch(nBlocks, threads).CalcPhysics(gpuInBall, StepMulti, gpuOutBall)
 
-            'Calc number of blocks needed based on number of bodys and threads.
-            Dim nBlocks As Integer = (UBound(CalcBall) + threads - 1) / threads
+        'Wait until all threads finish, copy the device output array back to host array, then free device memory.
+        gpu.Synchronize()
+        gpu.CopyFromDevice(gpuOutBall, Ball)
+        gpu.FreeAll()
 
-            'Launch the kernel to calculate body forces.
-            gpu.Launch(nBlocks, threads).CalcPhysics(gpuInBall, StepMulti, gpuOutBall)
+        'Allocate the updated body array and perform another kernel execution for collisions.
+        gpuInBall = gpu.Allocate(Ball)
+        OutBall = New Prim_Struct(Ball.Length - 1) {}
+        gpuOutBall = gpu.Allocate(OutBall)
+        gpu.CopyToDevice(Ball, gpuInBall)
+        gpu.Launch(nBlocks, threads).CollideBodies(gpuInBall, gpuOutBall, StepMulti)
+        gpu.Synchronize()
+        gpu.CopyFromDevice(gpuOutBall, Ball)
+        gpu.FreeAll()
 
-            'Wait untill all threads finish, copy the device output array back to host array, then free device memory.
-            gpu.Synchronize()
-            gpu.CopyFromDevice(gpuOutBall, CalcBall)
-            gpu.FreeAll()
+        'Copy the new data back into the public array
+        ' Ball = Ball
+        ' Ball = Nothing
 
-            'Allocate the updated body array and perform another kernel execution for collisions.
-            gpuInBall = gpu.Allocate(CalcBall)
-            OutBall = New Prim_Struct(CalcBall.Length - 1) {}
-            gpuOutBall = gpu.Allocate(OutBall)
-            gpu.CopyToDevice(CalcBall, gpuInBall)
-            gpu.Launch(nBlocks, threads).CollideBodies(gpuInBall, gpuOutBall, StepMulti)
-            gpu.Synchronize()
-            gpu.CopyFromDevice(gpuOutBall, CalcBall)
-            gpu.FreeAll()
+        'Integrate the body forces
+        UpdateBodies(Ball)
 
-            'Copy the new data back into the public array
-            Ball = CalcBall
-            CalcBall = Nothing
-
-            'Integrate the body forces
-            UpdateBodies(Ball)
-
-            'Iterate through body and determine if they are within a hypothetical Roche limit.
-            'Bodies within Roche are broken into smaller bodies and added to the main body array.
-            Dim NewBalls As New List(Of Prim_Struct)
-            For a As Integer = 0 To UBound(Ball)
-                If Ball(a).Visible = 1 Then
-                    If Ball(a).ForceTot > Ball(a).Mass * 4 And Ball(a).BlackHole = 0 Then ' And OuterBody(A).Size < 10 
-                        Ball(a).InRoche = 1
-                        NewBalls.AddRange(FractureBall(Ball(a)))
-                    ElseIf (Ball(a).ForceTot * 2) < Ball(a).Mass * 4 Then ' And OuterBody(A).Size > 10
-                        Ball(a).InRoche = 0
-                    End If
+        'Iterate through body and determine if they are within a hypothetical Roche limit.
+        'Bodies within Roche are broken into smaller bodies and added to the main body array.
+        Dim NewBalls As New List(Of Prim_Struct)
+        For a As Integer = 0 To Ball.Length - 1
+            If Ball(a).Visible = 1 Then
+                If Ball(a).ForceTot > Ball(a).Mass * 4 And Ball(a).BlackHole = 0 Then ' And OuterBody(A).Size < 10 
+                    Ball(a).InRoche = 1
+                    Ball(a).ForceTot = 0
+                    NewBalls.AddRange(FractureBall(Ball(a)))
+                ElseIf (Ball(a).ForceTot * 2) < Ball(a).Mass * 4 Then ' And OuterBody(A).Size > 10
+                    Ball(a).InRoche = 0
+                    Ball(a).ForceTot = 0
                 End If
-            Next
-            If NewBalls.Count > 0 Then
-                Dim origLen As Integer = Ball.Length
-                Array.Resize(Ball, (origLen + NewBalls.Count))
-                Array.Copy(NewBalls.ToArray, 0, Ball, origLen, (NewBalls.Count))
             End If
-
-
-
+        Next
+        If NewBalls.Count > 0 Then
+            Dim origLen As Integer = Ball.Length
+            Array.Resize(Ball, (origLen + NewBalls.Count))
+            Array.Copy(NewBalls.ToArray, 0, Ball, origLen, (NewBalls.Count))
         End If
 
+        'Ball = Ball
+
+        '  End If
+        bolRendering = False
 
     End Sub
     Private Sub UpdateBodies(ByRef Body() As Prim_Struct)
 
-        Dim tmpBody() As Prim_Struct = Body
-        Parallel.For(0, UBound(Body),
-                     Sub(i As Integer)
+        'Dim tmpBody() As Prim_Struct = Body
+        'Parallel.For(0, UBound(Body),
+        '             Sub(i As Integer)
+        '                 If tmpBody(i).Visible = 1 Then
+        '                     tmpBody(i).SpeedX += StepMulti * tmpBody(i).ForceX / tmpBody(i).Mass
+        '                     tmpBody(i).SpeedY += StepMulti * tmpBody(i).ForceY / tmpBody(i).Mass
+        '                     tmpBody(i).LocX += StepMulti * tmpBody(i).SpeedX
+        '                     tmpBody(i).LocY += StepMulti * tmpBody(i).SpeedY
+        '                 End If
+        '             End Sub)
+        'Body = tmpBody
 
-                         'For i As Integer = 0 To UBound(Body)
-                         If tmpBody(i).Visible = 1 Then
-                             tmpBody(i).SpeedX += StepMulti * tmpBody(i).ForceX / tmpBody(i).Mass
-                             tmpBody(i).SpeedY += StepMulti * tmpBody(i).ForceY / tmpBody(i).Mass
-                             tmpBody(i).LocX += StepMulti * tmpBody(i).SpeedX
-                             tmpBody(i).LocY += StepMulti * tmpBody(i).SpeedY
-                         End If
+        For i As Integer = 0 To Body.Length - 1
+            If Body(i).Visible = 1 Then
+                Body(i).SpeedX += StepMulti * Body(i).ForceX / Body(i).Mass
+                Body(i).SpeedY += StepMulti * Body(i).ForceY / Body(i).Mass
+                Body(i).LocX += StepMulti * Body(i).SpeedX
+                Body(i).LocY += StepMulti * Body(i).SpeedY
+            End If
 
-                     End Sub)
-        Body = tmpBody
-
-        'For i As Integer = 0 To UBound(Body)
-        '    If Body(i).Visible = 1 Then
-        '        Body(i).SpeedX += StepMulti * Body(i).ForceX / Body(i).Mass
-        '        Body(i).SpeedY += StepMulti * Body(i).ForceY / Body(i).Mass
-        '        Body(i).LocX += StepMulti * Body(i).SpeedX
-        '        Body(i).LocY += StepMulti * Body(i).SpeedY
-        '    End If
-
-        'Next
+        Next
     End Sub
 
     <Cudafy>
@@ -206,35 +205,7 @@ Public Module CUDA
         Dim Dist As Double
         Dim DistSqrt As Double
         Dim M1, M2 As Double
-        ' Dim MyStep As Double = 0.05
-
-        '   Dim tmpBodys As New List(Of BallParms)
-        '  Dim DistArray As New List(Of String)
-
-        ' Do Until bolStopWorker
         Dim EPS As Double = 1.02
-        ' Dim OuterBody As BallParms() = MyBodys.ToArray
-
-        'Do While bolStopLoop
-        ' Thread.Sleep(100)
-        'Loop
-        '  StartTick = Now.Ticks
-        '  Thread.Sleep(intDelay)
-        '  StartTimer()
-        '  If UBound(OuterBody) > 1 Then
-        ' BUB = uBoundBody
-        'Dim UB As Integer = thread_end_idx 'Body.Count - 1
-        'Dim LB As Integer = thread_start_idx
-        '   For A = LB To UB ' Each OuterOutBody(A) As BallParms In MyBodys 'A = lBoundBody To uBoundBody
-        'OutBody(A).WhoTouchedMe = tid
-        '  OutBody(A).TimesTouched += 1
-
-
-
-        ' OutBody(A).ThreadID = gpThread.threadIdx.x
-        '  If OuterOutBody(A).Visible Then
-        '  If OuterOutBody(A).MovinG = False Then
-
         If A <= Body.Length - 1 And Body(A).Visible = 1 Then
 
             OutBody(A) = Body(A)
@@ -250,359 +221,34 @@ Public Module CUDA
 
             For B = 0 To Body.Length - 1
                 If A <> B And Body(B).Visible = 1 Then
-                    'If OuterOutBody(A).Index = 792 And Bodys(B).Index = 2002 Then
-                    '    Debug.Print(DistSqrt & " - " & OuterOutBody(A).Size & " - " & Bodys(B).Size)
-                    'End If
-
-
-                    'If bolShawdow Then
-                    '    If InStr(1, OuterOutBody(A).Flags, "S") Then
-                    '        Dim m As Double, SlX As Double, SlY As Double
-                    '        SlX = Bodys(B).LocX - OuterOutBody(A).LocX
-                    '        SlY = Bodys(B).LocY - OuterOutBody(A).LocY
-                    '        m = SlY / SlX
-                    '        Bodys(B).ShadAngle = Math.Atan2(Bodys(B).LocY - OuterOutBody(A).LocY, Bodys(B).LocX - OuterOutBody(A).LocX)   'Math.Tan(SlX / SlY) 'Math.Atan2(SlY, SlX) * 180 / PI 'Math.Atan(SlX / SlY) * 180 / PI
-                    '    End If
-                    'End If
-                    'If Body(B).LocX = OutBody(A).LocX And Body(B).LocY = OutBody(A).LocY Then
-                    '    '  CollideBodies(OuterOutBody(A), Bodys(B))
-                    'End If
-                    'If bGrav = 0 Then
-                    'Else
-
                     DistX = Body(B).LocX - OutBody(A).LocX
                     DistY = Body(B).LocY - OutBody(A).LocY
                     Dist = (DistX * DistX) + (DistY * DistY)
                     DistSqrt = Sqrt(Dist)
                     If DistSqrt > 0 Then 'Gravity reaction
-                        '   If DistSqrt < (OuterOutBody(A).Size / 2) + (Bodys(B).Size / 2) Then DistSqrt = (OuterOutBody(A).Size / 2) + (Bodys(B).Size / 2) 'prevent screamers
                         M1 = OutBody(A).Mass '^ 2
                         M2 = Body(B).Mass ' ^ 2
                         TotMass = M1 * M2
-                        Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS) ' (Dist * DistSqrt)
-
+                        Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS)
 
                         ForceX = Force * DistX / DistSqrt
                         ForceY = Force * DistY / DistSqrt
+
                         OutBody(A).ForceTot += Force
-
-
                         OutBody(A).ForceX += ForceX
                         OutBody(A).ForceY += ForceY
 
-                        'OuterOutBody(A).SpeedX += MyStep * ForceX / M1
-                        'OuterOutBody(A).SpeedY += MyStep * ForceY / M1
-
-                        ' If DistSqrt < 100 Then
-
-
-
-                        'Do Until gpuCounter(1) = Body.Length - 1
-
-                        'Loop
-
-
-                        '''''If DistSqrt <= (OutBody(A).Size / 2) + (Body(B).Size / 2) Then 'Collision reaction
-
-
-
-
-                        '''''    OutBody(A).LastColID = B
-                        '''''    OutBody = CollideBodies(OutBody, A, B, DistSqrt, DistX, DistY, ForceX, ForceY)
-
-                        '''''    '  gpThread.SyncThreads()
-                        '''''End If
-
-
-                        'End If
                     Else
                     End If
-                    '  End If
+
                 End If
-                ' UpdateBody(OuterOutBody(A))
-
-
-
-
-
-
 
             Next B
-
-            'OutBody(A).SpeedX += TimeStep * OutBody(A).ForceX / OutBody(A).Mass
-            'OutBody(A).SpeedY += TimeStep * OutBody(A).ForceY / OutBody(A).Mass
-            'OutBody(A).LocX += TimeStep * OutBody(A).SpeedX
-            'OutBody(A).LocY += TimeStep * OutBody(A).SpeedY
-
             gpThread.SyncThreads()
-
-
-
-            'gpThread.atomicIncEx(gpuCounter(1))
-            'OutBody(A).Counter = gpuCounter(1)
-
-
-            'Do Until gpuCounter(1) = Body.Length - 1
-
-
-            'Loop
-
-
-            'For i As Integer = 0 To Body.Length - 1
-            '    If A <> i And Body(i).Visible = 1 Then
-            '        DistX = Body(i).LocX - OutBody(A).LocX
-            '        DistY = Body(i).LocY - OutBody(A).LocY
-            '        Dist = (DistX * DistX) + (DistY * DistY)
-            '        DistSqrt = Sqrt(Dist)
-
-
-            '        If DistSqrt <= (OutBody(A).Size / 2) + (Body(i).Size / 2) Then
-
-
-            '            M1 = OutBody(A).Mass '^ 2
-            '            M2 = Body(i).Mass ' ^ 2
-            '            TotMass = M1 * M2
-            '            Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS) ' (Dist * DistSqrt)
-            '            ForceX = Force * DistX / DistSqrt
-            '            ForceY = Force * DistY / DistSqrt
-
-
-            '            OutBody(A).LastColID = i
-            '            OutBody = CollideBodies(OutBody, A, i, DistSqrt, DistX, DistY, ForceX, ForceY)
-
-
-            '        End If
-
-            '    End If
-
-            'Next
-
-
-
-
-            'OutBody(A).SpeedX += MyStep * OutBody(A).ForceX / OutBody(A).Mass
-            'OutBody(A).SpeedY += MyStep * OutBody(A).ForceY / OutBody(A).Mass
-            'OutBody(A).LocX += MyStep * OutBody(A).SpeedX
-            'OutBody(A).LocY += MyStep * OutBody(A).SpeedY
-
-
-
-
-            ' gpThread.atomicIncEx(temp(1))
-
-            'gpuCounter(gpThread.threadIdx.x)
 
         End If
 
-        '  End If
-        ' End If
-
-        'OuterOutBody(A).LocX = OuterOutBody(A).LocX + (MyStep * OuterOutBody(A).SpeedX)
-        'OuterOutBody(A).LocY = OuterOutBody(A).LocY + (MyStep * OuterOutBody(A).SpeedY)
-        ' tmpBodys.Add(OuterOutBody(A))
-        'CalcColor = ColorsRGB - (OuterOutBody(A).ForceTot * RGBMulti)
-        ''If OutBody(A).ForceTot > OutBody(A).Mass * 4 And OutBody(A).BlackHole = 0 Then ' And OuterOutBody(A).Size < 10 
-        ''    OutBody(A).InRoche = True
-        ''    NewBalls.AddRange(FractureBall(OutBody(A)))
-        ''ElseIf (OutBody(A).ForceTot * 2) < OutBody(A).Mass * 4 Then ' And OuterOutBody(A).Size > 10
-        ''    OutBody(A).InRoche = False
-
-        ''End If
-        '    DistArray.Add(A.ToString + " - " + DistSqrt.ToString)
-
-        ' Next A
-        ' End If
-
-        ''    ShrinkBallArray()
-        ''If UBound(Ball) > 10000 Then
-        ''End If
-        ' UpdateBodies(Body)
-
-
-
-
-        'Dim temp() As UInteger = gpThread.AllocateShared(Of UInteger)("temp", 256)
-        '  temp(1) = 0
-
-        '''''''For i As Integer = 1 To nBodies 'UBound(Bodies)
-        '''''''    Body(i).SpeedX += MyStep * Body(i).ForceX / Body(i).Mass
-        '''''''    Body(i).SpeedY += MyStep * Body(i).ForceY / Body(i).Mass
-        '''''''    Body(i).LocX += MyStep * Body(i).SpeedX
-        '''''''    Body(i).LocY += MyStep * Body(i).SpeedY
-
-        '''''''Next
-
-
-
-        'Body(1).Mass = 9999
-        '  Body(1).Mass = gpThread.threadIdx.x 'UB 'gpThread.blockIdx.x
-        'Body(2).Mass = 'LB 'gpThread.blockDim.x
-
-        'result = Body
-
-
-        'dball = Body
-        '   BodyOut = Body
-        'If NewBalls.Count > 0 Then
-        '    MyBodys.Clear()
-        '    MyBodys.AddRange(OuterBody)
-
-        '    MyBodys.AddRange(NewBalls)
-        '    '  OuterBody = MyBodys.ToArray
-        '    'AddNewBalls(NewBalls)
-        '    '  tmpBodys.AddRange(NewBalls)
-        'Else
-        '    MyBodys.Clear()
-        '    MyBodys.AddRange(OuterBody)
-        'End If
-
-
-
-        '*******  PhysicsWorker.ReportProgress(1, Ball) ******
-        'EndTick = Now.Ticks
-        'ElapTick = EndTick - StartTick
-        'FPS = 10000000 / ElapTick
-        'If FPS > intTargetFPS Then
-        '    intDelay = intDelay + 1
-        'Else
-        '    If intDelay > 0 Then
-        '        intDelay = intDelay - 1
-        '    Else
-        '        intDelay = 0
-        '    End If
-        'End If
-        '   StopTimer()
-        '  Loop
-        ' Return tmpBodys
-
-        '  MyBodys = OuterBody 'tmpBodys
     End Sub
-    '<Cudafy>
-    'Public Function CollideBodies(ColBody() As Prim_Struct, Master As Integer, Slave As Integer, DistSqrt As Double, DistX As Double, DistY As Double, ForceX As Double, ForceY As Double) As Prim_Struct()
-    '    Dim VeKY As Double
-    '    Dim VekX As Double
-    '    Dim V1x As Double
-    '    Dim V2x As Double
-    '    Dim M1 As Double
-    '    Dim M2 As Double
-    '    Dim V1y As Double
-    '    Dim V2y As Double
-    '    Dim EPS As Double = 2
-    '    Dim V1 As Double
-    '    Dim V2 As Double
-    '    Dim U2 As Double
-    '    Dim U1 As Double
-    '    Dim PrevSpdX, PrevSpdY As Double
-    '    Dim Area1 As Double, Area2 As Double
-    '    If DistSqrt > 0 Then
-    '        V1x = ColBody(Master).SpeedX
-    '        V1y = ColBody(Master).SpeedY
-    '        V2x = ColBody(Slave).SpeedX
-    '        V2y = ColBody(Slave).SpeedY
-    '        M1 = ColBody(Master).Mass
-    '        M2 = ColBody(Slave).Mass
-    '        VekX = DistX / 2 ' (Ball(A).LocX - Ball(B).LocX) / 2
-    '        VeKY = DistY / 2 '(Ball(A).LocY - Ball(B).LocY) / 2
-    '        VekX = VekX / (DistSqrt / 2) 'LenG
-    '        VeKY = VeKY / (DistSqrt / 2) 'LenG
-    '        V1 = VekX * V1x + VeKY * V1y
-    '        V2 = VekX * V2x + VeKY * V2y
-    '        U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-    '        U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
-    '        If ColBody(Master).InRoche = 0 And ColBody(Slave).InRoche = 1 Then
-    '            If ColBody(Master).Mass > ColBody(Slave).Mass Then
-    '                PrevSpdX = ColBody(Master).SpeedX
-    '                PrevSpdY = ColBody(Master).SpeedY
-    '                ColBody(Master).SpeedX = ColBody(Master).SpeedX + (U1 - V1) * VekX
-    '                ColBody(Master).SpeedY = ColBody(Master).SpeedY + (U1 - V1) * VeKY
-    '                ColBody(Slave).Visible = 0
-    '                Area1 = PI * (ColBody(Master).Size ^ 2)
-    '                Area2 = PI * (ColBody(Slave).Size ^ 2)
-    '                Area1 = Area1 + Area2
-    '                ColBody(Master).Size = Sqrt(Area1 / PI)
-    '                ColBody(Master).Mass = ColBody(Master).Mass + ColBody(Slave).Mass 'Sqr(Ball(B).Mass)
-    '            ElseIf ColBody(Master).Mass = ColBody(Slave).Mass Then
-    '                If ColBody(Master).UID > ColBody(Slave).UID Then
-    '                    PrevSpdX = ColBody(Master).SpeedX
-    '                    PrevSpdY = ColBody(Master).SpeedY
-    '                    ColBody(Master).SpeedX = ColBody(Master).SpeedX + (U1 - V1) * VekX
-    '                    ColBody(Master).SpeedY = ColBody(Master).SpeedY + (U1 - V1) * VeKY
-    '                    ColBody(Slave).Visible = 0
-    '                    Area1 = PI * (ColBody(Master).Size ^ 2)
-    '                    Area2 = PI * (ColBody(Slave).Size ^ 2)
-    '                    Area1 = Area1 + Area2
-    '                    ColBody(Master).Size = Sqrt(Area1 / PI)
-    '                    ColBody(Master).Mass = ColBody(Master).Mass + ColBody(Slave).Mass 'Sqr(Ball(B).Mass)
-    '                Else
-    '                    ColBody(Master).Visible = 0
-    '                End If
-    '                '''''''''  ColBody(Master).Visible = False
-    '            End If
-    '        ElseIf ColBody(Master).InRoche = 0 And ColBody(Slave).InRoche = 0 Then
-    '            If ColBody(Master).Mass > ColBody(Slave).Mass Then
-    '                PrevSpdX = ColBody(Master).SpeedX
-    '                PrevSpdY = ColBody(Master).SpeedY
-    '                ColBody(Master).SpeedX = ColBody(Master).SpeedX + (U1 - V1) * VekX
-    '                ColBody(Master).SpeedY = ColBody(Master).SpeedY + (U1 - V1) * VeKY
-    '                ColBody(Slave).Visible = 0
-    '                Area1 = PI * (ColBody(Master).Size ^ 2)
-    '                Area2 = PI * (ColBody(Slave).Size ^ 2)
-    '                Area1 = Area1 + Area2
-    '                ColBody(Master).Size = Sqrt(Area1 / PI)
-    '                ColBody(Master).Mass = ColBody(Master).Mass + ColBody(Slave).Mass 'Sqr(Ball(B).Mass)
-    '            ElseIf ColBody(Master).Mass = ColBody(Slave).Mass Then
-    '                If ColBody(Master).UID > ColBody(Slave).UID Then
-    '                    PrevSpdX = ColBody(Master).SpeedX
-    '                    PrevSpdY = ColBody(Master).SpeedY
-    '                    ColBody(Master).SpeedX = ColBody(Master).SpeedX + (U1 - V1) * VekX
-    '                    ColBody(Master).SpeedY = ColBody(Master).SpeedY + (U1 - V1) * VeKY
-    '                    ColBody(Slave).Visible = 0
-    '                    Area1 = PI * (ColBody(Master).Size ^ 2)
-    '                    Area2 = PI * (ColBody(Slave).Size ^ 2)
-    '                    Area1 = Area1 + Area2
-    '                    ColBody(Master).Size = Sqrt(Area1 / PI)
-    '                    ColBody(Master).Mass = ColBody(Master).Mass + ColBody(Slave).Mass 'Sqr(Ball(B).Mass)
-    '                Else
-    '                    ColBody(Master).Visible = 0
-    '                End If
-    '            Else
-    '                ColBody(Master).Visible = 0
-    '            End If
-    '        ElseIf ColBody(Master).InRoche = 1 And ColBody(Slave).InRoche = 1 Then
-    '            Dim multi As Integer = 20
-    '            ColBody(Master).ForceX -= ForceX * multi
-    '            ColBody(Master).ForceY -= ForceY * multi
-    '            'ColBody(Slave).ForceX -= ForceX * multi
-    '            'ColBody(Slave).ForceY -= ForceY * multi
-    '            Dim Friction As Double = 0.8
-    '            ColBody(Master).SpeedX += (U1 - V1) * VekX * Friction
-    '            ColBody(Master).SpeedY += (U1 - V1) * VeKY * Friction
-    '            'ColBody(Slave).SpeedX += (U2 - V2) * VekX * Friction
-    '            'ColBody(Slave).SpeedY += (U2 - V2) * VeKY * Friction
-    '        ElseIf ColBody(Master).InRoche = 1 And ColBody(Slave).InRoche = 0 Then
-    '            ColBody(Master).Visible = 0
-    '        End If
-    '        ' End If
-    '    Else ' if bodies are at exact same position
-    '        If ColBody(Master).Mass > ColBody(Slave).Mass Then
-    '            Area1 = PI * (ColBody(Master).Size ^ 2)
-    '            Area2 = PI * (ColBody(Slave).Size ^ 2)
-    '            Area1 = Area1 + Area2
-    '            ColBody(Master).Size = Sqrt(Area1 / PI)
-    '            ColBody(Master).Mass = ColBody(Master).Mass + ColBody(Slave).Mass 'Sqr(Ball(B).Mass)
-    '            ColBody(Slave).Visible = 0
-    '        Else
-    '            'Area1 = PI * (ColBody(Master).Size ^ 2)
-    '            'Area2 = PI * (ColBody(Slave).Size ^ 2)
-    '            'Area1 = Area1 + Area2
-    '            'ColBody(Slave).Size = Sqrt(Area1 / PI)
-    '            'ColBody(Slave).Mass = ColBody(Slave).Mass + ColBody(Master).Mass 'Sqr(Ball(B).Mass)
-    '            ColBody(Master).Visible = 0
-    '        End If
-    '    End If
-    '    Return ColBody
-    'End Function
-
     <Cudafy>
     Public Sub CollideBodies(gpThread As GThread, Body() As Prim_Struct, ColBody() As Prim_Struct, TimeStep As Double) 'Master As Integer, Slave As Integer, DistSqrt As Double, DistX As Double, DistY As Double, ForceX As Double, ForceY As Double) As Prim_Struct()
         Dim VeKY As Double
@@ -620,7 +266,6 @@ Public Module CUDA
         Dim U1 As Double
         Dim PrevSpdX, PrevSpdY As Double
         Dim Area1 As Double, Area2 As Double
-
         Dim TotMass As Double
         Dim Force As Double
         Dim ForceX As Double
@@ -629,18 +274,10 @@ Public Module CUDA
         Dim DistY As Double
         Dim Dist As Double
         Dim DistSqrt As Double
-        'Dim M1, M2 As Double
-
-
 
         Dim Master As Integer = gpThread.blockDim.x * gpThread.blockIdx.x + gpThread.threadIdx.x
-
         If Master <= Body.Length - 1 And Body(Master).Visible = 1 Then
-
-
             ColBody(Master) = Body(Master)
-
-
             For Slave As Integer = 0 To Body.Length - 1
 
                 If Master <> Slave And Body(Slave).Visible = 1 Then
@@ -648,9 +285,6 @@ Public Module CUDA
                     DistY = Body(Slave).LocY - ColBody(Master).LocY
                     Dist = (DistX * DistX) + (DistY * DistY)
                     DistSqrt = Sqrt(Dist)
-
-
-
 
                     If DistSqrt <= (ColBody(Master).Size / 2) + (Body(Slave).Size / 2) Then
                         If DistSqrt > 0 Then
@@ -735,11 +369,8 @@ Public Module CUDA
                                 M2 = Body(Slave).Mass ' ^ 2
                                 TotMass = M1 * M2
                                 Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS) ' (Dist * DistSqrt)
-
-
                                 ForceX = Force * DistX / DistSqrt
                                 ForceY = Force * DistY / DistSqrt
-
 
 
                                 Dim multi As Integer = 20
@@ -781,14 +412,8 @@ Public Module CUDA
 
         End If
 
-        'OutBody(A).SpeedX += TimeStep * OutBody(A).ForceX / OutBody(A).Mass
-        'OutBody(A).SpeedY += TimeStep * OutBody(A).ForceY / OutBody(A).Mass
-        'OutBody(A).LocX += TimeStep * OutBody(A).SpeedX
-        'OutBody(A).LocY += TimeStep * OutBody(A).SpeedY
-
         gpThread.SyncThreads()
 
-        'Return ColBody
     End Sub
 
     Private Function FractureBall(ByRef Body As Prim_Struct) As List(Of Prim_Struct)

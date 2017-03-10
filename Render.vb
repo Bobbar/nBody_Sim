@@ -58,6 +58,7 @@ Public Module Renderer
                 If bolStopWorker Then
                     Exit Sub
                 End If
+
                 If BallArray(i).Visible = 1 Or bolShowAll Then
                     If bolCulling And BodyLoc.X + FinalOffset.X < 0 Or bolCulling And BodyLoc.X + FinalOffset.X > Form1.Render.Width / pic_scale Or bolCulling And BodyLoc.Y + FinalOffset.Y < 0 Or bolCulling And BodyLoc.Y + FinalOffset.Y > Form1.Render.Height / pic_scale Then
                     Else

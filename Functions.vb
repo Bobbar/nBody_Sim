@@ -94,30 +94,49 @@ Module Functions
 
     End Sub
     Public Function VisibleBalls() As Integer
-        'Dim tot As Integer = 0
-        'For i As Integer = 0 To UBound(Ball)
+        Dim tot As Integer = 0
+        For i As Integer = 0 To UBound(Ball)
 
-        '    If Ball(i).Visible = 1 And i <= UBound(Ball) Then tot += 1
-        'Next
-        'Return tot
-        Return VisBalls
+            If Ball(i).Visible = 1 And i <= UBound(Ball) Then tot += 1
+        Next
+        Return tot
+        ' Return VisBalls
     End Function
     Public Function CullBodies(Bodies() As Prim_Struct) As Prim_Struct()
-        '    StartTimer()
+        ''    StartTimer()
 
 
-        'Dim tmpBodies(0) As Prim_Struct
-        Dim tmpBodies As New List(Of Prim_Struct)
-        For i As Integer = 0 To UBound(Bodies)
+        ''Dim tmpBodies(0) As Prim_Struct
+        'Dim tmpBodies As New List(Of Prim_Struct)
+        'For i As Integer = 0 To UBound(Bodies)
+        '    If Bodies(i).Visible = 1 Then
+
+        '        tmpBodies.Add(Bodies(i))
+        '        'ReDim Preserve tmpBodies(UBound(tmpBodies) + 1)
+        '        'tmpBodies(UBound(tmpBodies)) = Bodies(i)
+        '    End If
+        'Next
+        ''  StopTimer()
+        'Return tmpBodies.ToArray
+
+
+
+        Dim tmpBodies(0) As Prim_Struct
+        For i As Integer = 0 To Bodies.Length - 1
             If Bodies(i).Visible = 1 Then
+                ReDim Preserve tmpBodies(tmpBodies.Length)
+                tmpBodies(tmpBodies.Length - 1) = Bodies(i)
 
-                tmpBodies.Add(Bodies(i))
-                'ReDim Preserve tmpBodies(UBound(tmpBodies) + 1)
-                'tmpBodies(UBound(tmpBodies)) = Bodies(i)
             End If
+
+
+
+
         Next
-        '  StopTimer()
-        Return tmpBodies.ToArray
+
+
+        Return tmpBodies
+
     End Function
 
     Public Function RndIntUID(BdyIndex As Integer) As Integer

@@ -1946,14 +1946,14 @@ Err:
         InitGPU()
 
         Do Until bolStopWorker
-            bolRendering = True
+            '  bolRendering = True
 
 
-            StartCalc()
+            If Not bolRendering Then StartCalc()
 
 
 
-            bolRendering = False
+            ' bolRendering = False
             ' If Not bolDrawing Then Drawr(Ball)
             CalcDelay()
 
