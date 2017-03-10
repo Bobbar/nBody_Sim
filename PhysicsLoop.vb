@@ -135,22 +135,22 @@ Public Module PhysicsLoop
         <ProtoBuf.ProtoMember(3)>
         Public LocY As Double
         <ProtoBuf.ProtoMember(4)>
-        Public Visible As Boolean
+        Public Visible As Integer
         <ProtoBuf.ProtoMember(5)>
-        Public Flags As String
+        Public BlackHole As Integer
         <ProtoBuf.ProtoMember(6)>
         Public UID As Long 'String
-
-        Public Color As Color
         <ProtoBuf.ProtoMember(7)>
-        Private Property ColorSerialized() As Integer
-            Get
-                Return Color.ToArgb()
-            End Get
-            Set
-                Color = Color.FromArgb(Value)
-            End Set
-        End Property
+        Public Color As Integer
+        '    <ProtoBuf.ProtoMember(7)>
+        '    Private Property ColorSerialized() As Integer
+        '        Get
+        '            Return Color.ToArgb()
+        '        End Get
+        '        Set
+        '            Color = Color.FromArgb(Value)
+        '        End Set
+        '    End Property
     End Structure
 
     Public RecordedBodies As New List(Of BallParms())
