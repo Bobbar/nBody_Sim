@@ -79,7 +79,6 @@ Public Module CUDA
     Public Sub StartCalc()
 
         bolRendering = True
-
         ' If Not bolPlaying Then
         ' Dim Ball() As Prim_Struct ' = Ball
         If ((Ball.Length - 1) - VisibleBalls()) > 1000 Then
@@ -120,7 +119,6 @@ Public Module CUDA
         gpu.Synchronize()
         gpu.CopyFromDevice(gpuOutBall, Ball)
         gpu.FreeAll()
-
         'Allocate the updated body array and perform another kernel execution for collisions.
         gpuInBall = gpu.Allocate(Ball)
         OutBall = New Prim_Struct(Ball.Length - 1) {}
@@ -130,7 +128,6 @@ Public Module CUDA
         gpu.Synchronize()
         gpu.CopyFromDevice(gpuOutBall, Ball)
         gpu.FreeAll()
-
         'Copy the new data back into the public array
         ' Ball = Ball
         ' Ball = Nothing
@@ -160,12 +157,14 @@ Public Module CUDA
             Array.Resize(Ball, (origLen + NewBalls.Count))
             Array.Copy(NewBalls.ToArray, 0, Ball, origLen, (NewBalls.Count))
         End If
-
         'Ball = Ball
 
         '  End If
         bolRendering = False
 
+    End Sub
+    Private Sub DebugVis()
+        '  Debug.Print(Ball(1483).Visible)
     End Sub
     Private Sub UpdateBodies(ByRef Body() As Prim_Struct)
 
@@ -208,46 +207,50 @@ Public Module CUDA
         Dim DistSqrt As Double
         Dim M1, M2 As Double
         Dim EPS As Double = 1.02
-        If A <= Body.Length - 1 And Body(A).Visible = 1 Then
-
+        If A <= Body.Length - 1 Then
             OutBody(A) = Body(A)
-            OutBody(A).ThreadID = gpThread.threadIdx.x
-            OutBody(A).BlockID = gpThread.blockIdx.x
-            OutBody(A).BlockDIM = gpThread.blockDim.x
-
-            OutBody(A).ForceX = 0
-            OutBody(A).ForceY = 0
-            OutBody(A).ForceTot = 0
+            If Body(A).Visible = 1 Then
 
 
 
-            For B = 0 To Body.Length - 1
-                If A <> B And Body(B).Visible = 1 Then
-                    DistX = Body(B).LocX - OutBody(A).LocX
-                    DistY = Body(B).LocY - OutBody(A).LocY
-                    Dist = (DistX * DistX) + (DistY * DistY)
-                    DistSqrt = Sqrt(Dist)
-                    If DistSqrt > 0 Then 'Gravity reaction
-                        M1 = OutBody(A).Mass '^ 2
-                        M2 = Body(B).Mass ' ^ 2
-                        TotMass = M1 * M2
-                        Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS)
+                OutBody(A).ThreadID = gpThread.threadIdx.x
+                OutBody(A).BlockID = gpThread.blockIdx.x
+                OutBody(A).BlockDIM = gpThread.blockDim.x
 
-                        ForceX = Force * DistX / DistSqrt
-                        ForceY = Force * DistY / DistSqrt
+                OutBody(A).ForceX = 0
+                OutBody(A).ForceY = 0
+                OutBody(A).ForceTot = 0
 
-                        OutBody(A).ForceTot += Force
-                        OutBody(A).ForceX += ForceX
-                        OutBody(A).ForceY += ForceY
 
-                    Else
+
+                For B = 0 To Body.Length - 1
+                    If A <> B And Body(B).Visible = 1 Then
+                        DistX = Body(B).LocX - OutBody(A).LocX
+                        DistY = Body(B).LocY - OutBody(A).LocY
+                        Dist = (DistX * DistX) + (DistY * DistY)
+                        DistSqrt = Sqrt(Dist)
+                        If DistSqrt > 0 Then 'Gravity reaction
+                            M1 = OutBody(A).Mass '^ 2
+                            M2 = Body(B).Mass ' ^ 2
+                            TotMass = M1 * M2
+                            Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS)
+
+                            ForceX = Force * DistX / DistSqrt
+                            ForceY = Force * DistY / DistSqrt
+
+                            OutBody(A).ForceTot += Force
+                            OutBody(A).ForceX += ForceX
+                            OutBody(A).ForceY += ForceY
+
+                        Else
+                        End If
+
                     End If
 
-                End If
 
-            Next B
-            gpThread.SyncThreads()
-
+                Next B
+                gpThread.SyncThreads()
+            End If
         End If
 
     End Sub
@@ -373,14 +376,11 @@ Public Module CUDA
                                 Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS) ' (Dist * DistSqrt)
                                 ForceX = Force * DistX / DistSqrt
                                 ForceY = Force * DistY / DistSqrt
-
-
                                 Dim multi As Integer = 20
                                 ColBody(Master).ForceX -= ForceX * multi
                                 ColBody(Master).ForceY -= ForceY * multi
-                                'Body(Slave).ForceX -= ForceX * multi
-                                'Body(Slave).ForceY -= ForceY * multi
-                                Dim Friction As Double = 0.1
+
+                                Dim Friction As Double = 0.2
                                 ColBody(Master).SpeedX += (U1 - V1) * VekX * Friction
                                 ColBody(Master).SpeedY += (U1 - V1) * VeKY * Friction
                                 'Body(Slave).SpeedX += (U2 - V2) * VekX * Friction

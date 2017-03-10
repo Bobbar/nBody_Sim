@@ -2002,13 +2002,13 @@ Err:
         'Dim tmpBodys As New List(Of BallParms)
         'tmpBodys.AddRange(e.UserState)
 
-        Dim PassBall() As Prim_Struct = e.UserState ' tmpBodys.ToArray
+        '  Dim PassBall() As Prim_Struct = e.UserState ' tmpBodys.ToArray
         If bolPlaying Then
 
             SeekBar.Value = e.ProgressPercentage
             ' Me.Invalidate()
         End If
-        If bolDraw And Not bolDrawing Then Drawr(PassBall) '  Me.Render.Image = Drawr(PassBall)
+        If bolDraw And Not bolDrawing Then Drawr(Ball) '(PassBall) '  Me.Render.Image = Drawr(PassBall)
 
     End Sub
     Private Sub tsmShowAll_Click(sender As Object, e As EventArgs) Handles tsmShowAll.Click
