@@ -160,7 +160,7 @@ Public Class Form1
     Private Sub Form1_KeyDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles MyBase.KeyDown
         If e.KeyCode = 16 Then bolShiftDown = True
         If e.KeyCode = 17 Then
-            bolStopLoop = True
+            ' bolStopLoop = True
             ' t.Suspend()
             't2.Suspend()
             't3.Suspend()
@@ -172,7 +172,7 @@ Public Class Form1
     Private Sub Form1_KeyUp(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles MyBase.KeyUp
         If e.KeyCode = 16 Then bolShiftDown = False
         If e.KeyCode = 17 Then
-            bolStopLoop = False
+            '  bolStopLoop = False
             't.Resume()
             ' t2.Resume()
             't3.Resume()
@@ -328,7 +328,7 @@ Err:
     Private Sub Render_MouseUp(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Render.MouseUp
         On Error Resume Next
         Timer3.Enabled = False
-        bolStopDraw = False
+        If bolStopDraw Then bolStopDraw = False
         'For i = 0 To UBound(Ball)
         '    Ball(i).MovinG = False
         'Next
@@ -450,7 +450,7 @@ Err:
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
         bolStop = Not bolStop
         If bolStop Then
-            '   SeekIndex = SeekBar.Value
+            SeekIndex = SeekBar.Value
             Button3.Text = "Start"
 
             ' tmrFollow.Enabled = False
@@ -459,6 +459,7 @@ Err:
             ' t3.Suspend()
             bolStopLoop = True
         Else
+            SeekIndex = SeekBar.Value
             Button3.Text = "Stop"
 
             '    tmrFollow.Enabled = True
@@ -1205,20 +1206,6 @@ Err:
 
 
 
-    Private Sub PhysicsWorker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles PhysicsWorker.ProgressChanged
-        ' Debug.Print("Render complete " & Now.Ticks)
-        'Dim tmpBodys As New List(Of BallParms)
-        'tmpBodys.AddRange(e.UserState)
-
-        Dim PassBall() As Prim_Struct = e.UserState ' tmpBodys.ToArray
-        If bolPlaying Then
-
-            SeekBar.Value = e.ProgressPercentage
-            Me.Invalidate()
-        End If
-        If bolDraw And Not bolDrawing Then Drawr(PassBall) '  Me.Render.Image = Drawr(PassBall)
-
-    End Sub
     'Public Function CalcPhysics(iUpperBody As Integer, iLowerBody As Integer, MainBodyArray() As BallParms) As List(Of BallParms)
 
     '    Dim uBoundBody, lBoundBody As Integer
@@ -1988,6 +1975,7 @@ Err:
 
                     CalcDelay()
                     bolRendering = False
+
                 Next i
 
 
@@ -2009,6 +1997,20 @@ Err:
 
     End Sub
 
+    Private Sub PhysicsWorker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles PhysicsWorker.ProgressChanged
+        ' Debug.Print("Render complete " & Now.Ticks)
+        'Dim tmpBodys As New List(Of BallParms)
+        'tmpBodys.AddRange(e.UserState)
+
+        Dim PassBall() As Prim_Struct = e.UserState ' tmpBodys.ToArray
+        If bolPlaying Then
+
+            SeekBar.Value = e.ProgressPercentage
+            ' Me.Invalidate()
+        End If
+        If bolDraw And Not bolDrawing Then Drawr(PassBall) '  Me.Render.Image = Drawr(PassBall)
+
+    End Sub
     Private Sub tsmShowAll_Click(sender As Object, e As EventArgs) Handles tsmShowAll.Click
         bolShowAll = tsmShowAll.Checked
     End Sub

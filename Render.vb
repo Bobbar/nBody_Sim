@@ -50,8 +50,10 @@ Public Module Renderer
         Dim myBrush As SolidBrush '(BallArray(i).Color)
         If bolDraw Then
             bolDrawing = True
-            If bolFollow Then FollowLoc = FollowBodyLoc()
-
+            If bolFollow Then
+                FollowLoc = FollowBodyLoc(BallArray)
+                If FollowLoc Is Nothing Then bolFollow = False
+            End If
             For i = 0 To UBound(BallArray)
                 BodyLoc = New SPoint(Convert.ToSingle(BallArray(i).LocX), Convert.ToSingle(BallArray(i).LocY))
                 BodySize = Convert.ToSingle(BallArray(i).Size)
@@ -62,8 +64,6 @@ Public Module Renderer
                 If BallArray(i).Visible = 1 Or bolShowAll Then
                     If bolCulling And BodyLoc.X + FinalOffset.X < 0 Or bolCulling And BodyLoc.X + FinalOffset.X > Form1.Render.Width / pic_scale Or bolCulling And BodyLoc.Y + FinalOffset.Y < 0 Or bolCulling And BodyLoc.Y + FinalOffset.Y > Form1.Render.Height / pic_scale Then
                     Else
-
-
                         If bolInvert Then
                             myBrush = New SolidBrush(Color.Black)
                         Else
@@ -157,8 +157,8 @@ Public Module Renderer
         bolDrawing = False
         '   Return bm
     End Sub
-    Private Function FollowBodyLoc() As SPoint
-        For Each b As Prim_Struct In Ball
+    Private Function FollowBodyLoc(Balls() As Prim_Struct) As SPoint
+        For Each b As Prim_Struct In Balls
             If b.UID = FollowGUID Then
                 Return New SPoint(b.LocX, b.LocY)
 

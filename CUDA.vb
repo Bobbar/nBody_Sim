@@ -167,12 +167,6 @@ Public Module CUDA
         bolRendering = False
 
     End Sub
-    'Private 
-    'Private Function DebugVis(Bodies() As Prim_Struct)
-
-
-
-    'End Function
     Private Sub UpdateBodies(ByRef Body() As Prim_Struct)
 
         'Dim tmpBody() As Prim_Struct = Body
