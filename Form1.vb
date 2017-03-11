@@ -591,15 +591,10 @@ Err:
         Ball(PubSel).SpeedY = txtSpeedY.Text
         Ball(PubSel).Size = txtSize.Text
         Ball(PubSel).Mass = txtMass.Text
+        Ball(PubSel).BlackHole = Int(txtFlag.Text)
         '  Ball(PubSel).Flags = txtFlag.Text
     End Sub
-    Private Sub Painter_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs)
-    End Sub
-    Private Sub Render_PaddingChanged(sender As Object, e As EventArgs) Handles Render.PaddingChanged
-    End Sub
 
-    Private Sub txtStep_HelpRequested(sender As Object, hlpevent As HelpEventArgs)
-    End Sub
     Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
         Dim TotalMass As Double
         For i = 1 To UBound(Ball)
@@ -1648,7 +1643,7 @@ Err:
             lblRecSize.Visible = False
         End If
 
-
+        StepMulti = TimeStep.Value
 
         ScreenCenterX = Me.Render.Width / 2
         ScreenCenterY = Me.Render.Height / 2
@@ -1718,31 +1713,31 @@ Err:
         'Dim fStream As New FileStream(SaveDialog.FileName, FileMode.OpenOrCreate)
 
         'bf.Serialize(fStream, Ball)
-
+        Dim ConvertBody() As Serial_Prim_Struct = CUDAToSerial(Ball)
         If SaveDialog.FileName <> "" Then
             Dim fStream As New FileStream(SaveDialog.FileName, FileMode.OpenOrCreate)
-            ProtoBuf.Serializer.Serialize(fStream, Ball)
+            ProtoBuf.Serializer.Serialize(fStream, ConvertBody)
             ' bf.Serialize(fStream, RecordedBodies)
         End If
 
     End Sub
 
     Private Sub tsmLoad_Click(sender As Object, e As EventArgs) Handles tsmLoad.Click
-        MsgBox("Disabled")
-        'Dim OpenDialog As New OpenFileDialog()
-        'OpenDialog.Filter = "Body State File|*.sta"
-        'OpenDialog.Title = "Open State File"
-        'If OpenDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
-        '    ' Dim sr As New System.IO.StreamReader(OpenFileDialog1.FileName)
-        '    Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-        '    Dim fStream As New FileStream(OpenDialog.FileName, FileMode.OpenOrCreate)
+        '  MsgBox("Disabled")
+        Dim OpenDialog As New OpenFileDialog()
+        OpenDialog.Filter = "Body State File|*.sta"
+        OpenDialog.Title = "Open State File"
+        If OpenDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
+            ' Dim sr As New System.IO.StreamReader(OpenFileDialog1.FileName)
+            Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            Dim fStream As New FileStream(OpenDialog.FileName, FileMode.OpenOrCreate)
 
-        '    'fStream.Position = 0 ' reset stream pointer
-        '    ' Ball = bf.Deserialize(fStream) ' read from file
+            'fStream.Position = 0 ' reset stream pointer
+            ' Ball = bf.Deserialize(fStream) ' read from file
 
-        '    Ball = ProtoBuf.Serializer.Deserialize(Of BallParms())(fStream)
-        '    'sr.Close()
-        'End If
+            Ball = SerialToCUDA(ProtoBuf.Serializer.Deserialize(Of Serial_Prim_Struct())(fStream))
+            'sr.Close()
+        End If
 
     End Sub
 
@@ -1825,6 +1820,8 @@ Err:
                 ProtoBuf.Serializer.Serialize(fStream, _nestedArrayForProtoBuf)
 
                 ' bf.Serialize(fStream, RecordedBodies)
+                CompRecBodies.Clear()
+            Else
                 CompRecBodies.Clear()
             End If
 
@@ -2013,5 +2010,9 @@ Err:
     End Sub
     Private Sub tsmShowAll_Click(sender As Object, e As EventArgs) Handles tsmShowAll.Click
         bolShowAll = tsmShowAll.Checked
+    End Sub
+
+    Private Sub txtFlag_TextChanged(sender As Object, e As EventArgs) Handles txtFlag.TextChanged
+
     End Sub
 End Class

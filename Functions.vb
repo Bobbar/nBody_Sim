@@ -1,7 +1,12 @@
 ﻿Imports System.Math
 Imports System.Threading.Tasks
 Imports System.Threading
+Imports System.Reflection
 Module Functions
+
+
+
+
     Public bolTrails As Boolean = False
     Public bolDraw As Boolean = True
     Public bolLines As Boolean = False
@@ -142,5 +147,64 @@ Module Functions
     Public Function RndIntUID(BdyIndex As Integer) As Integer
         Dim rnd As Random = New Random
         Return rnd.Next + BdyIndex
+    End Function
+    Public Function CUDAToSerial(Bodies() As Prim_Struct) As Serial_Prim_Struct()
+
+        Dim SerialBody(Bodies.Length - 1) As Serial_Prim_Struct
+        For i As Integer = 0 To Bodies.Length - 1
+
+            SerialBody(i).LocX = Bodies(i).LocX
+            SerialBody(i).LocY = Bodies(i).LocY
+            SerialBody(i).Mass = Bodies(i).Mass
+            SerialBody(i).SpeedX = Bodies(i).SpeedX
+            SerialBody(i).SpeedY = Bodies(i).SpeedY
+            SerialBody(i).ForceX = Bodies(i).ForceX
+            SerialBody(i).ForceY = Bodies(i).ForceY
+            SerialBody(i).ForceTot = Bodies(i).ForceTot
+            SerialBody(i).Color = Bodies(i).Color
+            SerialBody(i).Size = Bodies(i).Size
+            SerialBody(i).Visible = Bodies(i).Visible
+            SerialBody(i).InRoche = Bodies(i).InRoche
+            SerialBody(i).BlackHole = Bodies(i).BlackHole
+            SerialBody(i).UID = Bodies(i).UID
+            'SerialBody(i).ThreadID = Bodies(i).ThreadID
+            'SerialBody(i).BlockID = Bodies(i).BlockID
+            'SerialBody(i).BlockDIM = Bodies(i).BlockDIM
+            'SerialBody(i).LastColID = Bodies(i).LastColID
+
+
+        Next
+
+        Return SerialBody
+
+    End Function
+    Public Function SerialToCUDA(Bodies() As Serial_Prim_Struct) As Prim_Struct()
+
+        Dim CUDABody(Bodies.Length - 1) As Prim_Struct
+        For i As Integer = 0 To Bodies.Length - 1
+
+            CUDABody(i).LocX = Bodies(i).LocX
+            CUDABody(i).LocY = Bodies(i).LocY
+            CUDABody(i).Mass = Bodies(i).Mass
+            CUDABody(i).SpeedX = Bodies(i).SpeedX
+            CUDABody(i).SpeedY = Bodies(i).SpeedY
+            CUDABody(i).ForceX = Bodies(i).ForceX
+            CUDABody(i).ForceY = Bodies(i).ForceY
+            CUDABody(i).ForceTot = Bodies(i).ForceTot
+            CUDABody(i).Color = Bodies(i).Color
+            CUDABody(i).Size = Bodies(i).Size
+            CUDABody(i).Visible = Bodies(i).Visible
+            CUDABody(i).InRoche = Bodies(i).InRoche
+            CUDABody(i).BlackHole = Bodies(i).BlackHole
+            CUDABody(i).UID = Bodies(i).UID
+            'CUDABody(i).ThreadID = Bodies(i).ThreadID
+            'CUDABody(i).BlockID = Bodies(i).BlockID
+            'CUDABody(i).BlockDIM = Bodies(i).BlockDIM
+            'CUDABody(i).LastColID = Bodies(i).LastColID
+
+        Next
+
+        Return CUDABody
+
     End Function
 End Module

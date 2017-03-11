@@ -47,7 +47,7 @@ Public Module PhysicsLoop
     ' Public rd As Single
     Public bolStop As Boolean
 
-    <Cudafy>
+    ' <Cudafy>
     <ProtoBuf.ProtoContract>
     Public Structure BallParms
 

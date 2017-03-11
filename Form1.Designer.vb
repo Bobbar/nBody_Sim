@@ -59,6 +59,7 @@ Partial Class Form1
         Me.Draw = New System.Windows.Forms.ToolStripMenuItem()
         Me.AntiA = New System.Windows.Forms.ToolStripMenuItem()
         Me.Invert = New System.Windows.Forms.ToolStripMenuItem()
+        Me.tsmShowAll = New System.Windows.Forms.ToolStripMenuItem()
         Me.tsmCull = New System.Windows.Forms.ToolStripMenuItem()
         Me.Tools = New System.Windows.Forms.ToolStripMenuItem()
         Me.TotalMassToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -75,7 +76,6 @@ Partial Class Form1
         Me.lblRecFrames = New System.Windows.Forms.Label()
         Me.lblRecSize = New System.Windows.Forms.Label()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.tsmShowAll = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -219,6 +219,7 @@ Partial Class Form1
         Me.txtFlag.Name = "txtFlag"
         Me.txtFlag.Size = New System.Drawing.Size(37, 20)
         Me.txtFlag.TabIndex = 33
+        Me.txtFlag.Text = "0"
         Me.ToolTip1.SetToolTip(Me.txtFlag, "Flags")
         '
         'butAddBall
@@ -437,6 +438,13 @@ Partial Class Form1
         Me.Invert.Size = New System.Drawing.Size(161, 22)
         Me.Invert.Text = "Invert Colors"
         '
+        'tsmShowAll
+        '
+        Me.tsmShowAll.CheckOnClick = True
+        Me.tsmShowAll.Name = "tsmShowAll"
+        Me.tsmShowAll.Size = New System.Drawing.Size(161, 22)
+        Me.tsmShowAll.Text = "Show All"
+        '
         'tsmCull
         '
         Me.tsmCull.Checked = True
@@ -456,19 +464,19 @@ Partial Class Form1
         'TotalMassToolStripMenuItem
         '
         Me.TotalMassToolStripMenuItem.Name = "TotalMassToolStripMenuItem"
-        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.TotalMassToolStripMenuItem.Text = "Total Mass"
         '
         'tsmSave
         '
         Me.tsmSave.Name = "tsmSave"
-        Me.tsmSave.Size = New System.Drawing.Size(130, 22)
+        Me.tsmSave.Size = New System.Drawing.Size(152, 22)
         Me.tsmSave.Text = "Save State"
         '
         'tsmLoad
         '
         Me.tsmLoad.Name = "tsmLoad"
-        Me.tsmLoad.Size = New System.Drawing.Size(130, 22)
+        Me.tsmLoad.Size = New System.Drawing.Size(152, 22)
         Me.tsmLoad.Text = "Load State"
         '
         'Panel1
@@ -589,13 +597,6 @@ Partial Class Form1
         'Timer1
         '
         Me.Timer1.Interval = 200
-        '
-        'tsmShowAll
-        '
-        Me.tsmShowAll.CheckOnClick = True
-        Me.tsmShowAll.Name = "tsmShowAll"
-        Me.tsmShowAll.Size = New System.Drawing.Size(161, 22)
-        Me.tsmShowAll.Text = "Show All"
         '
         'Form1
         '

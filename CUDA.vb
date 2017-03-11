@@ -43,6 +43,41 @@ Public Module CUDA
         Public BlockDIM As Integer
         Public LastColID As Integer
     End Structure
+    <ProtoBuf.ProtoContract>
+    Public Structure Serial_Prim_Struct
+        <ProtoBuf.ProtoMember(1)>
+        Public LocX As Double
+        <ProtoBuf.ProtoMember(2)>
+        Public LocY As Double
+        <ProtoBuf.ProtoMember(3)>
+        Public Mass As Double
+        <ProtoBuf.ProtoMember(4)>
+        Public SpeedX As Double
+        <ProtoBuf.ProtoMember(5)>
+        Public SpeedY As Double
+        <ProtoBuf.ProtoMember(6)>
+        Public ForceX As Double
+        <ProtoBuf.ProtoMember(7)>
+        Public ForceY As Double
+        <ProtoBuf.ProtoMember(8)>
+        Public ForceTot As Double
+        <ProtoBuf.ProtoMember(9)>
+        Public Color As Integer
+        <ProtoBuf.ProtoMember(10)>
+        Public Size As Double
+        <ProtoBuf.ProtoMember(11)>
+        Public Visible As Integer
+        <ProtoBuf.ProtoMember(12)>
+        Public InRoche As Integer
+        <ProtoBuf.ProtoMember(13)>
+        Public BlackHole As Integer
+        <ProtoBuf.ProtoMember(14)>
+        Public UID As Long
+        '   Public ThreadID As Integer
+        'Public BlockID As Integer
+        'Public BlockDIM As Integer
+        'Public LastColID As Integer
+    End Structure
     '<Cudafy>
     Public Ball() As Prim_Struct 'BallParms
 
@@ -149,6 +184,9 @@ Public Module CUDA
                 ElseIf (Ball(a).ForceTot * 2) < Ball(a).Mass * 4 Then ' And OuterBody(A).Size > 10
                     Ball(a).InRoche = 0
                     Ball(a).ForceTot = 0
+                ElseIf Ball(a).BlackHole = 2 Then
+                    Ball(a).InRoche = 1
+                    Ball(a).ForceTot = 0
                 End If
             End If
         Next
@@ -206,7 +244,7 @@ Public Module CUDA
         Dim Dist As Double
         Dim DistSqrt As Double
         Dim M1, M2 As Double
-        Dim EPS As Double = 1.02
+        Dim EPS As Double = 2
         If A <= Body.Length - 1 Then
             OutBody(A) = Body(A)
             If Body(A).Visible = 1 Then
@@ -264,7 +302,7 @@ Public Module CUDA
         Dim M2 As Double
         Dim V1y As Double
         Dim V2y As Double
-        Dim EPS As Double = 2
+
         Dim V1 As Double
         Dim V2 As Double
         Dim U2 As Double
@@ -369,18 +407,19 @@ Public Module CUDA
                                 End If
                             ElseIf ColBody(Master).InRoche = 1 And Body(Slave).InRoche = 1 Then
 
-
-                                M1 = ColBody(Master).Mass '^ 2
-                                M2 = Body(Slave).Mass ' ^ 2
+                                'Lame Spring force attempt. It's literally a reversed gravity force that's increased with a multiplier.
+                                M1 = ColBody(Master).Mass
+                                M2 = Body(Slave).Mass
                                 TotMass = M1 * M2
-                                Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS) ' (Dist * DistSqrt)
+                                Dim EPS As Double = 1.02
+                                Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS)
                                 ForceX = Force * DistX / DistSqrt
                                 ForceY = Force * DistY / DistSqrt
-                                Dim multi As Integer = 20
+                                Dim multi As Integer = 40
                                 ColBody(Master).ForceX -= ForceX * multi
                                 ColBody(Master).ForceY -= ForceY * multi
 
-                                Dim Friction As Double = 0.2
+                                Dim Friction As Double = 0.1
                                 ColBody(Master).SpeedX += (U1 - V1) * VekX * Friction
                                 ColBody(Master).SpeedY += (U1 - V1) * VeKY * Friction
                                 'Body(Slave).SpeedX += (U2 - V2) * VekX * Friction

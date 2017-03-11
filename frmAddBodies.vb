@@ -155,31 +155,39 @@ Public Class frmAddBodies
 
     End Sub
     Private Sub AddBodies_Stationary(NumberOfBodies As Integer, MaxSize As Integer, MinSize As Integer, BodyMass As Integer)
-        Density = txtDensity.Text
+        Dim bolStoppedToAdd As Boolean = False
+        If Not bolStopLoop Then
+            bolStoppedToAdd = True
+            bolStopLoop = True
+            wait(300)
+            Density = txtDensity.Text
 
-        For i As Integer = 0 To NumberOfBodies
+            For i As Integer = 0 To NumberOfBodies
 
-            ReDim Preserve Ball(UBound(Ball) + 1)
-            Ball(UBound(Ball)).UID = RndIntUID(UBound(Ball)) 'Guid.NewGuid.ToString
-            '  Thread.Sleep(1)
-            'Debug.Print(Ball(UBound(Ball)).UID.ToString)
+                ReDim Preserve Ball(UBound(Ball) + 1)
+                Ball(UBound(Ball)).UID = RndIntUID(UBound(Ball)) 'Guid.NewGuid.ToString
+                '  Thread.Sleep(1)
+                'Debug.Print(Ball(UBound(Ball)).UID.ToString)
 
-            Ball(UBound(Ball)).Color = RandomRGBColor().ToArgb 'colDefBodyColor ' Color.Orange.ToArgb
-            Ball(UBound(Ball)).Visible = 1
-            Ball(UBound(Ball)).LocX = GetRandomNumber(1, Form1.Render.Width / pic_scale) - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
-            Ball(UBound(Ball)).LocY = GetRandomNumber(1, Form1.Render.Height / pic_scale) - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
-            Ball(UBound(Ball)).SpeedX = 0
-            Ball(UBound(Ball)).SpeedY = 0
-            ' Ball(UBound(Ball)).bTimestep = StepMulti
-            ' Ball(UBound(Ball)).Flags = ""
-            Ball(UBound(Ball)).Size = GetRandomNumber(MinSize, MaxSize)
-            If BodyMass > 0 Then
-                Ball(UBound(Ball)).Mass = BodyMass
-            Else
-                Ball(UBound(Ball)).Mass = fnMass(Ball(UBound(Ball)).Size) ' * 2
-            End If
-        Next
+                Ball(UBound(Ball)).Color = RandomRGBColor().ToArgb 'colDefBodyColor ' Color.Orange.ToArgb
+                Ball(UBound(Ball)).Visible = 1
+                Ball(UBound(Ball)).LocX = GetRandomNumber(1, Form1.Render.Width / pic_scale) - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
+                Ball(UBound(Ball)).LocY = GetRandomNumber(1, Form1.Render.Height / pic_scale) - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
+                Ball(UBound(Ball)).SpeedX = 0
+                Ball(UBound(Ball)).SpeedY = 0
+                ' Ball(UBound(Ball)).bTimestep = StepMulti
+                ' Ball(UBound(Ball)).Flags = ""
+                Ball(UBound(Ball)).Size = GetRandomNumber(MinSize, MaxSize)
+                If BodyMass > 0 Then
+                    Ball(UBound(Ball)).Mass = BodyMass
+                Else
+                    Ball(UBound(Ball)).Mass = fnMass(Ball(UBound(Ball)).Size) ' * 2
+                End If
+            Next
 
+
+            If bolStoppedToAdd Then bolStopLoop = False
+        End If
 
 
 
