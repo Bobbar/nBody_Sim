@@ -1816,8 +1816,14 @@ Err:
             '  Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             If SaveDialog.FileName <> "" Then
 
-                Dim fStream As New FileStream(SaveDialog.FileName, FileMode.OpenOrCreate)
+                ' Using fStream As New FileStream(SaveDialog.FileName, FileMode.OpenOrCreate)
+                Dim fStream As Stream
                 ProtoBuf.Serializer.Serialize(fStream, _nestedArrayForProtoBuf)
+
+
+                    Dim CompFile As New FileInfo(RecordFileName)
+                    Compress(fStream, CompFile)
+                ' End Using
 
                 ' bf.Serialize(fStream, RecordedBodies)
                 CompRecBodies.Clear()
