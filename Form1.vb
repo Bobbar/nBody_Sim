@@ -2005,7 +2005,9 @@ Err:
             SeekBar.Value = e.ProgressPercentage
             ' Me.Invalidate()
         End If
-        If bolDraw And Not bolDrawing Then Drawr(Ball) '(PassBall) '  Me.Render.Image = Drawr(PassBall)
+        If bolDraw And Not bolDrawing Then
+            Drawr(Ball) '(PassBall) '  Me.Render.Image = Drawr(PassBall)
+        End If
 
     End Sub
     Private Sub tsmShowAll_Click(sender As Object, e As EventArgs) Handles tsmShowAll.Click

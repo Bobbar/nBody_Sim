@@ -94,13 +94,21 @@ Public Module CUDA
     Public Sub InitGPU()
         Dim GPUIndex As Integer = 2 '2
 
-        Dim CUDAmodule As CudafyModule
 
+        Dim CUDAmodule As CudafyModule = CudafyModule.TryDeserialize()
+        If CUDAmodule Is Nothing OrElse Not CUDAmodule.TryVerifyChecksums() Then
+            CudafyTranslator.Language = eLanguage.OpenCL
+            CUDAmodule = CudafyTranslator.Cudafy()
+            CUDAmodule.Serialize()
+        End If
+
+
+        ' Dim CUDAmodule As CudafyModule
         gpu = CudafyHost.GetDevice(eGPUType.OpenCL, GPUIndex) 'eGPUType.Cuda, GPUIndex)
-        CudafyTranslator.Language = eLanguage.OpenCL 'eLanguage.Cuda 
-        CUDAmodule = CudafyTranslator.Cudafy()
+        ' CudafyTranslator.Language = eLanguage.OpenCL 'eLanguage.Cuda 
+        'CUDAmodule = CudafyTranslator.Cudafy()
         gpu.LoadModule(CUDAmodule)
-
+        Dim gpuProps As GPGPUProperties = gpu.GetDeviceProperties
         '  System.IO.File.WriteAllText("OpenCl_" + GPUIndex + ".cpp", CUDAmodule.CudaSourceCode)
 
 
@@ -330,6 +338,7 @@ Public Module CUDA
                     DistSqrt = Sqrt(Dist)
 
                     If DistSqrt <= (ColBody(Master).Size / 2) + (Body(Slave).Size / 2) Then
+                        ColBody(Master).LastColID = Slave
                         If DistSqrt > 0 Then
 
                             V1x = ColBody(Master).SpeedX
