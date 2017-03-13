@@ -136,6 +136,7 @@
       <DependentUpon>Form1.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="GZip.vb" />
     <Compile Include="Matrix2D.vb" />
     <Compile Include="Matrix3D.vb" />
     <Compile Include="Functions.vb" />
