@@ -16,6 +16,8 @@ Public Module CUDA
     Public gpu As GPGPU
     Public bolLoopRunning As Boolean = False
     Public VisBalls As Integer
+    Public PrevMass As Double
+    Public mDelta As Double
     ' Private dBall() As Prim_Struct
 
     Public Structure FoundGpu
@@ -131,6 +133,8 @@ Public Module CUDA
         End If
         '  VisBalls = UBound(Ball)
 
+        PrevMass = TotalMass()
+
         'Make a local copy of the body array.
         'This is done so that changes can be updated to the rest of the program one frame at a time.
         ' Dim Ball() As Prim_Struct = Ball
@@ -163,6 +167,7 @@ Public Module CUDA
         gpu.CopyFromDevice(gpuOutBall, Ball)
         gpu.FreeAll()
         'Allocate the updated body array and perform another kernel execution for collisions.
+        ' Debug.Print(Ball(961).InRoche)
         gpuInBall = gpu.Allocate(Ball)
         OutBall = New Prim_Struct(Ball.Length - 1) {}
         gpuOutBall = gpu.Allocate(OutBall)
@@ -171,6 +176,8 @@ Public Module CUDA
         gpu.Synchronize()
         gpu.CopyFromDevice(gpuOutBall, Ball)
         gpu.FreeAll()
+
+        '  Debug.Print(Ball(961).InRoche)
         'Copy the new data back into the public array
         ' Ball = Ball
         ' Ball = Nothing
@@ -183,19 +190,21 @@ Public Module CUDA
         Dim NewBalls As New List(Of Prim_Struct)
         For a As Integer = 0 To Ball.Length - 1
             If Ball(a).Visible = 1 Then
-                If Ball(a).ForceTot > Ball(a).Mass * 4 And Ball(a).BlackHole = 0 Then ' And OuterBody(A).Size < 10 
-                    Ball(a).InRoche = 1
-                    Ball(a).ForceTot = 0
-
+                '  If Ball(a).ForceTot > Ball(a).Mass * 4 And Ball(a).BlackHole = 0 Then ' And OuterBody(A).Size < 10 
+                'Ball(a).InRoche = 1
+                'Ball(a).ForceTot = 0
+                If Ball(a).InRoche = 1 Then
                     NewBalls.AddRange(FractureBall(Ball(a)))
-                    '  Ball(a).Visible = 0
-                ElseIf (Ball(a).ForceTot * 2) < Ball(a).Mass * 4 Then ' And OuterBody(A).Size > 10
-                    Ball(a).InRoche = 0
-                    Ball(a).ForceTot = 0
-                ElseIf Ball(a).BlackHole = 2 Then
-                    Ball(a).InRoche = 1
-                    Ball(a).ForceTot = 0
                 End If
+
+
+                'ElseIf (Ball(a).ForceTot * 2) < Ball(a).Mass * 4 Then ' And OuterBody(A).Size > 10
+                '    Ball(a).InRoche = 0
+                '    Ball(a).ForceTot = 0
+                'ElseIf Ball(a).BlackHole = 2 Then
+                '    Ball(a).InRoche = 1
+                '    Ball(a).ForceTot = 0
+                'End If
             End If
         Next
         If NewBalls.Count > 0 Then
@@ -206,6 +215,9 @@ Public Module CUDA
         'Ball = Ball
 
         '  End If
+
+        mDelta += Round((TotalMass() - PrevMass), 5)
+
         bolRendering = False
 
     End Sub
@@ -295,6 +307,26 @@ Public Module CUDA
 
 
                 Next B
+
+
+
+                If OutBody(A).ForceTot > OutBody(A).Mass * 4 And OutBody(A).BlackHole = 0 Then ' And OuterBody(A).Size < 10 
+                    OutBody(A).InRoche = 1
+                    ' OutBody(A).ForceTot = 0
+
+                    'NewBalls.AddRange(FractureBall(OutBody(A)))
+                    '  OutBody(A).Visible = 0
+                ElseIf (OutBody(A).ForceTot * 2) < OutBody(A).Mass * 4 Then ' And OuterBody(A).Size > 10
+                    OutBody(A).InRoche = 0
+                    ' OutBody(A).ForceTot = 0
+                ElseIf OutBody(A).BlackHole = 2 Then
+                    OutBody(A).InRoche = 1
+                    ' OutBody(A).ForceTot = 0
+                End If
+
+
+
+
                 gpThread.SyncThreads()
             End If
         End If
@@ -361,7 +393,7 @@ Public Module CUDA
                                     PrevSpdY = ColBody(Master).SpeedY
                                     ColBody(Master).SpeedX = ColBody(Master).SpeedX + (U1 - V1) * VekX
                                     ColBody(Master).SpeedY = ColBody(Master).SpeedY + (U1 - V1) * VeKY
-                                    Body(Slave).Visible = 0
+                                    'Body(Slave).Visible = 0
                                     Area1 = PI * (ColBody(Master).Size ^ 2)
                                     Area2 = PI * (Body(Slave).Size ^ 2)
                                     Area1 = Area1 + Area2
@@ -373,7 +405,7 @@ Public Module CUDA
                                         PrevSpdY = ColBody(Master).SpeedY
                                         ColBody(Master).SpeedX = ColBody(Master).SpeedX + (U1 - V1) * VekX
                                         ColBody(Master).SpeedY = ColBody(Master).SpeedY + (U1 - V1) * VeKY
-                                        Body(Slave).Visible = 0
+                                        ' Body(Slave).Visible = 0
                                         Area1 = PI * (ColBody(Master).Size ^ 2)
                                         Area2 = PI * (Body(Slave).Size ^ 2)
                                         Area1 = Area1 + Area2
@@ -382,7 +414,8 @@ Public Module CUDA
                                     Else
                                         ColBody(Master).Visible = 0
                                     End If
-                                    '''''''''  ColBody(Master).Visible = False
+                                Else
+                                    ColBody(Master).Visible = False
                                 End If
                             ElseIf ColBody(Master).InRoche = 0 And Body(Slave).InRoche = 0 Then
                                 If ColBody(Master).Mass > Body(Slave).Mass Then
@@ -390,7 +423,7 @@ Public Module CUDA
                                     PrevSpdY = ColBody(Master).SpeedY
                                     ColBody(Master).SpeedX = ColBody(Master).SpeedX + (U1 - V1) * VekX
                                     ColBody(Master).SpeedY = ColBody(Master).SpeedY + (U1 - V1) * VeKY
-                                    Body(Slave).Visible = 0
+                                    'Body(Slave).Visible = 0
                                     Area1 = PI * (ColBody(Master).Size ^ 2)
                                     Area2 = PI * (Body(Slave).Size ^ 2)
                                     Area1 = Area1 + Area2
@@ -402,7 +435,7 @@ Public Module CUDA
                                         PrevSpdY = ColBody(Master).SpeedY
                                         ColBody(Master).SpeedX = ColBody(Master).SpeedX + (U1 - V1) * VekX
                                         ColBody(Master).SpeedY = ColBody(Master).SpeedY + (U1 - V1) * VeKY
-                                        Body(Slave).Visible = 0
+                                        '  Body(Slave).Visible = 0
                                         Area1 = PI * (ColBody(Master).Size ^ 2)
                                         Area2 = PI * (Body(Slave).Size ^ 2)
                                         Area1 = Area1 + Area2
@@ -414,6 +447,10 @@ Public Module CUDA
                                 Else
                                     ColBody(Master).Visible = 0
                                 End If
+
+
+
+
                             ElseIf ColBody(Master).InRoche = 1 And Body(Slave).InRoche = 1 Then
 
                                 'Lame Spring force attempt. It's literally a reversed gravity force that's increased with a multiplier.
@@ -465,6 +502,9 @@ Public Module CUDA
             ColBody(Master).LocY += TimeStep * ColBody(Master).SpeedY
 
 
+
+
+
         End If
 
 
@@ -485,14 +525,14 @@ Public Module CUDA
         Dim RadUPX As Double, RadDNX As Double, RadUPY As Double, RadDNY As Double
         ' i = UBound(Ball)
         If Body.Visible = 1 And Body.Size > 1 Then
-            Area = PI * (Body.Size ^ 2)
+            Area = PI * ((Body.Size / 2) ^ 2)
             'Divisor = Int(Body.Size)
-            Divisor = Area
+            Divisor = Int(Area)
             If Divisor <= 1 Then Divisor = 2
             PrevSize = Body.Size
             PrevMass = Body.Mass
             'PrevSize = Sqr(PrevSize / pi)
-            Area = PI * (Body.Size ^ 2)
+            ' Area = PI * (Body.Size ^ 2)
             Area = Area / Divisor
             NewBallSize = fnRadius(Area)  'fnRadius(fnArea(Body.Size) / 2)  'Sqr(Area / pi) 'Body.Size / Divisor
 
@@ -514,7 +554,7 @@ Public Module CUDA
 
 
             'Dim CenterPoint As New Point(Body.LocX, Body.LocY)
-            For h = 0 To Divisor
+            For h = 1 To Divisor
                 Dim tmpBall As Prim_Struct
                 ' ReDim Preserve Ball(UBound(Ball) + 1)
                 '  u = UBound(Ball)
@@ -540,7 +580,7 @@ Public Module CUDA
                 tmpBall.LocY = GetRandomNumber((RadDNY), RadUPY)
 
 
-                If h > 0 Then
+                If h > 1 Then
                     If DupLoc(tmpBallList, tmpBall) Then
                         ' Debug.Print("Dup failure")
                         Do Until Not DupLoc(tmpBallList, tmpBall)

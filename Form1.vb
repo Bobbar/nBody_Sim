@@ -246,7 +246,7 @@ Public Class Form1
                         txtSpeedY.Text = Ball(Sel).SpeedY
                         txtSize.Text = Ball(Sel).Size
                         txtMass.Text = Ball(Sel).Mass
-                        'txtFlag.Text = Ball(Sel).Flags
+                        txtFlag.Text = Ball(Sel).BlackHole
                         PubSel = Sel
                         'Debug.Print("Mass: " & Ball(i).Mass & " units")
                         ' Debug.Print("Index: " & i)
@@ -596,10 +596,10 @@ Err:
     End Sub
 
     Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
-        Dim TotalMass As Double
-        For i = 1 To UBound(Ball)
-            If Ball(i).Visible = 1 Then TotalMass = TotalMass + Ball(i).Mass
-        Next i
+        'Dim TotalMass As Double
+        'For i = 1 To UBound(Ball)
+        '    If Ball(i).Visible = 1 Then TotalMass = TotalMass + Ball(i).Mass
+        'Next i
         Debug.Print("Total Mass: " & TotalMass)
         MsgBox("Total Mass: " & TotalMass)
     End Sub
@@ -1535,9 +1535,12 @@ Err:
 
         If bolStop Then
             If bolPlaying Then
-                Ball = ConvertFrame(CompRecBodies(SeekIndex)) 'RecordedBodies(SeekIndex)
+                If SeekIndex >= 0 And SeekIndex < CompRecBodies.Count - 1 Then
+                    Ball = ConvertFrame(CompRecBodies(SeekIndex)) 'RecordedBodies(SeekIndex)
+                End If
+
             End If
-            Drawr(Ball)
+                Drawr(Ball)
             SetUIInfo()
         End If
 
@@ -1604,6 +1607,16 @@ Err:
     End Sub
     Private Sub SetUIInfo()
 
+        If bolFollow Then
+            txtSpeedX.Text = Ball(lngFollowBall).SpeedX
+            txtSpeedY.Text = Ball(lngFollowBall).SpeedY
+            txtSize.Text = Ball(lngFollowBall).Size
+            txtMass.Text = Ball(lngFollowBall).Mass
+            txtFlag.Text = Ball(lngFollowBall).BlackHole
+        End If
+
+
+
         'If Me.lblFPS.InvokeRequired Then
         '    Dim d As New SetTextCallback(AddressOf SetUIInfo)
         '    Me.Invoke(d, New Object() {Round(FPS, 0)})
@@ -1630,7 +1643,9 @@ Err:
         ' FPS = 0
         lblVisBalls.Text = "Visible: " & VisibleBalls()
         lblScale.Text = "Scale: " & Round(pic_scale, 2)
-
+        'Dim mDelta As Double = TotalMass() - PrevMass
+        lblMassDelta.Text = "Mass Δ:" & mDelta
+        'PrevMass = TotalMass()
 
         If bolStoring Then
             lblRecFrames.Visible = True
@@ -1638,6 +1653,15 @@ Err:
             lblRecSize.Visible = True
 
             lblRecSize.Text = "Size (KB): " & RecSize()
+
+            If RecSize() > 800000 Then
+                bolStopLoop = True
+                SaveRendering("C:\Temp\RecSeries-" & Now.ToString("_hhmmss") & ".dat")
+                CompRecBodies.Clear()
+                bolStopLoop = False
+            End If
+
+
         Else
             lblRecFrames.Visible = False
             lblRecSize.Visible = False
@@ -1734,7 +1758,7 @@ Err:
 
             'fStream.Position = 0 ' reset stream pointer
             ' Ball = bf.Deserialize(fStream) ' read from file
-
+            ReDim Ball(0)
             Ball = SerialToCUDA(ProtoBuf.Serializer.Deserialize(Of Serial_Prim_Struct())(fStream))
             'sr.Close()
         End If
@@ -1751,32 +1775,41 @@ Err:
 
 
         RecordedBodies.Clear()
+
         Dim OpenDialog As New OpenFileDialog()
         OpenDialog.Filter = "Recording File|*.dat"
         OpenDialog.Title = "Open Rendered Recording"
         If OpenDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
             ' Dim sr As New System.IO.StreamReader(OpenFileDialog1.FileName)
-            Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            Dim fStream As New FileStream(OpenDialog.FileName, FileMode.OpenOrCreate)
-            ' fStream.Position = 0 ' reset stream pointer
-            '_nestedArrayForProtoBuf = ProtoBuf.Serializer.Deserialize(Of List(Of ProtobufArray(Of BallParms)))(fStream) 'bf.Deserialize(fStream) ' read from file
-            _nestedArrayForProtoBuf = ProtoBuf.Serializer.Deserialize(Of List(Of ProtobufArray(Of Body_Rec_Parms)))(fStream) 'bf.Deserialize(fStream) ' read from file
+            '    Dim bf As New System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            'Dim DecompFile As New FileInfo(OpenDialog.FileName)
+            'Dim fStream As MemoryStream = Decompress(DecompFile) 'New FileStream(OpenDialog.FileName, FileMode.OpenOrCreate)
+
+            'fStream.Position = 0 ' reset stream pointer
+            ''_nestedArrayForProtoBuf = ProtoBuf.Serializer.Deserialize(Of List(Of ProtobufArray(Of BallParms)))(fStream) 'bf.Deserialize(fStream) ' read from file
+            ''_nestedArrayForProtoBuf = ProtoBuf.Serializer.Deserialize(Of List(Of ProtobufArray(Of Body_Rec_Parms)))(fStream) 'bf.Deserialize(fStream) ' read from file
+            '_nestedArrayForProtoBuf = ProtoBuf.Serializer.Deserialize(Of List(Of ProtobufArray(Of Body_Rec_Parms)))(fStream) 'bf.Deserialize(fStream) ' read from file
             'RecordedBodies = ConvertRecording(CompRecBodies)
             'sr.Close()
+            CompRecBodies.Clear()
+            OpenRendering(OpenDialog.FileName)
         End If
 
-        SeekBar.Maximum = CompRecBodies.Count - 1 'RecordedBodies.Count - 1
-        SeekBar.Value = 1
+        If CompRecBodies.Count > 0 Then
+
+            SeekBar.Maximum = CompRecBodies.Count - 1 'RecordedBodies.Count - 1
+            SeekBar.Value = 1
 
 
 
 
+            If Not bolPlaying Then bolPlaying = True
+            '  bolPlaying = Not bolPlaying
+            If Not PhysicsWorker.IsBusy And Not bolStopWorker Then
+                PhysicsWorker.RunWorkerAsync()
+            End If
 
-        bolPlaying = Not bolPlaying
-        If Not PhysicsWorker.IsBusy And Not bolStopWorker Then
-            PhysicsWorker.RunWorkerAsync()
         End If
-
 
 
     End Sub
@@ -1817,12 +1850,15 @@ Err:
             If SaveDialog.FileName <> "" Then
 
                 ' Using fStream As New FileStream(SaveDialog.FileName, FileMode.OpenOrCreate)
-                Dim fStream As Stream
-                ProtoBuf.Serializer.Serialize(fStream, _nestedArrayForProtoBuf)
+                'Dim fStream As New MemoryStream
+                'ProtoBuf.Serializer.Serialize(fStream, _nestedArrayForProtoBuf)
 
 
-                    Dim CompFile As New FileInfo(RecordFileName)
-                    Compress(fStream, CompFile)
+                '    Dim CompFile As New FileInfo(RecordFileName)
+                '    Compress(fStream, CompFile)
+
+
+                SaveRendering(RecordFileName)
                 ' End Using
 
                 ' bf.Serialize(fStream, RecordedBodies)
@@ -2020,7 +2056,4 @@ Err:
         bolShowAll = tsmShowAll.Checked
     End Sub
 
-    Private Sub txtFlag_TextChanged(sender As Object, e As EventArgs) Handles txtFlag.TextChanged
-
-    End Sub
 End Class

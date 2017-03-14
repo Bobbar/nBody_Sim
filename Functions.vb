@@ -107,6 +107,15 @@ Module Functions
         Return tot
         ' Return VisBalls
     End Function
+    Public Function TotalMass() As Double
+        Dim TotalM As Double
+        For i As Integer = 0 To Ball.Length - 1
+            If Ball(i).Visible = 1 Then
+                TotalM += Ball(i).Mass
+            End If
+        Next
+        Return TotalM
+    End Function
     Public Function CullBodies(Bodies() As Prim_Struct) As Prim_Struct()
         ''    StartTimer()
 

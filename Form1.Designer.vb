@@ -76,6 +76,7 @@ Partial Class Form1
         Me.lblRecFrames = New System.Windows.Forms.Label()
         Me.lblRecSize = New System.Windows.Forms.Label()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.lblMassDelta = New System.Windows.Forms.Label()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -464,19 +465,19 @@ Partial Class Form1
         'TotalMassToolStripMenuItem
         '
         Me.TotalMassToolStripMenuItem.Name = "TotalMassToolStripMenuItem"
-        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
         Me.TotalMassToolStripMenuItem.Text = "Total Mass"
         '
         'tsmSave
         '
         Me.tsmSave.Name = "tsmSave"
-        Me.tsmSave.Size = New System.Drawing.Size(152, 22)
+        Me.tsmSave.Size = New System.Drawing.Size(130, 22)
         Me.tsmSave.Text = "Save State"
         '
         'tsmLoad
         '
         Me.tsmLoad.Name = "tsmLoad"
-        Me.tsmLoad.Size = New System.Drawing.Size(152, 22)
+        Me.tsmLoad.Size = New System.Drawing.Size(130, 22)
         Me.tsmLoad.Text = "Load State"
         '
         'Panel1
@@ -574,7 +575,7 @@ Partial Class Form1
         Me.lblRecFrames.BackColor = System.Drawing.Color.Black
         Me.lblRecFrames.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblRecFrames.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
-        Me.lblRecFrames.Location = New System.Drawing.Point(11, 179)
+        Me.lblRecFrames.Location = New System.Drawing.Point(12, 215)
         Me.lblRecFrames.Name = "lblRecFrames"
         Me.lblRecFrames.Size = New System.Drawing.Size(83, 16)
         Me.lblRecFrames.TabIndex = 58
@@ -587,7 +588,7 @@ Partial Class Form1
         Me.lblRecSize.BackColor = System.Drawing.Color.Black
         Me.lblRecSize.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblRecSize.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
-        Me.lblRecSize.Location = New System.Drawing.Point(11, 195)
+        Me.lblRecSize.Location = New System.Drawing.Point(12, 231)
         Me.lblRecSize.Name = "lblRecSize"
         Me.lblRecSize.Size = New System.Drawing.Size(91, 16)
         Me.lblRecSize.TabIndex = 59
@@ -598,12 +599,25 @@ Partial Class Form1
         '
         Me.Timer1.Interval = 200
         '
+        'lblMassDelta
+        '
+        Me.lblMassDelta.AutoSize = True
+        Me.lblMassDelta.BackColor = System.Drawing.Color.Black
+        Me.lblMassDelta.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblMassDelta.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.lblMassDelta.Location = New System.Drawing.Point(11, 160)
+        Me.lblMassDelta.Name = "lblMassDelta"
+        Me.lblMassDelta.Size = New System.Drawing.Size(57, 16)
+        Me.lblMassDelta.TabIndex = 60
+        Me.lblMassDelta.Text = "Mass Δ:"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
         Me.ClientSize = New System.Drawing.Size(1316, 733)
+        Me.Controls.Add(Me.lblMassDelta)
         Me.Controls.Add(Me.lblRecSize)
         Me.Controls.Add(Me.lblRecFrames)
         Me.Controls.Add(Me.SeekBar)
@@ -697,4 +711,5 @@ Partial Class Form1
     Friend WithEvents lblRecSize As Label
     Friend WithEvents Timer1 As Timer
     Friend WithEvents tsmShowAll As ToolStripMenuItem
+    Friend WithEvents lblMassDelta As Label
 End Class

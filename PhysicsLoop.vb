@@ -588,8 +588,7 @@ Public Module PhysicsLoop
         Return Generator.Next(Min, Max)
     End Function
     Public Function fnRadius(Area As Double) As Double
-        fnRadius = 0
-        fnRadius = Sqrt(Area / PI)
+        Return Sqrt(Area / PI)
     End Function
 
     Private Function DupLoc(LstBodies As List(Of BallParms), Body As BallParms) As Boolean
