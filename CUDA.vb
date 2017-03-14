@@ -521,7 +521,7 @@ Public Module CUDA
         Dim TotBMass As Double
         Dim Area As Double
         Dim tmpBallList As New List(Of Prim_Struct)
-
+        Dim px, py As Double
         Dim RadUPX As Double, RadDNX As Double, RadUPY As Double, RadDNY As Double
         ' i = UBound(Ball)
         If Body.Visible = 1 And Body.Size > 1 Then
@@ -576,25 +576,28 @@ Public Module CUDA
                 '  Ball(u).LocY = Body.LocY + Ball(u).Size * 2
 
 
-                tmpBall.LocX = GetRandomNumber((RadDNX), RadUPX)
-                tmpBall.LocY = GetRandomNumber((RadDNY), RadUPY)
 
+                tmpBall.LocX = RandomSingle(Body.LocX - Body.Size / 2, Body.LocX + Body.Size / 2) 'GetRandomNumber(Body.LocX - Body.Size, Body.LocX + Body.Size)
+                tmpBall.LocY = RandomSingle(Body.LocY - Body.Size / 2, Body.LocY + Body.Size / 2) 'GetRandomNumber(Body.LocY - Body.Size, Body.LocY + Body.Size)
 
                 If h > 1 Then
-                    If DupLoc(tmpBallList, tmpBall) Then
-                        ' Debug.Print("Dup failure")
-                        Do Until Not DupLoc(tmpBallList, tmpBall)
+                    If Not ObjectInsideTarget(New SPoint(Body.LocX, Body.LocY), Body.Size, New SPoint(tmpBall.LocX, tmpBall.LocY)) Then 'newEllipse.Location, newEllipse.Size, New SPoint(px, py)) Then
 
+                        Do Until ObjectInsideTarget(New SPoint(Body.LocX, Body.LocY), Body.Size, New SPoint(tmpBall.LocX, tmpBall.LocY)) ' And Not DupLoc(tmpBallList, tmpBall)
 
-                            tmpBall.LocX = GetRandomNumber((RadDNX), RadUPX)
-                            tmpBall.LocY = GetRandomNumber((RadDNY), RadUPY)
+                            tmpBall.LocX = RandomSingle(Body.LocX - Body.Size / 2, Body.LocX + Body.Size / 2) 'GetRandomNumber(Body.LocX - Body.Size, Body.LocX + Body.Size)
+                            tmpBall.LocY = RandomSingle(Body.LocY - Body.Size / 2, Body.LocY + Body.Size / 2) 'GetRandomNumber(Body.LocY - Body.Size, Body.LocY + Body.Size)
 
                         Loop
 
 
-                    End If
 
+                    End If
                 End If
+
+
+                'tmpBall.LocX = px
+                'tmpBall.LocY = py
 
 
 

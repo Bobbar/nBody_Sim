@@ -583,6 +583,16 @@ Public Module PhysicsLoop
         Return objRandom.Next(Low, High + 1)
 
     End Function
+
+    Public Function RandomSingle(Min As Single, Max As Single) As Single
+
+        Dim range As Double = CDbl(Max) - CDbl(Min)
+        Dim sample As Double = myRandom.NextDouble()
+        Dim scaled As Double = (sample * range) + Min
+        Return CSng(scaled)
+
+    End Function
+
     Public Function GetRandom(ByVal Min As Integer, ByVal Max As Integer) As Integer
         Dim Generator As System.Random = New System.Random()
         Return Generator.Next(Min, Max)
