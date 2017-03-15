@@ -193,8 +193,8 @@ Public Module CUDA
                 '  If Ball(a).ForceTot > Ball(a).Mass * 4 And Ball(a).BlackHole = 0 Then ' And OuterBody(A).Size < 10 
                 'Ball(a).InRoche = 1
                 'Ball(a).ForceTot = 0
-                If Ball(a).InRoche = 1 Then
-                    NewBalls.AddRange(FractureBall(Ball(a)))
+                If Ball(a).InRoche = 1 And Ball(a).BlackHole = 0 Then
+                    If Ball(a).BlackHole <> 2 Then NewBalls.AddRange(FractureBall(Ball(a)))
                 End If
 
 
@@ -457,6 +457,7 @@ Public Module CUDA
                                 M1 = ColBody(Master).Mass
                                 M2 = Body(Slave).Mass
                                 TotMass = M1 * M2
+                                ' TotMass = 100
                                 Dim EPS As Double = 1.02
                                 Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS)
                                 ForceX = Force * DistX / DistSqrt
@@ -465,7 +466,7 @@ Public Module CUDA
                                 ColBody(Master).ForceX -= ForceX * multi
                                 ColBody(Master).ForceY -= ForceY * multi
 
-                                Dim Friction As Double = 0.1
+                                Dim Friction As Double = 0.2
                                 ColBody(Master).SpeedX += (U1 - V1) * VekX * Friction
                                 ColBody(Master).SpeedY += (U1 - V1) * VeKY * Friction
                                 'Body(Slave).SpeedX += (U2 - V2) * VekX * Friction
@@ -521,9 +522,9 @@ Public Module CUDA
         Dim TotBMass As Double
         Dim Area As Double
         Dim tmpBallList As New List(Of Prim_Struct)
-        Dim px, py As Double
-        Dim RadUPX As Double, RadDNX As Double, RadUPY As Double, RadDNY As Double
-        ' i = UBound(Ball)
+        'Dim px, py As Double
+        'Dim RadUPX As Double, RadDNX As Double, RadUPY As Double, RadDNY As Double
+        '' i = UBound(Ball)
         If Body.Visible = 1 And Body.Size > 1 Then
             Area = PI * ((Body.Size / 2) ^ 2)
             'Divisor = Int(Body.Size)
@@ -547,10 +548,10 @@ Public Module CUDA
             'RadUPY = (Body.LocY) + PrevSize / 2 + Body.SpeedY * StepMulti
             'RadDNY = (Body.LocY) - PrevSize / 2 + Body.SpeedY * StepMulti
 
-            RadUPX = (Body.LocX) + PrevSize + Body.SpeedX * StepMulti
-            RadDNX = (Body.LocX) - PrevSize + Body.SpeedX * StepMulti
-            RadUPY = (Body.LocY) + PrevSize + Body.SpeedY * StepMulti
-            RadDNY = (Body.LocY) - PrevSize + Body.SpeedY * StepMulti
+            'RadUPX = (Body.LocX) + PrevSize + Body.SpeedX * StepMulti
+            'RadDNX = (Body.LocX) - PrevSize + Body.SpeedX * StepMulti
+            'RadUPY = (Body.LocY) + PrevSize + Body.SpeedY * StepMulti
+            'RadDNY = (Body.LocY) - PrevSize + Body.SpeedY * StepMulti
 
 
             'Dim CenterPoint As New Point(Body.LocX, Body.LocY)

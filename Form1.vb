@@ -200,7 +200,7 @@ Public Class Form1
             '  Ball(UBound(Ball)).IsFragment = False
             '  Ball(UBound(Ball)).Index = UBound(Ball)
             Ball(UBound(Ball)).UID = RndIntUID(UBound(Ball)) 'Guid.NewGuid.ToString
-            Ball(UBound(Ball)).Mass = fnMass(Ball(UBound(Ball)).Size)
+            Ball(UBound(Ball)).Mass = fnMass(Ball(UBound(Ball)).Size, Density)
             Ball(UBound(Ball)).Visible = 1
             '  Ball(UBound(Ball)).Flags = Ball(UBound(Ball)).Flags + "BH"
             MouseIndex = UBound(Ball)
@@ -373,7 +373,7 @@ Err:
     End Sub
 
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-
+        InitMatter()
 
         SetColors(Me)
         pic_scale = 1
@@ -431,7 +431,7 @@ Err:
     Private Sub Timer3_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer3.Tick
         On Error Resume Next
         Ball(MouseIndex).Size = Ball(MouseIndex).Size + 0.5
-        Ball(MouseIndex).Mass = fnMass(Ball(MouseIndex).Size) ' ^ 2
+        Ball(MouseIndex).Mass = fnMass(Ball(MouseIndex).Size, Density) ' ^ 2
     End Sub
     Private Sub Label3_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
     End Sub

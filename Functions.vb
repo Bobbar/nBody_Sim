@@ -22,6 +22,8 @@ Module Functions
     Public TrueFPS As Integer
     Public RenderTime As Double
 
+    Public MatterTypes() As Matter_Props
+
     ' Public CUDATest As New CUDA
 
     Public stpw As New Stopwatch
@@ -216,4 +218,44 @@ Module Functions
         Return CUDABody
 
     End Function
+
+
+
+
+    Public Structure Matter_Props
+        Public Density As Integer
+        Public Color As Color
+
+
+
+    End Structure
+
+    Public Sub InitMatter()
+        ReDim MatterTypes(4)
+        '  ReDim Preserve MatterTypes(UBound(MatterTypes) + 1)
+        MatterTypes(0).Density = 1
+        MatterTypes(0).Color = Color.Aqua 'gas
+
+
+        '  ReDim Preserve MatterTypes(UBound(MatterTypes) + 1)
+        MatterTypes(1).Density = 10
+        MatterTypes(1).Color = Color.DodgerBlue 'liquid
+
+        ' ReDim Preserve MatterTypes(UBound(MatterTypes) + 1)
+        MatterTypes(2).Density = 20
+        MatterTypes(2).Color = Color.Goldenrod 'rock
+
+        'ReDim Preserve MatterTypes(UBound(MatterTypes) + 1)
+        MatterTypes(3).Density = 30
+        MatterTypes(3).Color = Color.SaddleBrown 'metal
+
+        MatterTypes(4).Density = 60
+        MatterTypes(4).Color = Color.DarkGray 'heavy metal
+
+
+    End Sub
+
+
+
+
 End Module

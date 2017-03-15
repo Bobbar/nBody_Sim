@@ -566,10 +566,10 @@ Public Module PhysicsLoop
         Dim m_Rnd As New Random
         Return Color.FromArgb(255, objRandom.Next(0, 255), objRandom.Next(0, 255), objRandom.Next(0, 255))
     End Function
-    Public Function fnMass(Radius As Double) As Double
+    Public Function fnMass(Radius As Double, bDensity As Double) As Double
 
 
-        Return Sqrt(PI * (Radius ^ 2)) * Density '^ 2
+        Return Sqrt(PI * (Radius ^ 2)) * bDensity '^ 2
     End Function
     Private myRandom As New Random
     Public Function GetRandomNumber(ByVal Low As Double, ByVal High As Double) As Double
