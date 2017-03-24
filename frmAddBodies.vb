@@ -135,13 +135,17 @@ Public Class frmAddBodies
 
             End If
 
-            Dim magv As Double = circleV(px, py, MassOfCenterMass)
+            Dim oPx, oPy As Double
+            oPx = px - newEllipse.Location.X
+            oPy = py - newEllipse.Location.Y
 
-            Dim absangle As Double = Atan(Abs(py / px))
+            Dim magv As Double = circleV(oPx, oPy, MassOfCenterMass) 'circleV(px, py, MassOfCenterMass)
+
+            Dim absangle As Double = Atan(Abs(oPy / oPx)) 'Atan(Abs(py / px))
             Dim thetav As Double = PI / 2 - absangle
             'Dim phiv As Double = Rnd() * PI
-            Dim vx As Double = -1 * Sign(py) * Cos(thetav) * magv
-            Dim vy As Double = Sign(px) * Sin(thetav) * magv
+            Dim vx As Double = -1 * Sign(oPy) * Cos(thetav) * magv '-1 * Sign(py) * Cos(thetav) * magv
+            Dim vy As Double = Sign(oPx) * Sin(thetav) * magv 'Sign(px) * Sin(thetav) * magv
 
 
             Ball(i).LocX = px
