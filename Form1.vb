@@ -1147,21 +1147,21 @@ Err:
     'End Sub
     Public Sub RecordFrame(Bodies() As Prim_Struct)
         ' Dim tmpCompBodies(0) As Body_Rec_Parms
-        Dim tmpCompBodies(UBound(Bodies)) As Body_Rec_Parms
+        Dim tmpCompBodies(VisibleBalls()) As Body_Rec_Parms
         ' Dim i As Integer = 0
         'For Each body As BallParms In Bodies
-        For s As Integer = 0 To UBound(Bodies)
-            '  If Bodies(s).Visible Then
-            tmpCompBodies(s).Size = Bodies(s).Size
-            tmpCompBodies(s).LocX = Bodies(s).LocX
-            tmpCompBodies(s).LocY = Bodies(s).LocY
-            tmpCompBodies(s).Visible = Bodies(s).Visible
-            tmpCompBodies(s).BlackHole = Bodies(s).BlackHole
-            tmpCompBodies(s).Color = Bodies(s).Color
-            tmpCompBodies(s).UID = Bodies(s).UID
-            'ReDim Preserve tmpCompBodies(UBound(tmpCompBodies) + 1)
-            '    i += 1
-            '  End If
+        For s As Integer = 0 To VisibleBalls() 'UBound(Bodies)
+            If Bodies(s).Visible Then
+                tmpCompBodies(s).Size = Bodies(s).Size
+                tmpCompBodies(s).LocX = Bodies(s).LocX
+                tmpCompBodies(s).LocY = Bodies(s).LocY
+                tmpCompBodies(s).Visible = Bodies(s).Visible
+                tmpCompBodies(s).BlackHole = Bodies(s).BlackHole
+                tmpCompBodies(s).Color = Bodies(s).Color
+                tmpCompBodies(s).UID = Bodies(s).UID
+                'ReDim Preserve tmpCompBodies(UBound(tmpCompBodies) + 1)
+                '    i += 1
+            End If
 
         Next
         CompRecBodies.Add(tmpCompBodies)
@@ -1654,7 +1654,7 @@ Err:
 
             lblRecSize.Text = "Size (KB): " & RecSize()
 
-            If RecSize() > 800000 Then
+            If RecSize() > 900000 Then
                 bolStopLoop = True
                 SaveRendering("C:\Temp\RecSeries-" & Now.ToString("_hhmmss") & ".dat")
                 CompRecBodies.Clear()

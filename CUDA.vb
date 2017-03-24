@@ -126,7 +126,7 @@ Public Module CUDA
         bolRendering = True
         ' If Not bolPlaying Then
         ' Dim Ball() As Prim_Struct ' = Ball
-        If ((Ball.Length - 1) - VisibleBalls()) > 1000 Then
+        If ((Ball.Length - 1) - VisibleBalls()) > 400 Then
             ' StartTimer()
             Ball = CullBodies(Ball)
             ' StopTimer()
@@ -458,15 +458,15 @@ Public Module CUDA
                                 M2 = Body(Slave).Mass
                                 TotMass = M1 * M2
                                 ' TotMass = 100
-                                Dim EPS As Double = 1.02
-                                Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS)
+                                Dim EPS As Double = 0.07 '1.02
+                                Force = TotMass / (DistSqrt * DistSqrt + (ColBody(Master).Size / 2 + Body(Slave).Size / 2)) 'EPS) 'EPS * EPS)
                                 ForceX = Force * DistX / DistSqrt
                                 ForceY = Force * DistY / DistSqrt
-                                Dim multi As Integer = 40
+                                Dim multi As Integer = 40 - (Sqrt(ColBody(Master).Mass) * 2) - (TimeStep * 1000) '(Sqrt(TimeStep) * 100)
                                 ColBody(Master).ForceX -= ForceX * multi
                                 ColBody(Master).ForceY -= ForceY * multi
 
-                                Dim Friction As Double = 0.2
+                                Dim Friction As Double = 0.5 '0.2
                                 ColBody(Master).SpeedX += (U1 - V1) * VekX * Friction
                                 ColBody(Master).SpeedY += (U1 - V1) * VeKY * Friction
                                 'Body(Slave).SpeedX += (U2 - V2) * VekX * Friction

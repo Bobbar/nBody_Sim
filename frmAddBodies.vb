@@ -86,13 +86,37 @@ Public Class frmAddBodies
         ExtraEllipses.Add(newEllipse)
 
 
-        ReDim Ball(NumberOfBodies)
+        Dim nGas As Integer = (NumberOfBodies / 8) * 7
+        Dim nMinerals As Integer = (NumberOfBodies / 8)
 
-        For i As Integer = 0 To NumberOfBodies - 1
+        Dim StartIndex As Integer
+        Dim EndIndex As Integer
+        If UBound(Ball) <> 0 Then
+            StartIndex = UBound(Ball) + 1
+            EndIndex = UBound(Ball) + NumberOfBodies ' - 1
+        Else
+            StartIndex = 0
+            EndIndex = NumberOfBodies ' - 1
+        End If
+        ReDim Preserve Ball(EndIndex) 'UBound(Ball) + NumberOfBodies)
+        Dim BodyCount As Integer = 0
+
+        'ReDim Ball(NumberOfBodies)
+
+        For i As Integer = StartIndex To EndIndex - 1 '(UBound(Ball) + NumberOfBodies)' For i As Integer = 0 To NumberOfBodies - 1
+            Dim Matter As Matter_Props
             ' ReDim Preserve Ball(UBound(Ball) + 1)
             ' Ball(UBound(Ball)).Index = UBound(Ball)
+
+            If BodyCount <= nGas Then
+                Matter = MatterTypes(GetRandomNumber(0, 1))
+            ElseIf BodyCount >= nMinerals Then
+                Matter = MatterTypes(GetRandomNumber(2, 4))
+            End If
+            BodyCount += 1
+
             Ball(i).UID = RndIntUID(i) 'Guid.NewGuid.ToString
-            Ball(i).Color = RandomRGBColor().ToArgb 'colDefBodyColor
+            Ball(i).Color = Matter.Color.ToArgb 'RandomRGBColor().ToArgb 'colDefBodyColor
             Ball(i).Visible = 1
 
             px = GetRandomNumber(newEllipse.Location.X - newEllipse.Size, newEllipse.Location.X + newEllipse.Size) ' - ScaleOffset.X - RelBallPosMod.X
@@ -130,23 +154,23 @@ Public Class frmAddBodies
             If BodyMass > 0 Then
                 Ball(i).Mass = BodyMass
             Else
-                Ball(i).Mass = fnMass(Ball(i).Size, Density) ' * 2
+                Ball(i).Mass = fnMass(Ball(i).Size, Matter.Density) ' * 2
             End If
 
         Next
         If bolIncludeCenterMass Then
             '  ReDim Preserve Ball(UBound(Ball) + 1)
-            Ball(NumberOfBodies).UID = RndIntUID(NumberOfBodies) 'Guid.NewGuid.ToString
-            Ball(NumberOfBodies).Color = Color.Black.ToArgb 'RandomRGBColor() 'colDefBodyColor
-            Ball(NumberOfBodies).Visible = 1
-            Ball(NumberOfBodies).LocX = newEllipse.Location.X ' Form1.Render.Width / 2 / pic_scale - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
-            Ball(NumberOfBodies).LocY = newEllipse.Location.Y 'Form1.Render.Height / 2 / pic_scale - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
-            Ball(NumberOfBodies).SpeedX = 0
-            Ball(NumberOfBodies).SpeedY = 0
-            Ball(NumberOfBodies).BlackHole = 1
+            Ball(EndIndex).UID = RndIntUID(EndIndex) 'Guid.NewGuid.ToString
+            Ball(EndIndex).Color = Color.Black.ToArgb 'RandomRGBColor() 'colDefBodyColor
+            Ball(EndIndex).Visible = 1
+            Ball(EndIndex).LocX = newEllipse.Location.X ' Form1.Render.Width / 2 / pic_scale - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
+            Ball(EndIndex).LocY = newEllipse.Location.Y 'Form1.Render.Height / 2 / pic_scale - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
+            Ball(EndIndex).SpeedX = 0
+            Ball(EndIndex).SpeedY = 0
+            Ball(EndIndex).BlackHole = 1
             'Ball(UBound(Ball)).Flags = "BH"
-            Ball(NumberOfBodies).Size = 15
-            Ball(NumberOfBodies).Mass = MassOfCenterMass 'fnMass(Ball(UBound(Ball)).Size) ' * 2
+            Ball(EndIndex).Size = 3
+            Ball(EndIndex).Mass = MassOfCenterMass 'fnMass(Ball(UBound(Ball)).Size) ' * 2
         End If
 
 
@@ -362,8 +386,12 @@ Public Class frmAddBodies
     End Sub
 
     Private Sub cmdAddOrbit_Click(sender As Object, e As EventArgs) Handles cmdAddOrbit.Click
-        ' AddBodies_Orbit2(Int(txtNumOfBodies.Text), Int(txtMaxSize.Text), Int(txtMinSize.Text), Int(txtBodyMass.Text), chkCenterMass.Checked, Int(txtCenterMass.Text))
-        AddBodies_StationaryDisc(Int(txtNumOfBodies.Text), Int(txtMaxSize.Text), Int(txtMinSize.Text), Int(txtBodyMass.Text), chkCenterMass.Checked, Int(txtCenterMass.Text))
+        If chkCenterMass.Checked Then
+            AddBodies_Orbit2(Int(txtNumOfBodies.Text), Int(txtMaxSize.Text), Int(txtMinSize.Text), Int(txtBodyMass.Text), chkCenterMass.Checked, Int(txtCenterMass.Text))
+        Else
+            AddBodies_StationaryDisc(Int(txtNumOfBodies.Text), Int(txtMaxSize.Text), Int(txtMinSize.Text), Int(txtBodyMass.Text), chkCenterMass.Checked, Int(txtCenterMass.Text))
+        End If
+
     End Sub
 
     Private Sub cmdAddStation_Click(sender As Object, e As EventArgs) Handles cmdAddStation.Click
