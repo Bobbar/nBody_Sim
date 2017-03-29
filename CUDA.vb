@@ -166,16 +166,16 @@ Public Module CUDA
         gpu.Synchronize()
         gpu.CopyFromDevice(gpuOutBall, Ball)
         gpu.FreeAll()
-        'Allocate the updated body array and perform another kernel execution for collisions.
-        ' Debug.Print(Ball(961).InRoche)
-        gpuInBall = gpu.Allocate(Ball)
-        OutBall = New Prim_Struct(Ball.Length - 1) {}
-        gpuOutBall = gpu.Allocate(OutBall)
-        gpu.CopyToDevice(Ball, gpuInBall)
-        gpu.Launch(nBlocks, threads).CollideBodies(gpuInBall, gpuOutBall, StepMulti)
-        gpu.Synchronize()
-        gpu.CopyFromDevice(gpuOutBall, Ball)
-        gpu.FreeAll()
+        '''''Allocate the updated body array and perform another kernel execution for collisions.
+        ''''' Debug.Print(Ball(961).InRoche)
+        ''''gpuInBall = gpu.Allocate(Ball)
+        ''''OutBall = New Prim_Struct(Ball.Length - 1) {}
+        ''''gpuOutBall = gpu.Allocate(OutBall)
+        ''''gpu.CopyToDevice(Ball, gpuInBall)
+        ''''gpu.Launch(nBlocks, threads).CollideBodies(gpuInBall, gpuOutBall, StepMulti)
+        ''''gpu.Synchronize()
+        ''''gpu.CopyFromDevice(gpuOutBall, Ball)
+        ''''gpu.FreeAll()
 
         '  Debug.Print(Ball(961).InRoche)
         'Copy the new data back into the public array
@@ -205,6 +205,8 @@ Public Module CUDA
                 '    Ball(a).InRoche = 1
                 '    Ball(a).ForceTot = 0
                 'End If
+                If Ball(a).BlackHole = 2 Then Ball(a).InRoche = 1
+                If Ball(a).BlackHole = 1 Then Ball(a).Size = 3
             End If
         Next
         If NewBalls.Count > 0 Then
@@ -466,7 +468,7 @@ Public Module CUDA
                                 ColBody(Master).ForceX -= ForceX * multi
                                 ColBody(Master).ForceY -= ForceY * multi
 
-                                Dim Friction As Double = 0.5 '0.2
+                                Dim Friction As Double = 0.5
                                 ColBody(Master).SpeedX += (U1 - V1) * VekX * Friction
                                 ColBody(Master).SpeedY += (U1 - V1) * VeKY * Friction
                                 'Body(Slave).SpeedX += (U2 - V2) * VekX * Friction

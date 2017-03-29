@@ -178,6 +178,7 @@ Module Functions
             SerialBody(i).InRoche = Bodies(i).InRoche
             SerialBody(i).BlackHole = Bodies(i).BlackHole
             SerialBody(i).UID = Bodies(i).UID
+            ' SerialBody(i).DT = Bodies(i).DT
             'SerialBody(i).ThreadID = Bodies(i).ThreadID
             'SerialBody(i).BlockID = Bodies(i).BlockID
             'SerialBody(i).BlockDIM = Bodies(i).BlockDIM
@@ -208,6 +209,7 @@ Module Functions
             CUDABody(i).InRoche = Bodies(i).InRoche
             CUDABody(i).BlackHole = Bodies(i).BlackHole
             CUDABody(i).UID = Bodies(i).UID
+            'CUDABody(i).DT = Bodies(i).DT
             'CUDABody(i).ThreadID = Bodies(i).ThreadID
             'CUDABody(i).BlockID = Bodies(i).BlockID
             'CUDABody(i).BlockDIM = Bodies(i).BlockDIM

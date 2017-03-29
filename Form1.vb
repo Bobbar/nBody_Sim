@@ -196,6 +196,7 @@ Public Class Form1
             Ball(UBound(Ball)).SpeedX = 0
             Ball(UBound(Ball)).SpeedY = 0
             Ball(UBound(Ball)).Size = 1
+
             'Ball(UBound(Ball)).Flags = ""
             '  Ball(UBound(Ball)).IsFragment = False
             '  Ball(UBound(Ball)).Index = UBound(Ball)
@@ -1146,21 +1147,21 @@ Err:
 
     'End Sub
     Public Sub RecordFrame(Bodies() As Prim_Struct)
-        ' Dim tmpCompBodies(0) As Body_Rec_Parms
+        '  Dim tmpCompBodies(0) As Body_Rec_Parms
         Dim tmpCompBodies(VisibleBalls()) As Body_Rec_Parms
-        ' Dim i As Integer = 0
+        Dim i As Integer = 0
         'For Each body As BallParms In Bodies
-        For s As Integer = 0 To VisibleBalls() 'UBound(Bodies)
-            If Bodies(s).Visible Then
-                tmpCompBodies(s).Size = Bodies(s).Size
-                tmpCompBodies(s).LocX = Bodies(s).LocX
-                tmpCompBodies(s).LocY = Bodies(s).LocY
-                tmpCompBodies(s).Visible = Bodies(s).Visible
-                tmpCompBodies(s).BlackHole = Bodies(s).BlackHole
-                tmpCompBodies(s).Color = Bodies(s).Color
-                tmpCompBodies(s).UID = Bodies(s).UID
-                'ReDim Preserve tmpCompBodies(UBound(tmpCompBodies) + 1)
-                '    i += 1
+        For s As Integer = 0 To UBound(Bodies) 'VisibleBalls()
+            If Bodies(s).Visible = 1 Then
+                tmpCompBodies(i).Size = Bodies(s).Size
+                tmpCompBodies(i).LocX = Bodies(s).LocX
+                tmpCompBodies(i).LocY = Bodies(s).LocY
+                tmpCompBodies(i).Visible = Bodies(s).Visible
+                tmpCompBodies(i).BlackHole = Bodies(s).BlackHole
+                tmpCompBodies(i).Color = Bodies(s).Color
+                tmpCompBodies(i).UID = Bodies(s).UID
+                ' ReDim Preserve tmpCompBodies(UBound(tmpCompBodies) + 1)
+                i += 1
             End If
 
         Next
@@ -1644,7 +1645,8 @@ Err:
         lblVisBalls.Text = "Visible: " & VisibleBalls()
         lblScale.Text = "Scale: " & Round(pic_scale, 2)
         'Dim mDelta As Double = TotalMass() - PrevMass
-        lblMassDelta.Text = "Mass Δ:" & mDelta
+        lblMassDelta.Text = "Mass Δ: " & mDelta
+        ' lblElapTime.Text = "Time: " & Round(eTime, 5)
         'PrevMass = TotalMass()
 
         If bolStoring Then

@@ -77,6 +77,7 @@ Partial Class Form1
         Me.lblRecSize = New System.Windows.Forms.Label()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.lblMassDelta = New System.Windows.Forms.Label()
+        Me.lblElapTime = New System.Windows.Forms.Label()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -611,12 +612,25 @@ Partial Class Form1
         Me.lblMassDelta.TabIndex = 60
         Me.lblMassDelta.Text = "Mass Δ:"
         '
+        'lblElapTime
+        '
+        Me.lblElapTime.AutoSize = True
+        Me.lblElapTime.BackColor = System.Drawing.Color.Black
+        Me.lblElapTime.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblElapTime.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.lblElapTime.Location = New System.Drawing.Point(11, 176)
+        Me.lblElapTime.Name = "lblElapTime"
+        Me.lblElapTime.Size = New System.Drawing.Size(40, 16)
+        Me.lblElapTime.TabIndex = 61
+        Me.lblElapTime.Text = "Time:"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
         Me.ClientSize = New System.Drawing.Size(1316, 733)
+        Me.Controls.Add(Me.lblElapTime)
         Me.Controls.Add(Me.lblMassDelta)
         Me.Controls.Add(Me.lblRecSize)
         Me.Controls.Add(Me.lblRecFrames)
@@ -712,4 +726,5 @@ Partial Class Form1
     Friend WithEvents Timer1 As Timer
     Friend WithEvents tsmShowAll As ToolStripMenuItem
     Friend WithEvents lblMassDelta As Label
+    Friend WithEvents lblElapTime As Label
 End Class

@@ -148,6 +148,8 @@ Public Class frmAddBodies
             Dim vy As Double = Sign(oPx) * Sin(thetav) * magv 'Sign(px) * Sin(thetav) * magv
 
 
+            ' Ball(i).DT = StepMulti
+
             Ball(i).LocX = px
             Ball(i).LocY = py
 
@@ -169,6 +171,9 @@ Public Class frmAddBodies
             Ball(EndIndex).Visible = 1
             Ball(EndIndex).LocX = newEllipse.Location.X ' Form1.Render.Width / 2 / pic_scale - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
             Ball(EndIndex).LocY = newEllipse.Location.Y 'Form1.Render.Height / 2 / pic_scale - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
+
+            ' Ball(EndIndex).DT = StepMulti
+
             Ball(EndIndex).SpeedX = 0
             Ball(EndIndex).SpeedY = 0
             Ball(EndIndex).BlackHole = 1
@@ -250,6 +255,7 @@ Public Class frmAddBodies
             'Dim vx As Double = -1 * Sign(py) * Cos(thetav) * magv
             'Dim vy As Double = Sign(px) * Sin(thetav) * magv
 
+            ' Ball(i).DT = StepMulti
 
             Ball(i).LocX = px
             Ball(i).LocY = py
