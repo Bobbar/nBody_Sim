@@ -228,9 +228,9 @@ Public Class Form1
                         Debug.Print("Body Index: " & i & "  Body UID: " & Ball(i).UID & "  Body Loc: " & Ball(i).LocX & "," & Ball(i).LocY)
                         Debug.Print("Mass: " & Ball(i).Mass & " " & "Size: " & Ball(i).Size)
                         Debug.Print("InRoche: " & Ball(i).InRoche.ToString & " " & "RocheF: " & Ball(i).ForceTot)
-                        Debug.Print("ThreadID: " & Ball(i).ThreadID & " " & "BlockID: " & Ball(i).BlockID)
+                        ' Debug.Print("ThreadID: " & Ball(i).ThreadID & " " & "BlockID: " & Ball(i).BlockID)
                         Debug.Print("Visible: " & Ball(i).Visible)
-                        Debug.Print("LastColID: " & Ball(i).LastColID)
+                        ' Debug.Print("LastColID: " & Ball(i).LastColID)
                         If Not bolAltDown And bolShiftDown Then MoV = 1
                         Sel = i
                         'If bolShiftDown Then
@@ -1606,7 +1606,7 @@ Err:
     End Sub
     Private Sub UI_Worker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles UI_Worker.ProgressChanged
         SetUIInfo()
-        If bolRendering And Not bolPlaying AndAlso buffBall IsNot Nothing Then Drawr(buffBall)
+        ' If bolRendering And Not bolPlaying AndAlso buffBall IsNot Nothing Then Drawr(buffBall)
     End Sub
     Private Sub SetUIInfo()
 
