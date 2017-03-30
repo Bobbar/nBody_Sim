@@ -13,6 +13,7 @@ Public Module Renderer
     Public bolCulling As Boolean = True
     Public bolShowAll As Boolean = False
     Public FollowGUID As Long
+    Public buffBall() As Prim_Struct
     'Public RenderWindowDimsH As Integer
     'Public RenderWindowDimsW As Integer
     Public RenderWindowDims As New Point(Form1.Render.Width, Form1.Render.Height)

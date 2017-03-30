@@ -1589,7 +1589,7 @@ Err:
     End Sub
     Private Sub UI_Worker_DoWork(sender As Object, e As DoWorkEventArgs) Handles UI_Worker.DoWork
         Do Until bolStopWorker
-            Thread.Sleep(100)
+            Thread.Sleep(50)
             Do While bolStopLoop
                 Thread.Sleep(100)
             Loop
@@ -1605,6 +1605,7 @@ Err:
     End Sub
     Private Sub UI_Worker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles UI_Worker.ProgressChanged
         SetUIInfo()
+        If bolRendering And Not bolPlaying Then Drawr(buffBall)
     End Sub
     Private Sub SetUIInfo()
 
@@ -2042,7 +2043,7 @@ Err:
         ' Debug.Print("Render complete " & Now.Ticks)
         'Dim tmpBodys As New List(Of BallParms)
         'tmpBodys.AddRange(e.UserState)
-
+        buffBall = Ball
         '  Dim PassBall() As Prim_Struct = e.UserState ' tmpBodys.ToArray
         If bolPlaying Then
 
