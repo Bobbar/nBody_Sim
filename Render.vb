@@ -10,7 +10,7 @@ Public Module Renderer
     Public ScreenCenterY As Single
     Public CircleOInfluence As Single = 10000
     Public bolDrawing As Boolean = False
-    Public bolCulling As Boolean = True
+    Public bolCulling As Boolean = False
     Public bolShowAll As Boolean = False
     Public FollowGUID As Long
     Public buffBall() As Prim_Struct

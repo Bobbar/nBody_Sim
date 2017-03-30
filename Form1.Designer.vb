@@ -449,9 +449,7 @@ Partial Class Form1
         '
         'tsmCull
         '
-        Me.tsmCull.Checked = True
         Me.tsmCull.CheckOnClick = True
-        Me.tsmCull.CheckState = System.Windows.Forms.CheckState.Checked
         Me.tsmCull.Name = "tsmCull"
         Me.tsmCull.Size = New System.Drawing.Size(161, 22)
         Me.tsmCull.Text = "Culling"

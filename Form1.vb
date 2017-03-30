@@ -418,6 +418,7 @@ Err:
         bolStart2 = False
         bolStart3 = False
         PubIndex = 1
+        ExtendedMethods.DoubleBufferedPictureBox(Render, True)
         UI_Worker.RunWorkerAsync()
         InitGPU()
         ' tmrRender.Enabled = True
