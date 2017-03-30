@@ -1605,7 +1605,7 @@ Err:
     End Sub
     Private Sub UI_Worker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles UI_Worker.ProgressChanged
         SetUIInfo()
-        If bolRendering And Not bolPlaying Then Drawr(buffBall)
+        If bolRendering And Not bolPlaying AndAlso buffBall IsNot Nothing Then Drawr(buffBall)
     End Sub
     Private Sub SetUIInfo()
 

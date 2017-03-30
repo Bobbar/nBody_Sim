@@ -145,7 +145,7 @@ Public Module CUDA
         Dim gpuInBall() As Prim_Struct = gpu.Allocate(Ball)
 
         'Declare and init the output array.
-        Dim OutBall() As Prim_Struct = New Prim_Struct(Ball.Length - 1) {}
+        Dim OutBall() As Prim_Struct = Ball 'New Prim_Struct(Ball.Length - 1) {}
 
         'Allocate the output array.
         'This is the array the threads will write to. Each thread works one element of this array.
@@ -159,7 +159,7 @@ Public Module CUDA
 
         'Calc number of blocks needed based on number of bodys and threads.
         Dim nBlocks As Integer = ((Ball.Length - 1) + threads - 1) / threads
-        StartTimer()
+        '  StartTimer()
         'Launch the kernel to calculate body forces.
         gpu.Launch(nBlocks, threads).CalcPhysics(gpuInBall, Convert.ToSingle(StepMulti), gpuOutBall)
 
@@ -167,11 +167,11 @@ Public Module CUDA
         gpu.Synchronize()
         gpu.CopyFromDevice(gpuOutBall, Ball)
         gpu.FreeAll()
-        StopTimer()
+        '  StopTimer()
         'Allocate the updated body array and perform another kernel execution for collisions.
         ' Debug.Print(Ball(961).InRoche)
         gpuInBall = gpu.Allocate(Ball)
-        OutBall = New Prim_Struct(Ball.Length - 1) {}
+        OutBall = Ball 'New Prim_Struct(Ball.Length - 1) {}
         gpuOutBall = gpu.Allocate(OutBall)
         gpu.CopyToDevice(Ball, gpuInBall)
         gpu.Launch(nBlocks, threads).CollideBodies(gpuInBall, gpuOutBall, Convert.ToSingle(StepMulti))
@@ -270,7 +270,8 @@ Public Module CUDA
         Dim M1, M2 As Single
         Dim EPS As Single = 2
 
-        ' Dim MyForceX, MyForceY, MyForceTot, MyLocX, MyLocY,
+        Dim MyForceX, MyForceY, MyForceTot, MyLocX, MyLocY, MyMass As Single
+
 
 
 
@@ -279,6 +280,15 @@ Public Module CUDA
         If A <= Body.Length - 1 Then
 
             OutBody(A) = Body(A)
+
+            MyForceX = Body(A).ForceX
+            MyForceY = Body(A).ForceY
+            MyForceTot = Body(A).ForceTot
+            MyLocX = Body(A).LocX
+            MyLocY = Body(A).LocY
+            MyMass = Body(A).Mass
+
+
             If Body(A).Visible = 1 Then
 
 
@@ -287,20 +297,22 @@ Public Module CUDA
                 'OutBody(A).BlockID = gpThread.blockIdx.x
                 'OutBody(A).BlockDIM = gpThread.blockDim.x
 
-                OutBody(A).ForceX = 0
-                OutBody(A).ForceY = 0
-                OutBody(A).ForceTot = 0
+                'OutBody(A).ForceX = 0
+                'OutBody(A).ForceY = 0
+                'OutBody(A).ForceTot = 0
 
-
+                MyForceX = 0
+                MyForceY = 0
+                MyForceTot = 0
 
                 For B = 0 To Body.Length - 1
                     If A <> B And Body(B).Visible = 1 Then
-                        DistX = Body(B).LocX - OutBody(A).LocX
-                        DistY = Body(B).LocY - OutBody(A).LocY
+                        DistX = Body(B).LocX - MyLocX
+                        DistY = Body(B).LocY - MyLocY
                         Dist = (DistX * DistX) + (DistY * DistY)
                         DistSqrt = Sqrt(Dist)
                         If DistSqrt > 0 Then 'Gravity reaction
-                            M1 = OutBody(A).Mass '^ 2
+                            M1 = MyMass 'OutBody(A).Mass '^ 2
                             M2 = Body(B).Mass ' ^ 2
                             TotMass = M1 * M2
                             Force = TotMass / (DistSqrt * DistSqrt + EPS * EPS)
@@ -308,9 +320,9 @@ Public Module CUDA
                             ForceX = Force * DistX / DistSqrt
                             ForceY = Force * DistY / DistSqrt
 
-                            OutBody(A).ForceTot += Force
-                            OutBody(A).ForceX += ForceX
-                            OutBody(A).ForceY += ForceY
+                            MyForceTot += Force
+                            MyForceX += ForceX
+                            MyForceY += ForceY
 
                         Else
                         End If
@@ -319,6 +331,14 @@ Public Module CUDA
 
 
                 Next B
+
+
+
+
+
+                OutBody(A).ForceX = MyForceX
+                OutBody(A).ForceY = MyForceY
+                OutBody(A).ForceTot = MyForceTot
 
 
 
@@ -340,6 +360,16 @@ Public Module CUDA
                 'OutBody(A).SpeedY += TimeStep * OutBody(A).ForceY / OutBody(A).Mass
                 'OutBody(A).LocX += TimeStep * OutBody(A).SpeedX
                 'OutBody(A).LocY += TimeStep * OutBody(A).SpeedY
+
+
+                '''''MyForceX = Body(A).ForceX
+                '''''MyForceY = Body(A).ForceY
+                '''''MyForceTot = Body(A).ForceTot
+                '''''MyLocX = Body(A).LocX
+                '''''MyLocY = Body(A).LocY
+                '''''MyMass = Body(A).Mass
+
+
 
 
                 gpThread.SyncThreads()
