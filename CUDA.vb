@@ -543,24 +543,39 @@ Public Module CUDA
                             ElseIf MyInRoche = 1 And MySlaveInRoche = 1 Then
 
                                 'Lame Spring force attempt. It's literally a reversed gravity force that's increased with a multiplier.
-                                M1 = MyMass
-                                M2 = MySlaveMass
-                                TotMass = M1 * M2 'M1 * M2
-                                ' TotMass = 100
-                                Dim EPS As Double = 0.1
-                                Force = TotMass / ((DistSqrt * DistSqrt) + EPS) '(ColBody(Master).Size / 2 + Body(Slave).Size / 2)) 'EPS) 'EPS * EPS)
-                                ForceX = Force * DistX / DistSqrt
-                                ForceY = Force * DistY / DistSqrt
-                                Dim multi As Integer = 20 ' - (Sqrt(MyMass) * 2)  - (TimeStep * 1000) '(Sqrt(TimeStep) * 100)
-                                ColBody(Master).ForceX -= ForceX * multi
-                                ColBody(Master).ForceY -= ForceY * multi
+                                Dim Friction As Double = 0.7
+                                If DistSqrt < (MySize / 2) + (MySlaveSize / 2) - 0.01 Then
 
-                                Dim Friction As Double = 0.3
-                                MySpeedX += (U1 - V1) * VekX * Friction
-                                MySpeedY += (U1 - V1) * VeKY * Friction
+                                    M1 = MyMass
+                                    M2 = MySlaveMass
+                                    TotMass = M1 * M2 'M1 * M2
+                                    ' TotMass = 100
+                                    Dim EPS As Double = 0.1
+                                    Force = TotMass / ((DistSqrt * DistSqrt) + EPS) '(ColBody(Master).Size / 2 + Body(Slave).Size / 2)) 'EPS) 'EPS * EPS)
+                                    ForceX = Force * DistX / DistSqrt
+                                    ForceY = Force * DistY / DistSqrt
+                                    Dim multi As Integer = 20 ' - (Sqrt(MyMass) * 2)  - (TimeStep * 1000) '(Sqrt(TimeStep) * 100)
+
+                                    '  Dim A = PI * (MySize ^ 2)
+                                    ColBody(Master).ForceX -= ForceX * multi ' (multi - Sqrt(MySlaveMass / A))
+                                    ColBody(Master).ForceY -= ForceY * multi '(multi - Sqrt(MySlaveMass / A))
+                                    '
+                                    MySpeedX += (U1 - V1) * VekX * Friction
+                                    MySpeedY += (U1 - V1) * VeKY * Friction
+                                Else
+
+
+                                    MySpeedX += (U1 - V1) * VekX * Friction
+                                    MySpeedY += (U1 - V1) * VeKY * Friction
+
+                                End If
+
+
+
+
 
                             ElseIf MyInRoche = 1 And MySlaveInRoche = 0 Then
-                                ColBody(Master).Visible = 0
+                                    ColBody(Master).Visible = 0
                             End If
                             ' End If
                         Else ' if bodies are at exact same position

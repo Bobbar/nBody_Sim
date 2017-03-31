@@ -375,7 +375,6 @@ Err:
 
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         InitMatter()
-
         SetColors(Me)
         pic_scale = 1
         ScreenCenterX = Me.Render.Width / 2
@@ -1590,7 +1589,7 @@ Err:
     End Sub
     Private Sub UI_Worker_DoWork(sender As Object, e As DoWorkEventArgs) Handles UI_Worker.DoWork
         Do Until bolStopWorker
-            Thread.Sleep(50)
+            Thread.Sleep(100)
             Do While bolStopLoop
                 Thread.Sleep(100)
             Loop
