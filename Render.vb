@@ -152,8 +152,11 @@ Public Module Renderer
 
             Next
         End If
+
         Form1.Render.Image = bm
+        Form1.Render.Invalidate()
         bolDrawing = False
+        '   Return bm
     End Sub
     Private Function FollowBodyLoc(Balls() As Prim_Struct) As SPoint
         For Each b As Prim_Struct In Balls

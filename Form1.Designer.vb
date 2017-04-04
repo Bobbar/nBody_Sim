@@ -319,7 +319,7 @@ Partial Class Form1
         Me.TimeStep.Size = New System.Drawing.Size(48, 20)
         Me.TimeStep.TabIndex = 48
         Me.ToolTip1.SetToolTip(Me.TimeStep, "Time Step")
-        Me.TimeStep.Value = New Decimal(New Integer() {3, 0, 0, 196608})
+        Me.TimeStep.Value = New Decimal(New Integer() {5, 0, 0, 196608})
         '
         'NumThreads
         '
