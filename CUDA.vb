@@ -331,10 +331,10 @@ Public Module CUDA
                                 ForceY = Force * DistY / DistSqrt
 
                                 MyForceTot += Force
-                            If DistSqrt > MySize + MySizeB Then
-                                MyForceX += ForceX
-                                MyForceY += ForceY
-                            End If
+                            ' If DistSqrt > MySize + MySizeB Then
+                            MyForceX += ForceX
+                            MyForceY += ForceY
+                            ' End If
 
 
                         Else
@@ -355,7 +355,7 @@ Public Module CUDA
 
 
 
-                If OutBody(A).ForceTot > OutBody(A).Mass * 4 And OutBody(A).BlackHole = 0 Then ' And OuterBody(A).Size < 10 
+                If OutBody(A).ForceTot > OutBody(A).Mass * 6 And OutBody(A).BlackHole = 0 Then ' And OuterBody(A).Size < 10 
                     OutBody(A).InRoche = 1
                     ' OutBody(A).ForceTot = 0
 
@@ -543,24 +543,26 @@ Public Module CUDA
                             ElseIf MyInRoche = 1 And MySlaveInRoche = 1 Then
 
                                 'Lame Spring force attempt. It's literally a reversed gravity force that's increased with a multiplier.
-                                M1 = MyMass
-                                M2 = MySlaveMass
-                                TotMass = M1 * M2 'M1 * M2
-                                ' TotMass = 100
-                                Dim EPS As Double = 0.1
-                                Force = TotMass / ((DistSqrt * DistSqrt) + EPS) '(ColBody(Master).Size / 2 + Body(Slave).Size / 2)) 'EPS) 'EPS * EPS)
-                                ForceX = Force * DistX / DistSqrt
-                                ForceY = Force * DistY / DistSqrt
-                                Dim multi As Integer = 20 ' - (Sqrt(MyMass) * 2)  - (TimeStep * 1000) '(Sqrt(TimeStep) * 100)
-                                ColBody(Master).ForceX -= ForceX * multi
-                                ColBody(Master).ForceY -= ForceY * multi
+                                If DistSqrt < (MySize / 2) + (MySlaveSize / 2) Then
+                                    M1 = MyMass
+                                    M2 = MySlaveMass
+                                    TotMass = M1 * M2 'M1 * M2
+                                    ' TotMass = 100
+                                    Dim EPS As Double = 0.1
+                                    Force = TotMass / ((DistSqrt * DistSqrt) + EPS) '(ColBody(Master).Size / 2 + Body(Slave).Size / 2)) 'EPS) 'EPS * EPS)
+                                    ForceX = Force * DistX / DistSqrt
+                                    ForceY = Force * DistY / DistSqrt
+                                    Dim multi As Integer = 20 - (Sqrt(MySlaveMass)) ' * 2) ' - (TimeStep * 1000) '(Sqrt(TimeStep) * 100)
+                                    ColBody(Master).ForceX -= ForceX * multi
+                                    ColBody(Master).ForceY -= ForceY * multi
+                                End If
 
-                                Dim Friction As Double = 0.3
-                                MySpeedX += (U1 - V1) * VekX * Friction
-                                MySpeedY += (U1 - V1) * VeKY * Friction
+                                Dim Friction As Double = 0.5 + ((ColBody(Slave).Mass * 0.001) * -1)
+                                    MySpeedX += (U1 - V1) * VekX * Friction
+                                    MySpeedY += (U1 - V1) * VeKY * Friction
 
-                            ElseIf MyInRoche = 1 And MySlaveInRoche = 0 Then
-                                ColBody(Master).Visible = 0
+                                ElseIf MyInRoche = 1 And MySlaveInRoche = 0 Then
+                                    ColBody(Master).Visible = 0
                             End If
                             ' End If
                         Else ' if bodies are at exact same position

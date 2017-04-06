@@ -1597,7 +1597,7 @@ Err:
 
             UI_Worker.ReportProgress(1)
 
-
+            '  bolDraw = False
         Loop
 
 
