@@ -38,7 +38,7 @@ Module Functions
     Public Function GetDistance(PointA As SPoint, PointB As SPoint) As Single
         Return Math.Sqrt((PointA.X - PointB.X) ^ 2 + (PointA.Y - PointB.Y) ^ 2)
     End Function
-    Public Function GetDistanceOfBalls(BallA As Prim_Struct, BallB As Prim_Struct) As Single
+    Public Function GetDistanceOfBalls(BallA As Body_Struct, BallB As Body_Struct) As Single
         Return Math.Sqrt((BallA.LocX - BallB.LocX) ^ 2 + (BallA.LocY - BallB.LocY) ^ 2)
     End Function
     Public Sub StartTimer()
@@ -118,12 +118,12 @@ Module Functions
         Next
         Return TotalM
     End Function
-    Public Function CullBodies(Bodies() As Prim_Struct) As Prim_Struct()
+    Public Function CullBodies(Bodies() As Body_Struct) As Body_Struct()
         ''    StartTimer()
 
 
-        ''Dim tmpBodies(0) As Prim_Struct
-        'Dim tmpBodies As New List(Of Prim_Struct)
+        ''Dim tmpBodies(0) As Body_Struct
+        'Dim tmpBodies As New List(Of Body_Struct)
         'For i As Integer = 0 To UBound(Bodies)
         '    If Bodies(i).Visible = 1 Then
 
@@ -137,7 +137,7 @@ Module Functions
 
 
 
-        Dim tmpBodies(0) As Prim_Struct
+        Dim tmpBodies(0) As Body_Struct
         For i As Integer = 0 To Bodies.Length - 1
             If Bodies(i).Visible = 1 Then
                 ReDim Preserve tmpBodies(tmpBodies.Length)
@@ -159,7 +159,7 @@ Module Functions
         Dim rnd As Random = New Random
         Return rnd.Next + BdyIndex
     End Function
-    Public Function CUDAToSerial(Bodies() As Prim_Struct) As Serial_Prim_Struct()
+    Public Function CUDAToSerial(Bodies() As Body_Struct) As Serial_Prim_Struct()
 
         Dim SerialBody(Bodies.Length - 1) As Serial_Prim_Struct
         For i As Integer = 0 To Bodies.Length - 1
@@ -190,9 +190,9 @@ Module Functions
         Return SerialBody
 
     End Function
-    Public Function SerialToCUDA(Bodies() As Serial_Prim_Struct) As Prim_Struct()
+    Public Function SerialToCUDA(Bodies() As Serial_Prim_Struct) As Body_Struct()
 
-        Dim CUDABody(Bodies.Length - 1) As Prim_Struct
+        Dim CUDABody(Bodies.Length - 1) As Body_Struct
         For i As Integer = 0 To Bodies.Length - 1
 
             CUDABody(i).LocX = Bodies(i).LocX

@@ -315,7 +315,7 @@ Public Class Form1
 Err:
 
     End Sub
-    Private Function MouseOver(MousePos As SPoint, Ball As Prim_Struct) As Boolean
+    Private Function MouseOver(MousePos As SPoint, Ball As Body_Struct) As Boolean
         'ScaleMousePos(e.X) > Ball(i).LocX And ScaleMousePos(e.X) < Ball(i).LocX + Ball(i).Size And ScaleMousePos(e.Y) > Ball(i).LocY And ScaleMousePos(e.Y) < Ball(i).LocY + Ball(i).Size And Not bolShiftDown Then
         ' MouseOver(New Point(e.Location), New Point(Ball(i).LocX, Ball(i).LocY + Ball(i).Size))
         Dim Dist As Double = Math.Sqrt((ScaleMousePosRelative(MousePos).X - Ball.LocX) ^ 2 + (ScaleMousePosRelative(MousePos).Y - Ball.LocY) ^ 2)
@@ -1147,7 +1147,7 @@ Err:
 
 
     'End Sub
-    Public Sub RecordFrame(Bodies() As Prim_Struct)
+    Public Sub RecordFrame(Bodies() As Body_Struct)
         '  Dim tmpCompBodies(0) As Body_Rec_Parms
         Dim tmpCompBodies(VisibleBalls()) As Body_Rec_Parms
         Dim i As Integer = 0
@@ -1168,8 +1168,8 @@ Err:
         Next
         CompRecBodies.Add(tmpCompBodies)
     End Sub
-    Public Function ConvertFrame(Bodies() As Body_Rec_Parms) As Prim_Struct()
-        Dim tmpCompBodies(UBound(Bodies)) As Prim_Struct
+    Public Function ConvertFrame(Bodies() As Body_Rec_Parms) As Body_Struct()
+        Dim tmpCompBodies(UBound(Bodies)) As Body_Struct
         'Dim i As Integer = 0
         For s As Integer = 0 To UBound(Bodies)
             'For Each body As Body_Rec_Parms In Bodies
@@ -2045,7 +2045,7 @@ Err:
         'Dim tmpBodys As New List(Of BallParms)
         'tmpBodys.AddRange(e.UserState)
         buffBall = Ball
-        '  Dim PassBall() As Prim_Struct = e.UserState ' tmpBodys.ToArray
+        '  Dim PassBall() As Body_Struct = e.UserState ' tmpBodys.ToArray
         If bolPlaying Then
 
             SeekBar.Value = e.ProgressPercentage

@@ -13,7 +13,7 @@ Public Module Renderer
     Public bolCulling As Boolean = False
     Public bolShowAll As Boolean = False
     Public FollowGUID As Long
-    Public buffBall() As Prim_Struct
+    Public buffBall() As Body_Struct
     'Public RenderWindowDimsH As Integer
     'Public RenderWindowDimsW As Integer
     Public RenderWindowDims As New Point(Form1.Render.Width, Form1.Render.Height)
@@ -34,7 +34,7 @@ Public Module Renderer
         gr.ResetTransform()
         gr.ScaleTransform(pic_scale, pic_scale)
     End Sub
-    Public Sub Drawr(ByVal BallArray() As Prim_Struct) ' As Bitmap
+    Public Sub Drawr(ByVal BallArray() As Body_Struct) ' As Bitmap
         Dim BodyLoc, Body2Loc As SPoint
         Dim BodySize, Body2Size As Single
         Dim FollowLoc As New SPoint
@@ -158,8 +158,8 @@ Public Module Renderer
         bolDrawing = False
         '   Return bm
     End Sub
-    Private Function FollowBodyLoc(Balls() As Prim_Struct) As SPoint
-        For Each b As Prim_Struct In Balls
+    Private Function FollowBodyLoc(Balls() As Body_Struct) As SPoint
+        For Each b As Body_Struct In Balls
             If b.UID = FollowGUID Then
                 Return New SPoint(b.LocX, b.LocY)
 
