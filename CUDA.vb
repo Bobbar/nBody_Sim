@@ -180,6 +180,13 @@ Public Module CUDA
         ' gpuOutBall = gpu.Allocate(Ball)
         ' gpu.CopyToDevice(Ball, gpuInBall)
         gpu.Launch(nBlocks, threads).CollideBodies(gpuOutBall, gpuInBall, Convert.ToSingle(StepMulti))
+
+
+        gpu.Launch(nBlocks, threads).Integrate(gpuInBall, Convert.ToSingle(StepMulti))
+
+
+
+
         gpu.Synchronize()
         gpu.CopyFromDevice(gpuInBall, Ball)
         gpu.FreeAll()
@@ -274,7 +281,7 @@ Public Module CUDA
         Dim Dist As Single
         Dim DistSqrt As Single
         Dim M1, M2 As Single
-        Dim EPS As Single = 0.2 '2
+        Dim EPS As Single = 0.29 '1.04 '0.2 '2
 
         Dim MyForceX, MyForceY, MyForceTot, MyLocX, MyLocY, MyMass, MySize, MySizeB As Single
 
@@ -543,26 +550,47 @@ Public Module CUDA
                             ElseIf MyInRoche = 1 And MySlaveInRoche = 1 Then
 
                                 'Lame Spring force attempt. It's literally a reversed gravity force that's increased with a multiplier.
-                                ' If DistSqrt < (MySize / 2) + (MySlaveSize / 2) Then
+                                ' If DistSqrt < (((MySize / 2) + (MySlaveSize / 2)) * 0.9) Then
+                                'MySpeedX += (U1 - V1) * VekX * Friction
+                                'MySpeedY += (U1 - V1) * VeKY * Friction
+
+                                ''MyLocX += TimeStep * MySpeedX
+                                ''MyLocY += TimeStep * MySpeedY
+
+                                'DistX = MySlaveLocX - MyLocX
+                                'DistY = MySlaveLocY - MyLocY
+                                'Dist = (DistX * DistX) + (DistY * DistY)
+                                'DistSqrt = Sqrt(Dist)
+
+
                                 M1 = MyMass
                                 M2 = MySlaveMass
                                 TotMass = M1 * M2 'M1 * M2
                                 ' TotMass = 100
-                                Dim EPS As Double = 0.1
+                                Dim EPS As Double = 0.29 '0.1
+
                                 Force = TotMass / ((DistSqrt * DistSqrt) + EPS) '(ColBody(Master).Size / 2 + Body(Slave).Size / 2)) 'EPS) 'EPS * EPS)
                                 ForceX = Force * DistX / DistSqrt
-                                ForceY = Force * DistY / DistSqrt
+                                    ForceY = Force * DistY / DistSqrt
                                 Dim multi As Integer = 20 '- (Sqrt(MySlaveMass)) ' * 2) ' - (TimeStep * 1000) '(Sqrt(TimeStep) * 100)
                                 ColBody(Master).ForceX -= ForceX * multi
                                 ColBody(Master).ForceY -= ForceY * multi
-                                '  End If
 
-                                Dim Friction As Double = 0.5 ' + ((ColBody(Slave).Mass * 0.001) * -1)
+
+
+                                Dim Friction As Double = 0.5
                                 MySpeedX += (U1 - V1) * VekX * Friction
                                 MySpeedY += (U1 - V1) * VeKY * Friction
+                                'Else
+                                '    MySpeedX += (U1 - V1) * VekX * Friction
+                                '    MySpeedY += (U1 - V1) * VeKY * Friction
+
+                                'End If
+
+                                ' + ((ColBody(Slave).Mass * 0.001) * -1)
 
                             ElseIf MyInRoche = 1 And MySlaveInRoche = 0 Then
-                                ColBody(Master).Visible = 0
+                                    ColBody(Master).Visible = 0
                             End If
                             ' End If
                         Else ' if bodies are at exact same position
@@ -590,10 +618,10 @@ Public Module CUDA
 
 
 
-            MySpeedX += TimeStep * ColBody(Master).ForceX / MyMass
-            MySpeedY += TimeStep * ColBody(Master).ForceY / MyMass
-            MyLocX += TimeStep * MySpeedX
-            MyLocY += TimeStep * MySpeedY
+            'MySpeedX += TimeStep * ColBody(Master).ForceX / MyMass
+            'MySpeedY += TimeStep * ColBody(Master).ForceY / MyMass
+            'MyLocX += TimeStep * MySpeedX
+            'MyLocY += TimeStep * MySpeedY
 
             ColBody(Master).SpeedX = MySpeedX
             ColBody(Master).SpeedY = MySpeedY
@@ -618,6 +646,51 @@ Public Module CUDA
 
 
         gpThread.SyncThreads()
+
+    End Sub
+    <Cudafy>
+    Private Sub Integrate(gpThread As GThread, Body() As Body_Struct, TimeStep As Single)
+        ' Dim OutSpeedX, OutSpeedY, OutLocX, OutLocY, OutForceX, OutForceY As Single
+
+        Dim A As Integer = gpThread.blockDim.x * gpThread.blockIdx.x + gpThread.threadIdx.x
+        'OutSpeedX = Body(A).SpeedX
+        'OutSpeedY = Body(A).SpeedY
+
+        'OutLocX = Body(A).LocX
+        'OutLocY = Body(A).LocY
+
+        'OutForceX = Body(A).ForceX
+        'OutForceY = Body(A).ForceY
+
+
+        Body(A).SpeedX += TimeStep * Body(A).ForceX / Body(A).Mass
+        Body(A).SpeedY += TimeStep * Body(A).ForceY / Body(A).Mass
+        Body(A).LocX += TimeStep * Body(A).SpeedX
+        Body(A).LocY += TimeStep * Body(A).SpeedY
+
+
+        'For B As Integer = 0 To Body.Length - 1
+        '    If A <> B Then
+
+
+        '        OutSpeedX += TimeStep * ColBody(Master).ForceX / OutMass
+        '        OutSpeedY += TimeStep * ColBody(Master).ForceY / OutMass
+        '        OutLocX += TimeStep * OutSpeedX
+        '        OutLocY += TimeStep * OutSpeedY
+
+
+
+
+
+
+        '    End If
+
+        'Next
+
+        gpThread.SyncThreads()
+
+
+
 
     End Sub
 
