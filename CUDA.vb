@@ -571,7 +571,7 @@ Public Module CUDA
 
                                 Force = TotMass / ((DistSqrt * DistSqrt) + EPS) '(ColBody(Master).Size / 2 + Body(Slave).Size / 2)) 'EPS) 'EPS * EPS)
                                 ForceX = Force * DistX / DistSqrt
-                                    ForceY = Force * DistY / DistSqrt
+                                ForceY = Force * DistY / DistSqrt
                                 Dim multi As Integer = 20 '- (Sqrt(MySlaveMass)) ' * 2) ' - (TimeStep * 1000) '(Sqrt(TimeStep) * 100)
                                 ColBody(Master).ForceX -= ForceX * multi
                                 ColBody(Master).ForceY -= ForceY * multi

@@ -569,7 +569,7 @@ Public Module PhysicsLoop
     Public Function fnMass(Radius As Double, bDensity As Double) As Double
 
 
-        Return 0.5 * (Sqrt(PI * (Radius ^ 2)) * bDensity)
+        Return (Sqrt(PI * (Radius ^ 2)) * bDensity)
     End Function
     Private myRandom As New Random
     Public Function GetRandomNumber(ByVal Low As Double, ByVal High As Double) As Double

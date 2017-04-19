@@ -200,8 +200,8 @@ Public Class frmAddBodies
         ExtraEllipses.Add(newEllipse)
 
 
-        Dim nGas As Integer = (NumberOfBodies / 8) * 7
-        Dim nMinerals As Integer = (NumberOfBodies / 8)
+        Dim nGas As Integer = (NumberOfBodies / 16) * 15 '(NumberOfBodies / 8) * 7
+        Dim nMinerals As Integer = (NumberOfBodies / 16)  '(NumberOfBodies / 8)
 
 
         Dim StartIndex As Integer
