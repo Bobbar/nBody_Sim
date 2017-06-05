@@ -228,6 +228,7 @@ Public Class Form1
                         Debug.Print("Body Index: " & i & "  Body UID: " & Ball(i).UID & "  Body Loc: " & Ball(i).LocX & "," & Ball(i).LocY)
                         Debug.Print("Mass: " & Ball(i).Mass & " " & "Size: " & Ball(i).Size)
                         Debug.Print("InRoche: " & Ball(i).InRoche.ToString & " " & "RocheF: " & Ball(i).ForceTot)
+                        '   Debug.Print("Debug Val: " & Ball(i).DB)
                         ' Debug.Print("ThreadID: " & Ball(i).ThreadID & " " & "BlockID: " & Ball(i).BlockID)
                         Debug.Print("Visible: " & Ball(i).Visible)
                         ' Debug.Print("LastColID: " & Ball(i).LastColID)
@@ -642,6 +643,7 @@ Err:
             UpDownVal = UpDown1.Value
             ' Ball(lngFollowBall).Flags = Replace$(Ball(lngFollowBall).Flags, "F", "")
             Sel = UpDown1.Value
+            If Sel < 0 Then Exit Sub
             If Ball(Sel).Visible = 0 Then
                 Do Until Ball(Sel).Visible = 1 Or Sel = UpDown1.Minimum
                     Sel = Sel - 1
@@ -2060,4 +2062,7 @@ Err:
         bolShowAll = tsmShowAll.Checked
     End Sub
 
+    Private Sub CullDistantToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CullDistantToolStripMenuItem.Click
+        bolCullDistant = True
+    End Sub
 End Class

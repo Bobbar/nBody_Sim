@@ -42,6 +42,7 @@ Public Module CUDA
         Public InRoche As Integer
         Public BlackHole As Integer
         Public UID As Long
+        ' Public DB As Single
         'Public ThreadID As Integer
         'Public BlockID As Integer
         'Public BlockDIM As Integer
@@ -122,6 +123,7 @@ Public Module CUDA
     Public StartTick, EndTick, ElapTick As Long
     Public SeekIndex As Integer = 0
     Public Prev_SeekIndex As Integer = 0
+    Public bolCullDistant As Boolean = False
     ' <Cudafy>
     Public Sub StartCalc()
 
@@ -134,6 +136,12 @@ Public Module CUDA
             ' StopTimer()
         End If
         '  VisBalls = UBound(Ball)
+
+        If bolCullDistant Then
+            CullDistant()
+            bolCullDistant = False
+        End If
+
 
         PrevMass = TotalMass()
 
@@ -238,6 +246,16 @@ Public Module CUDA
         bolRendering = False
 
     End Sub
+    Private Sub CullDistant()
+        For i As Integer = 0 To Ball.Length - 1
+            Dim BodyLoc As New SPoint(Ball(i).LocX, Ball(i).LocY)
+            If BodyLoc.X + FinalOffset.X < 0 Or BodyLoc.X + FinalOffset.X > Form1.Render.Width / pic_scale Or BodyLoc.Y + FinalOffset.Y < 0 Or BodyLoc.Y + FinalOffset.Y > Form1.Render.Height / pic_scale Then
+                Ball(i).Visible = 0
+            End If
+
+        Next
+        Ball = CullBodies(Ball)
+    End Sub
     Private Sub DebugVis()
         '  Debug.Print(Ball(1483).Visible)
     End Sub
@@ -281,7 +299,7 @@ Public Module CUDA
         Dim Dist As Single
         Dim DistSqrt As Single
         Dim M1, M2 As Single
-        Dim EPS As Single = 0.29 '1.04 '0.2 '2
+        Dim EPS As Single = 1 '1.04 '0.2 '2
 
         Dim MyForceX, MyForceY, MyForceTot, MyLocX, MyLocY, MyMass, MySize, MySizeB As Single
 
@@ -300,7 +318,7 @@ Public Module CUDA
             MyLocX = Body(A).LocX
             MyLocY = Body(A).LocY
             MyMass = Body(A).Mass
-            MySize = Body(A).Size / 2
+            MySize = Body(A).Size * 0.5
 
             If Body(A).Visible = 1 Then
 
@@ -318,8 +336,8 @@ Public Module CUDA
                 MyForceY = 0
                 MyForceTot = 0
 
-                For B = 0 To Body.Length - 1
-                    MySizeB = Body(B).Size / 2
+                For B = 1 To Body.Length - 1
+                    MySizeB = Body(B).Size * 0.5
 
                     If A <> B And Body(B).Visible = 1 Then
                         DistX = Body(B).LocX - MyLocX
@@ -327,8 +345,8 @@ Public Module CUDA
                         Dist = (DistX * DistX) + (DistY * DistY)
                         DistSqrt = Sqrt(Dist)
                         If DistSqrt > 0 Then 'Gravity reaction
-
-
+                            '  Dim EPS As Single = MySize + MySizeB
+                            ' If DistSqrt < EPS Then DistSqrt = EPS
                             M1 = MyMass  'OutBody(A).Mass '^ 2
                             M2 = Body(B).Mass ' ^ 2
                             TotMass = M1 * M2
@@ -362,32 +380,14 @@ Public Module CUDA
 
 
 
-                If OutBody(A).ForceTot > OutBody(A).Mass * 6 And OutBody(A).BlackHole = 0 Then ' And OuterBody(A).Size < 10 
+                If OutBody(A).ForceTot > OutBody(A).Mass * 6 And OutBody(A).BlackHole = 0 Then
                     OutBody(A).InRoche = 1
-                    ' OutBody(A).ForceTot = 0
-
-                    'NewBalls.AddRange(FractureBall(OutBody(A)))
-                    '  OutBody(A).Visible = 0
-                ElseIf (OutBody(A).ForceTot * 2) < OutBody(A).Mass * 4 Then ' And OuterBody(A).Size > 10
+                ElseIf (OutBody(A).ForceTot * 2) < OutBody(A).Mass * 4 Then
                     OutBody(A).InRoche = 0
-                    ' OutBody(A).ForceTot = 0
                 ElseIf OutBody(A).BlackHole = 2 Then
                     OutBody(A).InRoche = 1
-                    ' OutBody(A).ForceTot = 0
                 End If
 
-                'OutBody(A).SpeedX += TimeStep * OutBody(A).ForceX / OutBody(A).Mass
-                'OutBody(A).SpeedY += TimeStep * OutBody(A).ForceY / OutBody(A).Mass
-                'OutBody(A).LocX += TimeStep * OutBody(A).SpeedX
-                'OutBody(A).LocY += TimeStep * OutBody(A).SpeedY
-
-
-                '''''MyForceX = Body(A).ForceX
-                '''''MyForceY = Body(A).ForceY
-                '''''MyForceTot = Body(A).ForceTot
-                '''''MyLocX = Body(A).LocX
-                '''''MyLocY = Body(A).LocY
-                '''''MyMass = Body(A).Mass
 
 
 
@@ -414,8 +414,8 @@ Public Module CUDA
         Dim U1 As Single
         'Dim PrevSpdX, PrevSpdY As Single
         Dim Area1 As Single, Area2 As Single
-        Dim TotMass As Single
-        Dim Force As Single
+        '   Dim TotMass As Single
+        '  Dim Force As Single
         Dim ForceX As Single
         Dim ForceY As Single
         Dim DistX As Single
@@ -448,7 +448,7 @@ Public Module CUDA
 
 
 
-            For Slave As Integer = 0 To Body.Length - 1
+            For Slave As Integer = 1 To Body.Length - 1
 
 
                 Dim MySlaveLocX, MySlaveLocY, MySlaveMass, MySlaveSpeedX, MySlaveSpeedY, MySlaveSize As Single
@@ -473,25 +473,39 @@ Public Module CUDA
                     Dist = (DistX * DistX) + (DistY * DistY)
                     DistSqrt = Sqrt(Dist)
 
-                    If DistSqrt <= (MySize / 2) + (MySlaveSize / 2) Then
+                    If DistSqrt <= (MySize * 0.5) + (MySlaveSize * 0.5) Then
                         ' ColBody(Master).LastColID = Slave
                         If DistSqrt > 0 Then
 
-                            V1x = MySpeedX
-                            V1y = MySpeedY
-                            V2x = MySlaveSpeedX
-                            V2y = MySlaveSpeedY
-                            M1 = MyMass
-                            M2 = MySlaveMass
-                            VekX = DistX / 2 ' (Ball(A).LocX - Ball(B).LocX) / 2
-                            VeKY = DistY / 2 '(Ball(A).LocY - Ball(B).LocY) / 2
-                            VekX = VekX / (DistSqrt / 2) 'LenG
-                            VeKY = VeKY / (DistSqrt / 2) 'LenG
-                            V1 = VekX * V1x + VeKY * V1y
-                            V2 = VekX * V2x + VeKY * V2y
-                            U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-                            U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
+                            'V1x = MySpeedX
+                            'V1y = MySpeedY
+                            'V2x = MySlaveSpeedX
+                            'V2y = MySlaveSpeedY
+                            'M1 = MyMass
+                            'M2 = MySlaveMass
+                            'VekX = DistX * 0.5 ' (Ball(A).LocX - Ball(B).LocX) / 2
+                            'VeKY = DistY * 0.5 '(Ball(A).LocY - Ball(B).LocY) / 2
+                            'VekX = VekX / (DistSqrt * 0.5) 'LenG
+                            'VeKY = VeKY / (DistSqrt * 0.5) 'LenG
+                            'V1 = VekX * V1x + VeKY * V1y
+                            'V2 = VekX * V2x + VeKY * V2y
+                            'U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
+                            'U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
                             If MyInRoche = 0 And MySlaveInRoche = 1 Then
+                                V1x = MySpeedX
+                                V1y = MySpeedY
+                                V2x = MySlaveSpeedX
+                                V2y = MySlaveSpeedY
+                                M1 = MyMass
+                                M2 = MySlaveMass
+                                VekX = DistX * 0.5 ' (Ball(A).LocX - Ball(B).LocX) / 2
+                                VeKY = DistY * 0.5 '(Ball(A).LocY - Ball(B).LocY) / 2
+                                VekX = VekX / (DistSqrt * 0.5) 'LenG
+                                VeKY = VeKY / (DistSqrt * 0.5) 'LenG
+                                V1 = VekX * V1x + VeKY * V1y
+                                V2 = VekX * V2x + VeKY * V2y
+                                U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
+                                U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
                                 If MyMass > MySlaveMass Then
                                     MySpeedX = MySpeedX + (U1 - V1) * VekX
                                     MySpeedY = MySpeedY + (U1 - V1) * VeKY
@@ -518,6 +532,20 @@ Public Module CUDA
                                     ColBody(Master).Visible = False
                                 End If
                             ElseIf MyInRoche = 0 And MySlaveInRoche = 0 Then
+                                V1x = MySpeedX
+                                V1y = MySpeedY
+                                V2x = MySlaveSpeedX
+                                V2y = MySlaveSpeedY
+                                M1 = MyMass
+                                M2 = MySlaveMass
+                                VekX = DistX * 0.5 ' (Ball(A).LocX - Ball(B).LocX) / 2
+                                VeKY = DistY * 0.5 '(Ball(A).LocY - Ball(B).LocY) / 2
+                                VekX = VekX / (DistSqrt * 0.5) 'LenG
+                                VeKY = VeKY / (DistSqrt * 0.5) 'LenG
+                                V1 = VekX * V1x + VeKY * V1y
+                                V2 = VekX * V2x + VeKY * V2y
+                                U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
+                                U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
                                 If MyMass > MySlaveMass Then
                                     MySpeedX = MySpeedX + (U1 - V1) * VekX
                                     MySpeedY = MySpeedY + (U1 - V1) * VeKY
@@ -550,47 +578,85 @@ Public Module CUDA
                             ElseIf MyInRoche = 1 And MySlaveInRoche = 1 Then
 
                                 'Lame Spring force attempt. It's literally a reversed gravity force that's increased with a multiplier.
-                                ' If DistSqrt < (((MySize / 2) + (MySlaveSize / 2)) * 0.9) Then
-                                'MySpeedX += (U1 - V1) * VekX * Friction
-                                'MySpeedY += (U1 - V1) * VeKY * Friction
-
-                                ''MyLocX += TimeStep * MySpeedX
-                                ''MyLocY += TimeStep * MySpeedY
-
-                                'DistX = MySlaveLocX - MyLocX
-                                'DistY = MySlaveLocY - MyLocY
-                                'Dist = (DistX * DistX) + (DistY * DistY)
-                                'DistSqrt = Sqrt(Dist)
+                                Dim colDist As Single = (MySize * 0.5) + (MySlaveSize * 0.5)
+                                '   If DistSqrt < colDist Then
+                                'Dim EPS As Double = 0.1
+                                'M1 = MyMass
+                                'M2 = MySlaveMass
+                                'TotMass = M1 + M2
+                                'Force = TotMass / ((DistSqrt * DistSqrt) + EPS)
 
 
-                                M1 = MyMass
-                                M2 = MySlaveMass
-                                TotMass = M1 * M2 'M1 * M2
-                                ' TotMass = 100
-                                Dim EPS As Double = 0.29 '0.1
+                                Dim normX As Single = DistX / DistSqrt
+                                Dim normY As Single = DistY / DistSqrt
 
-                                Force = TotMass / ((DistSqrt * DistSqrt) + EPS) '(ColBody(Master).Size / 2 + Body(Slave).Size / 2)) 'EPS) 'EPS * EPS)
-                                ForceX = Force * DistX / DistSqrt
-                                ForceY = Force * DistY / DistSqrt
-                                Dim multi As Integer = 20 '- (Sqrt(MySlaveMass)) ' * 2) ' - (TimeStep * 1000) '(Sqrt(TimeStep) * 100)
-                                ColBody(Master).ForceX -= ForceX * multi
-                                ColBody(Master).ForceY -= ForceY * multi
+                                Dim relVelX As Single = MySlaveSpeedX - MySpeedX
+                                Dim relVelY As Single = MySlaveSpeedY - MySpeedY
+                                'Dim gpMath As GPGPUSPARSE
+                                'gpMath.DOT()
+
+
+                                Dim SpringF As Single = 2
+                                ForceX = -SpringF * (colDist - DistSqrt) * normX * MySlaveMass
+                                ForceY = -SpringF * (colDist - DistSqrt) * normY * MySlaveMass
 
 
 
-                                Dim Friction As Double = 0.5
-                                MySpeedX += (U1 - V1) * VekX * Friction
-                                MySpeedY += (U1 - V1) * VeKY * Friction
-                                'Else
-                                '    MySpeedX += (U1 - V1) * VekX * Friction
-                                '    MySpeedY += (U1 - V1) * VeKY * Friction
+
+                                Dim Damping As Single = 0.03 '0.8 '0.02
+                                ForceX += Damping * relVelX
+                                ForceY += Damping * relVelY
+
+
+
+                                'Dim Shear As Single = 0.1
+                                'Dim tanVelX As Single = relVelX - (((relVelX * normX) + (relVelY * normY)) * normX)
+                                'Dim tanVelY As Single = relVelY - (((relVelX * normX) + (relVelY * normY)) * normY)
+                                'ForceX += Shear * tanVelX
+                                'ForceY += Shear * tanVelY
+                                ' 
+
+                                MySpeedX += ForceX
+                                MySpeedY += ForceY
+
+
+                                'If DistSqrt < colDist Then
+
+                                '    'Dim diff As Single = colDist * 0.5 - DistSqrt
+                                '    MyLocX -= (DistX / 4) ' * 0.5)
+                                '    MyLocY -= (DistY / 4) ' * 0.5)
 
                                 'End If
 
-                                ' + ((ColBody(Slave).Mass * 0.001) * -1)
+
+                                'ColBody(Master).ForceX += ForceX
+                                'ColBody(Master).ForceY += ForceY
+
+                                'ColBody(Master).ColForceX = ForceX
+                                'ColBody(Master).ColForceY = ForceY
+                                '   End If
+
+                                ''M1 = MyMass
+                                ''M2 = MySlaveMass
+                                ''TotMass = M1 * M2 'M1 * M2
+                                ''Dim EPS As Double = 0.1
+                                ''Force = TotMass / ((DistSqrt * DistSqrt) + EPS) '(ColBody(Master).Size / 2 + Body(Slave).Size / 2)) 'EPS) 'EPS * EPS)
+                                ''ForceX = Force * DistX / DistSqrt
+                                ''ForceY = Force * DistY / DistSqrt
+                                ''Dim multi As Integer = 20 - (Sqrt(MySlaveMass)) ' * 2) ' - (TimeStep * 1000) '(Sqrt(TimeStep) * 100)
+
+                                ''ColBody(Master).ForceX -= (ForceX * multi)
+                                ''ColBody(Master).ForceY -= (ForceY * multi)
+
+
+
+
+                                'Dim Friction As Double = 0.5 + ((ColBody(Slave).Mass * 0.001) * -1)
+                                'MySpeedX += (U1 - V1) * VekX * Friction
+                                'MySpeedY += (U1 - V1) * VeKY * Friction
 
                             ElseIf MyInRoche = 1 And MySlaveInRoche = 0 Then
-                                    ColBody(Master).Visible = 0
+                                ColBody(Master).Visible = 0
                             End If
                             ' End If
                         Else ' if bodies are at exact same position
@@ -614,6 +680,7 @@ Public Module CUDA
                 End If
 
             Next
+
 
 
 

@@ -55,7 +55,7 @@ Public Module Renderer
                 FollowLoc = FollowBodyLoc(BallArray)
                 If FollowLoc Is Nothing Then bolFollow = False
             End If
-            For i = 0 To UBound(BallArray)
+            For i = 1 To UBound(BallArray)
                 BodyLoc = New SPoint(Convert.ToSingle(BallArray(i).LocX), Convert.ToSingle(BallArray(i).LocY))
                 BodySize = Convert.ToSingle(BallArray(i).Size)
                 If bolStopWorker Then
@@ -109,7 +109,11 @@ Public Module Renderer
                             RelBallPosMod.Y = -FollowLoc.Y
                             ' If BallArray(lngFollowBall).LocY <> Ball(lngFollowBall).LocY Then Debug.Print("Loc ERROR")
                         End If
+
                         gr.FillEllipse(myBrush, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
+                        'Dim fPen As New Pen(Color.Green, 0.1)
+                        'gr.DrawLine(fPen, BodyLoc.X + FinalOffset.X, BodyLoc.Y + FinalOffset.Y, BodyLoc.X + BallArray(i).ForceX + FinalOffset.X, BodyLoc.Y + BallArray(i).ForceY + FinalOffset.Y)
+
                         If BallArray(i).BlackHole = 1 Then
                             ' Dim myPen As New Pen(Color.Red)
                             gr.DrawEllipse(myPen, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)

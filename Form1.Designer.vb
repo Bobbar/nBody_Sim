@@ -78,6 +78,7 @@ Partial Class Form1
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.lblMassDelta = New System.Windows.Forms.Label()
         Me.lblElapTime = New System.Windows.Forms.Label()
+        Me.CullDistantToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.Render, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TimeStep, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -389,7 +390,7 @@ Partial Class Form1
         '
         'Options
         '
-        Me.Options.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BallLines, Me.FBallSOI, Me.Trails, Me.Draw, Me.AntiA, Me.Invert, Me.tsmShowAll, Me.tsmCull})
+        Me.Options.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BallLines, Me.FBallSOI, Me.Trails, Me.Draw, Me.AntiA, Me.Invert, Me.tsmShowAll, Me.tsmCull, Me.CullDistantToolStripMenuItem})
         Me.Options.Name = "Options"
         Me.Options.Size = New System.Drawing.Size(61, 20)
         Me.Options.Text = "Options"
@@ -464,19 +465,19 @@ Partial Class Form1
         'TotalMassToolStripMenuItem
         '
         Me.TotalMassToolStripMenuItem.Name = "TotalMassToolStripMenuItem"
-        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(130, 22)
+        Me.TotalMassToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.TotalMassToolStripMenuItem.Text = "Total Mass"
         '
         'tsmSave
         '
         Me.tsmSave.Name = "tsmSave"
-        Me.tsmSave.Size = New System.Drawing.Size(130, 22)
+        Me.tsmSave.Size = New System.Drawing.Size(152, 22)
         Me.tsmSave.Text = "Save State"
         '
         'tsmLoad
         '
         Me.tsmLoad.Name = "tsmLoad"
-        Me.tsmLoad.Size = New System.Drawing.Size(130, 22)
+        Me.tsmLoad.Size = New System.Drawing.Size(152, 22)
         Me.tsmLoad.Text = "Load State"
         '
         'Panel1
@@ -622,6 +623,12 @@ Partial Class Form1
         Me.lblElapTime.TabIndex = 61
         Me.lblElapTime.Text = "Time:"
         '
+        'CullDistantToolStripMenuItem
+        '
+        Me.CullDistantToolStripMenuItem.Name = "CullDistantToolStripMenuItem"
+        Me.CullDistantToolStripMenuItem.Size = New System.Drawing.Size(161, 22)
+        Me.CullDistantToolStripMenuItem.Text = "Cull Distant"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -725,4 +732,5 @@ Partial Class Form1
     Friend WithEvents tsmShowAll As ToolStripMenuItem
     Friend WithEvents lblMassDelta As Label
     Friend WithEvents lblElapTime As Label
+    Friend WithEvents CullDistantToolStripMenuItem As ToolStripMenuItem
 End Class
