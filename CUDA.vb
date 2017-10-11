@@ -187,6 +187,8 @@ Public Module CUDA
         ' OutBall = Ball 'New Body_Struct(Ball.Length - 1) {}
         ' gpuOutBall = gpu.Allocate(Ball)
         ' gpu.CopyToDevice(Ball, gpuInBall)
+
+
         gpu.Launch(nBlocks, threads).CollideBodies(gpuOutBall, gpuInBall, Convert.ToSingle(StepMulti))
 
 
@@ -448,7 +450,7 @@ Public Module CUDA
 
 
 
-            For Slave As Integer = 1 To Body.Length - 1
+            For Slave As Integer = 0 To Body.Length - 1
 
 
                 Dim MySlaveLocX, MySlaveLocY, MySlaveMass, MySlaveSpeedX, MySlaveSpeedY, MySlaveSize As Single
