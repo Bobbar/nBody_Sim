@@ -4,7 +4,7 @@ Imports System.Threading
 Imports System.Drawing.Drawing2D
 Public Module Renderer
     Public colBackColor As Color = Color.Black
-    Public colDefBodyColor As Color = Color.White
+    ' Public colDefBodyColor As Color = Color.White
     Public colControlForeColor As Color = Color.White
     Public ScreenCenterX As Single
     Public ScreenCenterY As Single
@@ -13,12 +13,23 @@ Public Module Renderer
     Public bolCulling As Boolean = False
     Public bolShowAll As Boolean = False
     Public FollowGUID As Long
-    Public buffBall() As Body_Struct
+    ' Public buffBall() As Body_Struct
+    Private BHHighlightPen As New Pen(Color.Red)
+    Private BodyBrush As SolidBrush
     'Public RenderWindowDimsH As Integer
     'Public RenderWindowDimsW As Integer
     Public RenderWindowDims As New Point(Form1.Render.Width, Form1.Render.Height)
-    Public bm As New Bitmap(Form1.Render.Width, Form1.Render.Height) '(CInt(pic_scale * Render.Width), CInt(pic_scale * Render.Height))
-    Public gr As Graphics = Graphics.FromImage(bm)
+    Public bm As New Bitmap(Form1.Render.Width, Form1.Render.Height, Imaging.PixelFormat.Format32bppPArgb) '(CInt(pic_scale * Render.Width), CInt(pic_scale * Render.Height))
+    Public gr As Graphics = SetGfx(bm) 'Graphics.FromImage(bm)
+    Private Function SetGfx(bm As Bitmap) As Graphics
+        Dim gfx As Graphics = Graphics.FromImage(bm)
+        gfx.CompositingMode = CompositingMode.SourceCopy
+        gfx.CompositingQuality = CompositingQuality.HighSpeed
+        gfx.PixelOffsetMode = PixelOffsetMode.None
+        'gfx.SmoothingMode = 
+        gfx.InterpolationMode = InterpolationMode.Default
+        Return gfx
+    End Function
     Public Structure extra_render_objects
         Public Location As SPoint
         Public Size As Single
@@ -26,8 +37,8 @@ Public Module Renderer
     End Structure
     Public ExtraEllipses As New List(Of extra_render_objects)
     Public Sub UpdateScale()
-    '  Debug.Print("Scale Update")
-    If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
+        '  Debug.Print("Scale Update")
+        If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
             bm = New Bitmap(RenderWindowDims.X, RenderWindowDims.Y)
             gr = Graphics.FromImage(bm)
         End If
@@ -41,90 +52,67 @@ Public Module Renderer
         If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
             UpdateScale()
         End If
-        Dim myPen As New Pen(Color.Red)
+        ' Dim myPen As New Pen(Color.Red)
+
         If Not bolTrails Then gr.Clear(colBackColor)
+
         If bolAntiAliasing Then
             gr.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
         Else
             gr.SmoothingMode = Drawing2D.SmoothingMode.None
         End If
-        Dim myBrush As SolidBrush '(BallArray(i).Color)
+        '  Dim myBrush As SolidBrush '(BallArray(i).Color)
         If bolDraw Then
             bolDrawing = True
             If bolFollow Then
                 FollowLoc = FollowBodyLoc(BallArray)
                 If FollowLoc Is Nothing Then bolFollow = False
             End If
-            For i = 1 To UBound(BallArray)
-                BodyLoc = New SPoint(Convert.ToSingle(BallArray(i).LocX), Convert.ToSingle(BallArray(i).LocY))
+            For i = 0 To UBound(BallArray)
+                ' BodyLoc = New SPoint(Convert.ToSingle(BallArray(i).LocX), Convert.ToSingle(BallArray(i).LocY))
+                BodyLoc = New SPoint(BallArray(i).LocX, BallArray(i).LocY)
                 BodySize = Convert.ToSingle(BallArray(i).Size)
                 If bolStopWorker Then
                     Exit Sub
                 End If
 
                 If BallArray(i).Visible = 1 Or bolShowAll Then
-                    If bolCulling And BodyLoc.X + FinalOffset.X < 0 Or bolCulling And BodyLoc.X + FinalOffset.X > Form1.Render.Width / pic_scale Or bolCulling And BodyLoc.Y + FinalOffset.Y < 0 Or bolCulling And BodyLoc.Y + FinalOffset.Y > Form1.Render.Height / pic_scale Then
-                    Else
+                    'If bolCulling AndAlso BodyLoc.X + FinalOffset.X < 0 Or bolCulling And BodyLoc.X + FinalOffset.X > Form1.Render.Width / pic_scale Or bolCulling And BodyLoc.Y + FinalOffset.Y < 0 Or bolCulling And BodyLoc.Y + FinalOffset.Y > Form1.Render.Height / pic_scale Then
+                    'Else
+                    If Not CullBody(BodyLoc) Then
+
                         If bolInvert Then
-                            myBrush = New SolidBrush(Color.Black)
+                            BodyBrush = New SolidBrush(Color.Black)
                         Else
-                            myBrush = New SolidBrush(Color.FromArgb(BallArray(i).Color))
+                            BodyBrush = New SolidBrush(Color.FromArgb(BallArray(i).Color))
                         End If
-                        'If BallArray(i).Flags.IndexOf("S") < 1 And BallArray(i).ShadAngle <> 0 And BallArray(i).Flags.IndexOf("R") < 1 And Form1.chkShadow.Checked Then
-                        'If bolShawdow Then
-                        '    If InStr(1, BallArray(i).Flags, "S") = False And BallArray(i).ShadAngle <> 0 Then
-                        '        Dim Bx1 As Single, Bx2 As Single, By1 As Single, By2 As Single
-                        '        Bx1 = BodyLoc.X + (BodySize * 2) * Cos(BallArray(i).ShadAngle)
-                        '        By1 = BodyLoc.Y + (BodySize * 2) * Sin(BallArray(i).ShadAngle)
-                        '        Bx2 = BodyLoc.X + (BodySize / 2) * Cos(BallArray(i).ShadAngle) '(BodySize * Cos(BallArray(i).ShadAngle * PI / 180)) + BodyLoc.X 'BodyLoc.X + (BodySize * 2) * Cos(BallArray(i).ShadAngle)
-                        '        By2 = BodyLoc.Y + (BodySize / 2) * Sin(BallArray(i).ShadAngle) '(BodySize * Sin(BallArray(i).ShadAngle * PI / 180)) + BodyLoc.Y 'BodyLoc.Y + (BodySize * 2) * Sin(BallArray(i).ShadAngle)
-                        '        'Debug.Print(BallArray(i).Flags)
-                        '        Dim myBrush2 As New LinearGradientBrush(New Point(Bx1, By1), New Point(Bx2, By2), Color.FromArgb(26, 26, 26, 1), BallArray(i).Color) 'SolidBrush(BallArray(i).Color)
-                        '        gr.FillEllipse(myBrush2, BodyLoc.X - BodySize / 2 + RelBallPosMod.X, BodyLoc.Y - BodySize / 2 + RelBallPosMod.Y, BodySize, BodySize)
-                        '        gr.ScaleTransform(pic_scale, pic_scale)
-                        '    End If
-                        'Else
-                        'If Not Form1.chkTrails.Checked Then
-                        '  E.Graphics.ScaleTransform(pic_scale, pic_scale)
-                        '  Dim myPen As New Pen(Color.Red)
-                        ' Dim myBrush As New SolidBrush(BallArray(i).Color)
-                        '    Dim myBrush2 As New SolidBrush(Color.Red)
 
-                        'If ExtraEllipses.Count > 0 Then
-
-                        '    For Each ellip As extra_render_objects In ExtraEllipses
-                        '        gr.DrawEllipse(myPen, ellip.Location.X - ellip.Size + FinalOffset.X, ellip.Location.Y - ellip.Size + FinalOffset.Y, ellip.Size * 2, ellip.Size * 2)
-                        '    Next
-
-                        'End If
 
 
 
                         If bolFollow Then
 
-                            'RelBallPosMod.X = -BallArray(lngFollowBall).LocX
-                            'RelBallPosMod.Y = -BallArray(lngFollowBall).LocY
 
                             RelBallPosMod.X = -FollowLoc.X
                             RelBallPosMod.Y = -FollowLoc.Y
-                            ' If BallArray(lngFollowBall).LocY <> Ball(lngFollowBall).LocY Then Debug.Print("Loc ERROR")
+
                         End If
 
-                        gr.FillEllipse(myBrush, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
-                        'Dim fPen As New Pen(Color.Green, 0.1)
-                        'gr.DrawLine(fPen, BodyLoc.X + FinalOffset.X, BodyLoc.Y + FinalOffset.Y, BodyLoc.X + BallArray(i).ForceX + FinalOffset.X, BodyLoc.Y + BallArray(i).ForceY + FinalOffset.Y)
+                        ' gr.FillEllipse(myBrush, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
+
+                        gr.FillEllipse(BodyBrush, BodyLoc.X - BodySize * 0.5F + FinalOffset.X, BodyLoc.Y - BodySize * 0.5F + FinalOffset.Y, BodySize, BodySize)
+
+
 
                         If BallArray(i).BlackHole = 1 Then
-                            ' Dim myPen As New Pen(Color.Red)
-                            gr.DrawEllipse(myPen, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
+                            gr.DrawEllipse(BHHighlightPen, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
                         End If
                         If bolFollow Then
-                            If BallArray(i).UID = FollowGUID Then 'lngFollowBall = i Then
-                                '  End If
-                                'gr.DrawEllipse(myPen, BallArray(lngFollowBall).LocX - BodySize / 2 + FinalOffset.X - ScaleMousePosExact(New SPoint(10000, 10000)).X, BallArray(lngFollowBall).LocY - BodySize / 2 + FinalOffset.Y - ScaleMousePosExact(New SPoint(10000, 10000)).Y, 10000, 10000)
+                            If BallArray(i).UID = FollowGUID Then
+
 
                                 If bolSOI Then
-                                    gr.DrawEllipse(myPen, BodyLoc.X - BodySize / 2 + FinalOffset.X - (CircleOInfluence), BodyLoc.Y - BodySize / 2 + FinalOffset.Y - (CircleOInfluence), CircleOInfluence * 2, CircleOInfluence * 2)
+                                    gr.DrawEllipse(BHHighlightPen, BodyLoc.X - BodySize / 2 + FinalOffset.X - (CircleOInfluence), BodyLoc.Y - BodySize / 2 + FinalOffset.Y - (CircleOInfluence), CircleOInfluence * 2, CircleOInfluence * 2)
                                 End If
                                 If bolLines Then
                                     For b As Integer = 0 To UBound(BallArray)
@@ -142,26 +130,27 @@ Public Module Renderer
                         End If
 
 
-
-                        'gr.FillEllipse(myBrush2, Convert.ToInt32(ScaleMousePosExact(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).X), Convert.ToInt32(New SPoint(Form1.Render.Width / 2, Form1.Render.Height / 2).Y), 5, 5)
-                        'Else
-                        '    Dim myPen As New Pen(BallArray(i).Color)
-                        '    Form1.Render.CreateGraphics.DrawEllipse(myPen, BodyLoc.X - BodySize / 2 + RelBallPosMod.X, BodyLoc.Y - BodySize / 2 + RelBallPosMod.Y, BodySize, BodySize)
-                        'End If
-                        '  End If
-                        'e.Graphics.FillEllipse(Brushes.Black, BodyLoc.X - BodySize / 2 - 1, BodyLoc.Y - BodySize / 2 - 1, BodySize + 2, BodySize + 2)
-
                     End If
                 End If
 
             Next
         End If
+        If BodyBrush IsNot Nothing Then BodyBrush.Dispose()
 
         Form1.Render.Image = bm
         Form1.Render.Invalidate()
         bolDrawing = False
-        '   Return bm
     End Sub
+
+    Private Function CullBody(body As SPoint) As Boolean
+        If bolCulling Then
+            If body.X + FinalOffset.X < 0 Or body.X + FinalOffset.X > Form1.Render.Width / pic_scale Or body.Y + FinalOffset.Y < 0 Or body.Y + FinalOffset.Y > Form1.Render.Height / pic_scale Then
+                Return True
+            End If
+        End If
+        Return False
+    End Function
+
     Private Function FollowBodyLoc(Balls() As Body_Struct) As SPoint
         For Each b As Body_Struct In Balls
             If b.UID = FollowGUID Then

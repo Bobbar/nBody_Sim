@@ -23,6 +23,11 @@ Public Module PhysicsLoop
             X = Xval
             Y = Yval
         End Sub
+        Sub New(Xval As Double, Yval As Double)
+            X = CType(Xval, Single)
+            Y = CType(Yval, Single)
+        End Sub
+
         Sub New()
             X = 0
             Y = 0

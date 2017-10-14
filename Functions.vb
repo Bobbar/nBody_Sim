@@ -119,39 +119,27 @@ Module Functions
         Return TotalM
     End Function
     Public Function CullBodies(Bodies() As Body_Struct) As Body_Struct()
-        ''    StartTimer()
+
+        Dim tmpBodies = Bodies.ToList.FindAll(Function(b) b.Visible = 1)
 
 
-        ''Dim tmpBodies(0) As Body_Struct
-        'Dim tmpBodies As New List(Of Body_Struct)
-        'For i As Integer = 0 To UBound(Bodies)
+
+        'Dim tmpBodies(0) As Body_Struct
+        'For i As Integer = 0 To Bodies.Length - 1
         '    If Bodies(i).Visible = 1 Then
+        '        ReDim Preserve tmpBodies(tmpBodies.Length - 1)
+        '        tmpBodies(tmpBodies.Length - 1) = Bodies(i)
 
-        '        tmpBodies.Add(Bodies(i))
-        '        'ReDim Preserve tmpBodies(UBound(tmpBodies) + 1)
-        '        'tmpBodies(UBound(tmpBodies)) = Bodies(i)
         '    End If
+
+
+
+
         'Next
-        ''  StopTimer()
-        'Return tmpBodies.ToArray
 
 
-
-        Dim tmpBodies(0) As Body_Struct
-        For i As Integer = 0 To Bodies.Length - 1
-            If Bodies(i).Visible = 1 Then
-                ReDim Preserve tmpBodies(tmpBodies.Length)
-                tmpBodies(tmpBodies.Length - 1) = Bodies(i)
-
-            End If
-
-
-
-
-        Next
-
-
-        Return tmpBodies
+        'Return tmpBodies
+        Return tmpBodies.ToArray
 
     End Function
 

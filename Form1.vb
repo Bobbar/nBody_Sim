@@ -432,9 +432,12 @@ Err:
         bolFollow = False
     End Sub
     Private Sub Timer3_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer3.Tick
-        On Error Resume Next
-        Ball(MouseIndex).Size = Ball(MouseIndex).Size + 0.5
-        Ball(MouseIndex).Mass = fnMass(Ball(MouseIndex).Size, Density) ' ^ 2
+        ' On Error Resume Next
+        Try
+            Ball(MouseIndex).Size = Ball(MouseIndex).Size + 0.5
+            Ball(MouseIndex).Mass = fnMass(Ball(MouseIndex).Size, Density) ' ^ 2
+        Catch
+        End Try
     End Sub
     Private Sub Label3_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
     End Sub
@@ -1592,7 +1595,7 @@ Err:
     End Sub
     Private Sub UI_Worker_DoWork(sender As Object, e As DoWorkEventArgs) Handles UI_Worker.DoWork
         Do Until bolStopWorker
-            Thread.Sleep(50)
+            Thread.Sleep(100)
             Do While bolStopLoop
                 Thread.Sleep(100)
             Loop
@@ -2046,7 +2049,7 @@ Err:
         ' Debug.Print("Render complete " & Now.Ticks)
         'Dim tmpBodys As New List(Of BallParms)
         'tmpBodys.AddRange(e.UserState)
-        buffBall = Ball
+        '  buffBall = Ball
         '  Dim PassBall() As Body_Struct = e.UserState ' tmpBodys.ToArray
         If bolPlaying Then
 

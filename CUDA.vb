@@ -338,7 +338,7 @@ Public Module CUDA
                 MyForceY = 0
                 MyForceTot = 0
 
-                For B = 1 To Body.Length - 1
+                For B = 0 To Body.Length - 1
                     MySizeB = Body(B).Size * 0.5
 
                     If A <> B And Body(B).Visible = 1 Then
