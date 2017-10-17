@@ -28,10 +28,10 @@ Public Module CUDA
     End Structure
     <Cudafy>
     Public Structure Body_Struct
-        'Public LocX As Double
-        'Public LocY As Double
-        Public LocX As Single
-        Public LocY As Single
+        Public LocX As Double
+        Public LocY As Double
+        'Public LocX As Single
+        'Public LocY As Single
         Public Mass As Single
         Public SpeedX As Single
         Public SpeedY As Single
@@ -45,9 +45,9 @@ Public Module CUDA
         Public BlackHole As Integer
         Public UID As Long
         ' Public DB As Single
-        Public ThreadID As Integer
-        Public BlockID As Integer
-        Public BlockDIM As Integer
+        'Public ThreadID As Integer
+        'Public BlockID As Integer
+        'Public BlockDIM As Integer
         'Public LastColID As Integer
     End Structure
     <ProtoBuf.ProtoContract>
@@ -161,16 +161,18 @@ Public Module CUDA
         'Declare and init the output array.
 
         Dim OutBall() As Body_Struct = New Body_Struct(Ball.Length - 1) {} 'Ball 
-        Ball.CopyTo(OutBall, 0)
+
+
         'Allocate the output array.
         'This is the array the threads will write to. Each thread works one element of this array.
 
-
-        Dim gpuOutBall() As Body_Struct = gpu.Allocate(OutBall)
+        Dim gpuOutBall() As Body_Struct = gpu.Allocate(Ball)
 
         'Copy the body array to the device
         gpu.CopyToDevice(Ball, gpuInBall)
-        gpu.CopyToDevice(OutBall, gpuOutBall)
+        gpu.CopyToDevice(Ball, gpuOutBall)
+
+
 
         'Number of threads per block
         ' Dim threads As Integer = 256 '256 is max for OpenCL AMD device.
@@ -179,9 +181,7 @@ Public Module CUDA
         Dim nBlocks As Integer = ((Ball.Length - 1) + threads - 1) / threads
 
 
-        ' Dim nBlocks = 1024 * 1024 / threads
-        '   Debug.Print(nBlocks)
-        '  StartTimer()
+
         'Launch the kernel to calculate body forces.
         gpu.Launch(nBlocks, threads).CalcPhysics(gpuInBall, Convert.ToSingle(StepMulti), gpuOutBall)
 
@@ -189,50 +189,24 @@ Public Module CUDA
         gpu.Synchronize()
         gpu.CopyFromDevice(gpuOutBall, Ball)
         gpu.FreeAll()
-
         gpuInBall = gpu.Allocate(Ball)
-        Ball.CopyTo(OutBall, 0)
-        gpuOutBall = gpu.Allocate(OutBall)
-
+        gpuOutBall = gpu.Allocate(Ball)
         gpu.CopyToDevice(Ball, gpuInBall)
-        gpu.CopyToDevice(OutBall, gpuOutBall)
+        gpu.CopyToDevice(Ball, gpuOutBall)
+
+
 
         gpu.Launch(nBlocks, threads).CollideBodies(gpuInBall, gpuOutBall, Convert.ToSingle(StepMulti))
 
-        'gpu.Launch(nBlocks, threads).CollideBodies(gpuOutBall, gpuInBall, Convert.ToSingle(StepMulti))
 
         gpu.Synchronize()
-        ' gpu.CopyFromDevice(gpuOutBall, Ball)
         gpu.CopyFromDevice(gpuOutBall, Ball)
-
         gpu.FreeAll()
-
-        UpdateBodies(Ball)
-        ' gpuOutBall = gpu.Allocate(OutBall)
-        'gpuInBall = gpu.Allocate(OutBall)
-        'gpu.CopyToDevice(OutBall, gpuInBall)
-        'gpu.Launch(nBlocks, threads).Integrate(gpuInBall, Convert.ToSingle(StepMulti))
-
-        ' gpu.Launch(nBlocks, threads).Integrate(gpuOutBall, Convert.ToSingle(StepMulti))
-
-
-
-        'gpu.Synchronize()
-        'gpu.CopyFromDevice(gpuInBall, Ball)
-        'gpu.FreeAll()
-
-
-
-        'gpu.Synchronize()
-        'gpu.CopyFromDevice(gpuOutBall, Ball)
-        'gpu.FreeAll()
-
-
-        'Copy the new data back into the public array
 
 
         'Integrate the body forces
-        'UpdateBodies(Ball)
+        UpdateBodies(Ball)
+
 
         'Iterate through body and determine if they are within a hypothetical Roche limit.
         'Bodies within Roche are broken into smaller bodies and added to the main body array.
@@ -241,10 +215,6 @@ Public Module CUDA
         Dim NewBalls As New List(Of Body_Struct)
         For a As Integer = 0 To Ball.Length - 1
             '   Debug.Print(Ball(a).UID)
-            If Double.IsNaN(Ball(a).ForceX) Then
-                Debugger.Break()
-            End If
-
             If Ball(a).Visible = 1 Then
 
                 If Ball(a).InRoche = 1 And Ball(a).BlackHole = 0 Then
@@ -266,21 +236,7 @@ Public Module CUDA
 
             Ball = ArrList.ToArray
 
-
-            'Dim origLen As Integer = Ball.Length - 1
-            'Array.Resize(Ball, (origLen + NewBalls.Count - 1))
-            'Dim NewArr = NewBalls.ToArray
-            'Array.Copy(NewArr, NewArr., Ball, origLen, (NewBalls.Count - 1))
         End If
-
-
-
-        'If NewBalls.Count > 0 Then
-        '    Dim origLen As Integer = Ball.Length
-        '    Array.Resize(Ball, (origLen + NewBalls.Count))
-        '    Array.Copy(NewBalls.ToArray, 0, Ball, origLen, (NewBalls.Count))
-        'End If
-
 
 
         mDelta += Round((TotalMass() - PrevMass), 5)
@@ -315,6 +271,7 @@ Public Module CUDA
         '             End Sub)
         'Body = tmpBody
 
+
         For i As Integer = 0 To Body.Length - 1
             If Body(i).Visible = 1 Then
                 Body(i).SpeedX += StepMulti * Body(i).ForceX / Body(i).Mass
@@ -324,22 +281,23 @@ Public Module CUDA
             End If
 
         Next
+
     End Sub
-    <Cudafy>
-    Public Sub TestCalc(gpThread As GThread, Body() As Body_Struct, TimeStep As Single, OutBody() As Body_Struct)
-        Dim A As Integer = gpThread.blockDim.x * gpThread.blockIdx.x + gpThread.threadIdx.x
-        For B = 0 To Body.Length - 1
-            If A <> B Then
-                ' OutBody(A) = Body(A)
-                OutBody(A).ForceX += 1
-                OutBody(A).ForceY += 1
-                OutBody(A).BlockDIM = gpThread.blockDim.x
-                OutBody(A).BlockID = gpThread.blockIdx.x
-                OutBody(A).ThreadID = gpThread.threadIdx.x
-            End If
-        Next
-        gpThread.SyncThreads()
-    End Sub
+    '<Cudafy>
+    'Public Sub TestCalc(gpThread As GThread, Body() As Body_Struct, TimeStep As Single, OutBody() As Body_Struct)
+    '    Dim A As Integer = gpThread.blockDim.x * gpThread.blockIdx.x + gpThread.threadIdx.x
+    '    For B = 0 To Body.Length - 1
+    '        If A <> B Then
+    '            ' OutBody(A) = Body(A)
+    '            OutBody(A).ForceX += 1
+    '            OutBody(A).ForceY += 1
+    '            OutBody(A).BlockDIM = gpThread.blockDim.x
+    '            OutBody(A).BlockID = gpThread.blockIdx.x
+    '            OutBody(A).ThreadID = gpThread.threadIdx.x
+    '        End If
+    '    Next
+    '    gpThread.SyncThreads()
+    'End Sub
 
 
     <Cudafy>
