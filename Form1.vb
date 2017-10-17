@@ -399,7 +399,9 @@ Err:
         StepMulti = TimeStep.Value
         bGrav = 1
         'fOn = 0
-        ReDim Ball(0)
+
+        'ReDim Ball(0)
+
         ' Timer1.Enabled = True
         bolStop = False
         Me.Show()
@@ -494,7 +496,7 @@ Err:
 
 
         frmAddBodies.Show()
-
+        frmAddBodies.Activate()
 
         'On Error Resume Next
         'Const Balls As Long = 8000
@@ -1767,9 +1769,11 @@ Err:
 
             'fStream.Position = 0 ' reset stream pointer
             ' Ball = bf.Deserialize(fStream) ' read from file
-            ReDim Ball(0)
+            '  Public Ball As Body_Struct() = New Body_Struct() {}
+            Ball = New Body_Struct() {}
             Ball = SerialToCUDA(ProtoBuf.Serializer.Deserialize(Of Serial_Prim_Struct())(fStream))
             'sr.Close()
+
         End If
 
     End Sub
@@ -1986,7 +1990,9 @@ Err:
             If Not bolPlaying Then
 
 
-                If Not bolRendering Then StartCalc()
+                If Not bolRendering Then
+                    StartCalc()
+                End If
 
 
                 If bolStoring Then
@@ -2035,7 +2041,7 @@ Err:
             ' If Not bolDrawing Then Drawr(Ball)
 
 
-            PhysicsWorker.ReportProgress(1, Ball)
+            PhysicsWorker.ReportProgress(1) ', Ball)
 
             CalcDelay()
 

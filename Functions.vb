@@ -143,6 +143,17 @@ Module Functions
 
     End Function
 
+    Public Sub AddNewBodies(bodies As List(Of Body_Struct))
+
+        Dim NewArr = Ball
+        Dim ArrList = NewArr.ToList
+        ArrList.AddRange(bodies)
+        Ball = ArrList.ToArray
+    End Sub
+
+
+
+
     Public Function RndIntUID(BdyIndex As Integer) As Integer
         Dim rnd As Random = New Random
         Return rnd.Next + BdyIndex

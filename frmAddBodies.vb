@@ -89,24 +89,32 @@ Public Class frmAddBodies
         Dim nGas As Integer = (NumberOfBodies / 8) * 7
         Dim nMinerals As Integer = (NumberOfBodies / 8)
 
-        Dim StartIndex As Integer
-        Dim EndIndex As Integer
-        If UBound(Ball) <> 0 Then
-            StartIndex = UBound(Ball) + 1
-            EndIndex = UBound(Ball) + NumberOfBodies ' - 1
-        Else
-            StartIndex = 0
-            EndIndex = NumberOfBodies ' - 1
-        End If
-        ReDim Preserve Ball(EndIndex) 'UBound(Ball) + NumberOfBodies)
+        'Dim StartIndex As Integer
+        'Dim EndIndex As Integer
+
+
+        'If UBound(Ball) <> 0 Then
+        '    StartIndex = UBound(Ball) + 1
+        '    EndIndex = UBound(Ball) + NumberOfBodies ' - 1
+        'Else
+        '    StartIndex = 0
+        '    EndIndex = NumberOfBodies ' - 1
+        'End If
+        'ReDim Preserve Ball(EndIndex) 'UBound(Ball) + NumberOfBodies)
+
+
+        Dim NewBodies As New List(Of Body_Struct)
+
         Dim BodyCount As Integer = 0
 
         'ReDim Ball(NumberOfBodies)
 
-        For i As Integer = StartIndex To EndIndex - 1 '(UBound(Ball) + NumberOfBodies)' For i As Integer = 0 To NumberOfBodies - 1
+        For i As Integer = 0 To NumberOfBodies '(UBound(Ball) + NumberOfBodies)' For i As Integer = 0 To NumberOfBodies - 1
             Dim Matter As Matter_Props
             ' ReDim Preserve Ball(UBound(Ball) + 1)
             ' Ball(UBound(Ball)).Index = UBound(Ball)
+
+            Dim newBody As New Body_Struct
 
             If BodyCount <= nGas Then
                 Matter = MatterTypes(GetRandomNumber(0, 1))
@@ -115,9 +123,9 @@ Public Class frmAddBodies
             End If
             BodyCount += 1
 
-            Ball(i).UID = RndIntUID(i) 'Guid.NewGuid.ToString
-            Ball(i).Color = Matter.Color.ToArgb 'RandomRGBColor().ToArgb 'colDefBodyColor
-            Ball(i).Visible = 1
+            newBody.UID = RndIntUID(i) 'Guid.NewGuid.ToString
+            newBody.Color = Matter.Color.ToArgb 'RandomRGBColor().ToArgb 'colDefBodyColor
+            newBody.Visible = 1
 
             px = GetRandomNumber(newEllipse.Location.X - newEllipse.Size, newEllipse.Location.X + newEllipse.Size) ' - ScaleOffset.X - RelBallPosMod.X
             py = GetRandomNumber(newEllipse.Location.Y - newEllipse.Size, newEllipse.Location.Y + newEllipse.Size) ' - ScaleOffset.Y - RelBallPosMod.Y
@@ -148,41 +156,46 @@ Public Class frmAddBodies
             Dim vy As Double = Sign(oPx) * Sin(thetav) * magv 'Sign(px) * Sin(thetav) * magv
 
 
-            ' Ball(i).DT = StepMulti
+            ' newBody.DT = StepMulti
 
-            Ball(i).LocX = px
-            Ball(i).LocY = py
+            newBody.LocX = px
+            newBody.LocY = py
 
-            Ball(i).SpeedX = vx
-            Ball(i).SpeedY = vy
+            newBody.SpeedX = vx
+            newBody.SpeedY = vy
             ' Ball(UBound(Ball)).Flags = ""
-            Ball(i).Size = GetRandomNumber(MinSize, MaxSize)
+            newBody.Size = GetRandomNumber(MinSize, MaxSize)
             If BodyMass > 0 Then
-                Ball(i).Mass = BodyMass
+                newBody.Mass = BodyMass
             Else
-                Ball(i).Mass = fnMass(Ball(i).Size, Matter.Density) ' * 2
+                newBody.Mass = fnMass(newBody.Size, Matter.Density) ' * 2
             End If
-
+            NewBodies.Add(newBody)
         Next
+
+
         If bolIncludeCenterMass Then
+
+            Dim newBody As New Body_Struct
             '  ReDim Preserve Ball(UBound(Ball) + 1)
-            Ball(EndIndex).UID = RndIntUID(EndIndex) 'Guid.NewGuid.ToString
-            Ball(EndIndex).Color = Color.Black.ToArgb 'RandomRGBColor() 'colDefBodyColor
-            Ball(EndIndex).Visible = 1
-            Ball(EndIndex).LocX = newEllipse.Location.X ' Form1.Render.Width / 2 / pic_scale - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
-            Ball(EndIndex).LocY = newEllipse.Location.Y 'Form1.Render.Height / 2 / pic_scale - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
+            newBody.UID = RndIntUID(BodyCount + 1) 'Guid.NewGuid.ToString
+            newBody.Color = Color.Black.ToArgb 'RandomRGBColor() 'colDefBodyColor
+            newBody.Visible = 1
+            newBody.LocX = newEllipse.Location.X ' Form1.Render.Width / 2 / pic_scale - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
+            newBody.LocY = newEllipse.Location.Y 'Form1.Render.Height / 2 / pic_scale - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
 
-            ' Ball(EndIndex).DT = StepMulti
+            ' newBody.DT = StepMulti
 
-            Ball(EndIndex).SpeedX = 0
-            Ball(EndIndex).SpeedY = 0
-            Ball(EndIndex).BlackHole = 1
+            newBody.SpeedX = 0
+            newBody.SpeedY = 0
+            newBody.BlackHole = 1
             'Ball(UBound(Ball)).Flags = "BH"
-            Ball(EndIndex).Size = 3
-            Ball(EndIndex).Mass = MassOfCenterMass 'fnMass(Ball(UBound(Ball)).Size) ' * 2
+            newBody.Size = 3
+            newBody.Mass = MassOfCenterMass 'fnMass(Ball(UBound(Ball)).Size) ' * 2
+            NewBodies.Add(newBody)
         End If
 
-
+        AddNewBodies(NewBodies)
 
         Debug.Print(UBound(Ball))
 
@@ -329,63 +342,76 @@ Public Class frmAddBodies
             'Next
 
 
-
-
+            Dim NewBodies As New List(Of Body_Struct)
+            Dim newBods As Integer = 0
 
             For a As Integer = 0 To (NumberOfBodies / 8) * 7
-
+                newBods += 1
                 Dim Matter As Matter_Props = MatterTypes(GetRandomNumber(0, 1))
 
-                ReDim Preserve Ball(UBound(Ball) + 1)
-                Ball(UBound(Ball)).UID = RndIntUID(UBound(Ball)) 'Guid.NewGuid.ToString
+                Dim newBody As New Body_Struct
+
+
+                ' ReDim Preserve Ball(UBound(Ball) + 1)
+                newBody.UID = RndIntUID(newBods) 'Guid.NewGuid.ToString
                 '  Thread.Sleep(1)
                 'Debug.Print(Ball(UBound(Ball)).UID.ToString)
 
-                Ball(UBound(Ball)).Color = Matter.Color.ToArgb ' RandomRGBColor().ToArgb 'colDefBodyColor ' Color.Orange.ToArgb
-                Ball(UBound(Ball)).Visible = 1
-                Ball(UBound(Ball)).LocX = GetRandomNumber(1, Form1.Render.Width / pic_scale) - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
-                Ball(UBound(Ball)).LocY = GetRandomNumber(1, Form1.Render.Height / pic_scale) - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
-                Ball(UBound(Ball)).SpeedX = 0
-                Ball(UBound(Ball)).SpeedY = 0
-                ' Ball(UBound(Ball)).bTimestep = StepMulti
-                ' Ball(UBound(Ball)).Flags = ""
-                Ball(UBound(Ball)).Size = GetRandomNumber(MinSize, MaxSize)
+                newBody.Color = Matter.Color.ToArgb ' RandomRGBColor().ToArgb 'colDefBodyColor ' Color.Orange.ToArgb
+                newBody.Visible = 1
+                newBody.LocX = GetRandomNumber(1, Form1.Render.Width / pic_scale) - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
+                newBody.LocY = GetRandomNumber(1, Form1.Render.Height / pic_scale) - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
+                newBody.SpeedX = 0
+                newBody.SpeedY = 0
+                'newBody.bTimestep = StepMulti
+                'newBody.Flags = ""
+                newBody.Size = GetRandomNumber(MinSize, MaxSize)
                 If BodyMass > 0 Then
-                    Ball(UBound(Ball)).Mass = BodyMass
+                    newBody.Mass = BodyMass
                 Else
-                    Ball(UBound(Ball)).Mass = (fnMass(Ball(UBound(Ball)).Size, Matter.Density)) ' * 2
+                    newBody.Mass = (fnMass(newBody.Size, Matter.Density)) ' * 2
                 End If
+
+
+                NewBodies.Add(newBody)
             Next a
 
 
 
             For a As Integer = 0 To (NumberOfBodies / 8) ' * 2
-
+                newBods += 1
                 Dim Matter As Matter_Props = MatterTypes(GetRandomNumber(2, 4))
 
-                ReDim Preserve Ball(UBound(Ball) + 1)
-                Ball(UBound(Ball)).UID = RndIntUID(UBound(Ball)) 'Guid.NewGuid.ToString
+                Dim newBody As New Body_Struct
+
+
+                ' ReDim Preserve Ball(UBound(Ball) + 1)
+                newBody.UID = RndIntUID(newBods) 'Guid.NewGuid.ToString
                 '  Thread.Sleep(1)
                 'Debug.Print(Ball(UBound(Ball)).UID.ToString)
 
-                Ball(UBound(Ball)).Color = Matter.Color.ToArgb ' RandomRGBColor().ToArgb 'colDefBodyColor ' Color.Orange.ToArgb
-                Ball(UBound(Ball)).Visible = 1
-                Ball(UBound(Ball)).LocX = GetRandomNumber(1, Form1.Render.Width / pic_scale) - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
-                Ball(UBound(Ball)).LocY = GetRandomNumber(1, Form1.Render.Height / pic_scale) - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
-                Ball(UBound(Ball)).SpeedX = 0
-                Ball(UBound(Ball)).SpeedY = 0
-                ' Ball(UBound(Ball)).bTimestep = StepMulti
-                ' Ball(UBound(Ball)).Flags = ""
-                Ball(UBound(Ball)).Size = GetRandomNumber(MinSize, MaxSize)
+                newBody.Color = Matter.Color.ToArgb ' RandomRGBColor().ToArgb 'colDefBodyColor ' Color.Orange.ToArgb
+                newBody.Visible = 1
+                newBody.LocX = GetRandomNumber(1, Form1.Render.Width / pic_scale) - ScaleOffset.X - RelBallPosMod.X ' * pic_scale
+                newBody.LocY = GetRandomNumber(1, Form1.Render.Height / pic_scale) - ScaleOffset.Y - RelBallPosMod.Y ' * pic_scale
+                newBody.SpeedX = 0
+                newBody.SpeedY = 0
+                'newBody.bTimestep = StepMulti
+                'newBody.Flags = ""
+                newBody.Size = GetRandomNumber(MinSize, MaxSize)
                 If BodyMass > 0 Then
-                    Ball(UBound(Ball)).Mass = BodyMass
+                    newBody.Mass = BodyMass
                 Else
-                    Ball(UBound(Ball)).Mass = (fnMass(Ball(UBound(Ball)).Size, Matter.Density)) ' * 2
+                    newBody.Mass = (fnMass(newBody.Size, Matter.Density)) ' * 2
                 End If
+
+                NewBodies.Add(newBody)
+
             Next a
 
 
 
+            AddNewBodies(NewBodies)
 
 
             If bolStoppedToAdd Then bolStopLoop = False
