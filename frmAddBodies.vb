@@ -219,7 +219,7 @@ Public Class frmAddBodies
 
         Dim StartIndex As Integer
         Dim EndIndex As Integer
-        If UBound(Ball) <> 0 Then
+        If UBound(Ball) > 0 Then
             StartIndex = UBound(Ball)
             EndIndex = UBound(Ball) + NumberOfBodies
         Else

@@ -13,9 +13,11 @@ Public Module Renderer
     Public bolCulling As Boolean = False
     Public bolShowAll As Boolean = False
     Public FollowGUID As Long
+    Public FinalOffset As SPoint
     ' Public buffBall() As Body_Struct
     Private BHHighlightPen As New Pen(Color.Red)
     Private BodyBrush As SolidBrush
+    Private FollowLoc As SPoint
     'Public RenderWindowDimsH As Integer
     'Public RenderWindowDimsW As Integer
     Public RenderWindowDims As New Point(Form1.Render.Width, Form1.Render.Height)
@@ -46,9 +48,11 @@ Public Module Renderer
         gr.ScaleTransform(pic_scale, pic_scale)
     End Sub
     Public Sub Drawr(ByVal BallArray() As Body_Struct) ' As Bitmap
+
+        FinalOffset = GetFinalOffset()
         Dim BodyLoc, Body2Loc As SPoint
         Dim BodySize, Body2Size As Single
-        Dim FollowLoc As New SPoint
+        'Dim FollowLoc As New SPoint
         If RenderWindowDims.X <> bm.Size.Width Or RenderWindowDims.Y <> bm.Size.Height Then
             UpdateScale()
         End If
@@ -105,7 +109,8 @@ Public Module Renderer
 
 
                         If BallArray(i).BlackHole = 1 Then
-                            gr.DrawEllipse(BHHighlightPen, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
+                            ' gr.DrawEllipse(BHHighlightPen, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
+                            gr.DrawEllipse(BHHighlightPen, BodyLoc.X - BodySize * 0.5F + FinalOffset.X, BodyLoc.Y - BodySize * 0.5F + FinalOffset.Y, BodySize, BodySize)
                         End If
                         If bolFollow Then
                             If BallArray(i).UID = FollowGUID Then
@@ -140,6 +145,7 @@ Public Module Renderer
         Form1.Render.Image = bm
         Form1.Render.Invalidate()
         bolDrawing = False
+
     End Sub
 
     Private Function CullBody(body As SPoint) As Boolean
@@ -165,7 +171,7 @@ Public Module Renderer
     Public Function ScaledPoint(Point As Point, Origin As Point, Optional Scale As Double = 1.0) As Point
         Return New Point(Origin.X + Point.X * Scale, Origin.Y + Point.Y * Scale)
     End Function
-    Public Function FinalOffset() As SPoint
+    Public Function GetFinalOffset() As SPoint
         Return New SPoint(RelBallPosMod.X + ScaleOffset.X, RelBallPosMod.Y + ScaleOffset.Y)
     End Function
 End Module

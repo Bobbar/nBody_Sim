@@ -132,11 +132,14 @@ Public Module CUDA
         bolRendering = True
         ' If Not bolPlaying Then
         ' Dim Ball() As Body_Struct ' = Ball
+
+
         If ((Ball.Length - 1) - VisibleBalls()) > 400 Then
             ' StartTimer()
             Ball = CullBodies(Ball)
             ' StopTimer()
         End If
+
         '  VisBalls = UBound(Ball)
 
 
@@ -183,7 +186,7 @@ Public Module CUDA
 
 
         'Launch the kernel to calculate body forces.
-        gpu.Launch(nBlocks, threads).CalcPhysics(gpuInBall, Convert.ToSingle(StepMulti), gpuOutBall)
+        gpu.Launch(nBlocks, threads).CalcPhysics(gpuInBall, StepMulti, gpuOutBall)
 
 
         gpu.Synchronize()
@@ -196,7 +199,7 @@ Public Module CUDA
 
 
 
-        gpu.Launch(nBlocks, threads).CollideBodies(gpuInBall, gpuOutBall, Convert.ToSingle(StepMulti))
+        gpu.Launch(nBlocks, threads).CollideBodies(gpuInBall, gpuOutBall, StepMulti)
 
 
         gpu.Synchronize()
@@ -213,37 +216,39 @@ Public Module CUDA
 
 
         Dim NewBalls As New List(Of Body_Struct)
-        For a As Integer = 0 To Ball.Length - 1
-            '   Debug.Print(Ball(a).UID)
-            If Ball(a).Visible = 1 Then
+            For a As Integer = 0 To Ball.Length - 1
+                '   Debug.Print(Ball(a).UID)
+                If Ball(a).Visible = 1 Then
 
-                If Ball(a).InRoche = 1 And Ball(a).BlackHole = 0 Then
-                    If Ball(a).BlackHole <> 2 Then NewBalls.AddRange(FractureBall(Ball(a)))
+                    If Ball(a).InRoche = 1 And Ball(a).BlackHole = 0 Then
+                        If Ball(a).BlackHole <> 2 Then NewBalls.AddRange(FractureBall(Ball(a)))
+                    End If
+
+
+                    If Ball(a).BlackHole = 2 Then Ball(a).InRoche = 1
+                    If Ball(a).BlackHole = 1 Then Ball(a).Size = 3
                 End If
+            Next
+
+            If NewBalls.Count > 0 Then
+
+                Dim NewArr = Ball
+                Dim ArrList = NewArr.ToList
+                ArrList.AddRange(NewBalls)
 
 
-                If Ball(a).BlackHole = 2 Then Ball(a).InRoche = 1
-                If Ball(a).BlackHole = 1 Then Ball(a).Size = 3
+                Ball = ArrList.ToArray
+
             End If
-        Next
-
-        If NewBalls.Count > 0 Then
-
-            Dim NewArr = Ball
-            Dim ArrList = NewArr.ToList
-            ArrList.AddRange(NewBalls)
+            NewBalls = Nothing
 
 
-            Ball = ArrList.ToArray
-
-        End If
-
-
-        mDelta += Round((TotalMass() - PrevMass), 5)
+            mDelta += Round((TotalMass() - PrevMass), 5)
 
             bolRendering = False
 
     End Sub
+
     Private Sub CullDistant()
         For i As Integer = 0 To Ball.Length - 1
             Dim BodyLoc As New SPoint(Ball(i).LocX, Ball(i).LocY)

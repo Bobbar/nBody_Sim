@@ -271,7 +271,7 @@ Public Module PhysicsLoop
     Dim CurrentPX As Single
     Dim CurrentPY As Single
     Public lngFollowBall As Long
-    Public StepMulti As Double
+    Public StepMulti As Single 'Double
     Public bolBallsRemoved As Boolean
     Public bolStopDraw As Boolean
     Public MouseDnX As Double
