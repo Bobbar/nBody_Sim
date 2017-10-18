@@ -402,8 +402,8 @@ Public Module CUDA
 
 
                 If OutBody(A).ForceTot > OutBody(A).Mass * 6 And OutBody(A).BlackHole = 0 Then
-                    OutBody(A).InRoche = 1
-                    ' OutBody(A).InRoche = 0
+                    ' OutBody(A).InRoche = 1
+                    OutBody(A).InRoche = 0
                 ElseIf (OutBody(A).ForceTot * 2) < OutBody(A).Mass * 4 Then
                     OutBody(A).InRoche = 0
                 ElseIf OutBody(A).BlackHole = 2 Then
@@ -421,30 +421,27 @@ Public Module CUDA
     End Sub
     <Cudafy>
     Public Sub CollideBodies(gpThread As GThread, Body() As Body_Struct, ColBody() As Body_Struct, TimeStep As Single) 'Master As Integer, Slave As Integer, DistSqrt As Double, DistX As Double, DistY As Double, ForceX As Double, ForceY As Double) As Body_Struct()
-        Dim VeKY As Single
-        Dim VekX As Single
+
         Dim V1x As Single
         Dim V2x As Single
         Dim M1 As Single
         Dim M2 As Single
         Dim V1y As Single
         Dim V2y As Single
-
-        Dim V1 As Single
-        Dim V2 As Single
-        Dim U2 As Single
-        Dim U1 As Single
-        'Dim PrevSpdX, PrevSpdY As Single
         Dim Area1 As Single, Area2 As Single
-        '   Dim TotMass As Single
-        '  Dim Force As Single
         Dim ForceX As Single
         Dim ForceY As Single
         Dim DistX As Single
         Dim DistY As Single
         Dim Dist As Single
         Dim DistSqrt As Single
-
+        Dim dotProd As Single
+        Dim colScale As Single
+        Dim colX As Single
+        Dim colY As Single
+        Dim combMass As Single
+        Dim colWeightSlave As Single
+        Dim colWeightMaster As Single
 
         Dim MyLocX, MyLocY, MyMass, MySpeedX, MySpeedY, MySize As Single 'MyForceX, MyForceY
         Dim MyInRoche As Integer
@@ -465,10 +462,6 @@ Public Module CUDA
             MyInRoche = Body(Master).InRoche
             MyUID = Body(Master).UID
             MySize = Body(Master).Size
-
-
-
-
 
 
             For Slave As Integer = 0 To Body.Length - 1
@@ -500,20 +493,6 @@ Public Module CUDA
                         ' ColBody(Master).LastColID = Slave
                         If DistSqrt > 0 Then
 
-                            'V1x = MySpeedX
-                            'V1y = MySpeedY
-                            'V2x = MySlaveSpeedX
-                            'V2y = MySlaveSpeedY
-                            'M1 = MyMass
-                            'M2 = MySlaveMass
-                            'VekX = DistX * 0.5 ' (Ball(A).LocX - Ball(B).LocX) / 2
-                            'VeKY = DistY * 0.5 '(Ball(A).LocY - Ball(B).LocY) / 2
-                            'VekX = VekX / (DistSqrt * 0.5) 'LenG
-                            'VeKY = VeKY / (DistSqrt * 0.5) 'LenG
-                            'V1 = VekX * V1x + VeKY * V1y
-                            'V2 = VekX * V2x + VeKY * V2y
-                            'U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-                            'U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
                             If MyInRoche = 0 And MySlaveInRoche = 1 Then
                                 V1x = MySpeedX
                                 V1y = MySpeedY
@@ -521,18 +500,20 @@ Public Module CUDA
                                 V2y = MySlaveSpeedY
                                 M1 = MyMass
                                 M2 = MySlaveMass
-                                VekX = DistX * 0.5 ' (Ball(A).LocX - Ball(B).LocX) / 2
-                                VeKY = DistY * 0.5 '(Ball(A).LocY - Ball(B).LocY) / 2
-                                VekX = VekX / (DistSqrt * 0.5) 'LenG
-                                VeKY = VeKY / (DistSqrt * 0.5) 'LenG
-                                V1 = VekX * V1x + VeKY * V1y
-                                V2 = VekX * V2x + VeKY * V2y
-                                U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-                                U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
+
+
+                                dotProd = DistX * (V2x - V1x) + DistY * (V2y - V1y)
+                                colScale = dotProd / Dist
+                                colX = DistX * colScale
+                                colY = DistY * colScale
+                                combMass = M1 + M2
+                                colWeightMaster = 2 * M2 / combMass
+                                colWeightSlave = 2 * M1 / combMass
+
                                 If MyMass > MySlaveMass Then
-                                    MySpeedX = MySpeedX + (U1 - V1) * VekX
-                                    MySpeedY = MySpeedY + (U1 - V1) * VeKY
-                                    'Body(Slave).Visible = 0
+                                    MySpeedX += colWeightSlave * colX
+                                    MySpeedY += colWeightSlave * colY
+
                                     Area1 = PI * (ColBody(Master).Size ^ 2)
                                     Area2 = PI * (Body(Slave).Size ^ 2)
                                     Area1 = Area1 + Area2
@@ -540,9 +521,10 @@ Public Module CUDA
                                     MyMass = MyMass + MySlaveMass 'Sqr(Ball(B).Mass)
                                 ElseIf MyMass = MySlaveMass Then
                                     If MyUID > MySlaveUID Then
-                                        MySpeedX = MySpeedX + (U1 - V1) * VekX
-                                        MySpeedY = MySpeedY + (U1 - V1) * VeKY
-                                        ' Body(Slave).Visible = 0
+
+                                        MySpeedX += colWeightSlave * colX
+                                        MySpeedY += colWeightSlave * colY
+
                                         Area1 = PI * (ColBody(Master).Size ^ 2)
                                         Area2 = PI * (Body(Slave).Size ^ 2)
                                         Area1 = Area1 + Area2
@@ -561,18 +543,21 @@ Public Module CUDA
                                 V2y = MySlaveSpeedY
                                 M1 = MyMass
                                 M2 = MySlaveMass
-                                VekX = DistX * 0.5 ' (Ball(A).LocX - Ball(B).LocX) / 2
-                                VeKY = DistY * 0.5 '(Ball(A).LocY - Ball(B).LocY) / 2
-                                VekX = VekX / (DistSqrt * 0.5) 'LenG
-                                VeKY = VeKY / (DistSqrt * 0.5) 'LenG
-                                V1 = VekX * V1x + VeKY * V1y
-                                V2 = VekX * V2x + VeKY * V2y
-                                U1 = (M1 * V1 + M2 * V2 - M2 * (V1 - V2)) / (M1 + M2)
-                                U2 = (M1 * V1 + M2 * V2 - M1 * (V2 - V1)) / (M1 + M2)
+
+                                dotProd = DistX * (V2x - V1x) + DistY * (V2y - V1y)
+                                colScale = dotProd / Dist
+                                colX = DistX * colScale
+                                colY = DistY * colScale
+                                combMass = M1 + M2
+                                colWeightMaster = 2 * M1 / combMass
+                                colWeightSlave = 2 * M2 / combMass
+
+
                                 If MyMass > MySlaveMass Then
-                                    MySpeedX = MySpeedX + (U1 - V1) * VekX
-                                    MySpeedY = MySpeedY + (U1 - V1) * VeKY
-                                    'Body(Slave).Visible = 0
+
+                                    MySpeedX += colWeightSlave * colX
+                                    MySpeedY += colWeightSlave * colY
+
                                     Area1 = PI * (ColBody(Master).Size ^ 2)
                                     Area2 = PI * (Body(Slave).Size ^ 2)
                                     Area1 = Area1 + Area2
@@ -580,9 +565,9 @@ Public Module CUDA
                                     MyMass = MyMass + MySlaveMass 'Sqr(Ball(B).Mass)
                                 ElseIf MyMass = MySlaveMass Then
                                     If MyUID > MySlaveUID Then
-                                        MySpeedX = MySpeedX + (U1 - V1) * VekX
-                                        MySpeedY = MySpeedY + (U1 - V1) * VeKY
-                                        '  Body(Slave).Visible = 0
+                                        MySpeedX += colWeightSlave * colX
+                                        MySpeedY += colWeightSlave * colY
+
                                         Area1 = PI * (ColBody(Master).Size ^ 2)
                                         Area2 = PI * (Body(Slave).Size ^ 2)
                                         Area1 = Area1 + Area2
@@ -642,41 +627,6 @@ Public Module CUDA
                                 MySpeedX += ForceX
                                 MySpeedY += ForceY
 
-
-                                'If DistSqrt < colDist Then
-
-                                '    'Dim diff As Single = colDist * 0.5 - DistSqrt
-                                '    MyLocX -= (DistX / 4) ' * 0.5)
-                                '    MyLocY -= (DistY / 4) ' * 0.5)
-
-                                'End If
-
-
-                                'ColBody(Master).ForceX += ForceX
-                                'ColBody(Master).ForceY += ForceY
-
-                                'ColBody(Master).ColForceX = ForceX
-                                'ColBody(Master).ColForceY = ForceY
-                                '   End If
-
-                                ''M1 = MyMass
-                                ''M2 = MySlaveMass
-                                ''TotMass = M1 * M2 'M1 * M2
-                                ''Dim EPS As Double = 0.1
-                                ''Force = TotMass / ((DistSqrt * DistSqrt) + EPS) '(ColBody(Master).Size / 2 + Body(Slave).Size / 2)) 'EPS) 'EPS * EPS)
-                                ''ForceX = Force * DistX / DistSqrt
-                                ''ForceY = Force * DistY / DistSqrt
-                                ''Dim multi As Integer = 20 - (Sqrt(MySlaveMass)) ' * 2) ' - (TimeStep * 1000) '(Sqrt(TimeStep) * 100)
-
-                                ''ColBody(Master).ForceX -= (ForceX * multi)
-                                ''ColBody(Master).ForceY -= (ForceY * multi)
-
-
-
-
-                                'Dim Friction As Double = 0.5 + ((ColBody(Slave).Mass * 0.001) * -1)
-                                'MySpeedX += (U1 - V1) * VekX * Friction
-                                'MySpeedY += (U1 - V1) * VeKY * Friction
 
                             ElseIf MyInRoche = 1 And MySlaveInRoche = 0 Then
                                 ColBody(Master).Visible = 0

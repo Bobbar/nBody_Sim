@@ -219,7 +219,7 @@ Public Class Form1
             '    Ball(i).Old_LocY = Ball(i).LocY
             'Next
             If Sel = -1 Then
-                For i = 1 To UBound(Ball)
+                For i = 0 To UBound(Ball)
                     'Debug.Print "LocX: " & Ball(i).LocX & vbCrLf & "LocY: " & Ball(i).LocY & vbCrLf & "SpeedX: " & Ball(i).SpeedX & vbCrLf & "SpeedY: " & Ball(i).SpeedY
                     If MouseOver(New SPoint(e.Location), Ball(i)) Then
                         'Debug.Print(Render.PointToClient(New Point(Ball(i).LocX, Ball(i).LocY)).ToString)
