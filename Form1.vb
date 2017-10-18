@@ -2074,4 +2074,8 @@ Err:
     Private Sub CullDistantToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CullDistantToolStripMenuItem.Click
         bolCullDistant = True
     End Sub
+
+    Private Sub RocheLimitToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RocheLimitToolStripMenuItem.Click
+        bolRocheLimit = RocheLimitToolStripMenuItem.Checked
+    End Sub
 End Class

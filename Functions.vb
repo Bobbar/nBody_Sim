@@ -18,6 +18,7 @@ Module Functions
     Public bolRendering As Boolean
     Public bolStoring As Boolean
     Public bolPlaying As Boolean
+    Public bolRocheLimit As Boolean = True
 
     Public TrueFPS As Integer
     Public RenderTime As Double
@@ -87,17 +88,10 @@ Module Functions
     Public Sub CalcDelay()
         EndTick = Now.Ticks
         ElapTick = EndTick - StartTick
-        RenderTime = ElapTick / 10000
+        RenderTime = (ElapTick / 10000) - intDelay
         FPS = 10000000 / ElapTick
-        If FPS > intTargetFPS Then
-            intDelay = intDelay + 1
-        Else
-            If intDelay > 0 Then
-                intDelay = intDelay - 1
-            Else
-                intDelay = 0
-            End If
-        End If
+        intDelay = 1000 / intTargetFPS - RenderTime
+        If intDelay < 0 Then intDelay = 0
 
     End Sub
     Public Function VisibleBalls() As Integer

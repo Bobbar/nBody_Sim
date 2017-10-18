@@ -186,7 +186,7 @@ Public Module CUDA
 
 
         'Launch the kernel to calculate body forces.
-        gpu.Launch(nBlocks, threads).CalcPhysics(gpuInBall, StepMulti, gpuOutBall)
+        gpu.Launch(nBlocks, threads).CalcPhysics(gpuInBall, StepMulti, gpuOutBall, Convert.ToInt32(bolRocheLimit))
 
 
         gpu.Synchronize()
@@ -220,14 +220,14 @@ Public Module CUDA
                 '   Debug.Print(Ball(a).UID)
                 If Ball(a).Visible = 1 Then
 
-                    If Ball(a).InRoche = 1 And Ball(a).BlackHole = 0 Then
-                        If Ball(a).BlackHole <> 2 Then NewBalls.AddRange(FractureBall(Ball(a)))
-                    End If
-
-
-                    If Ball(a).BlackHole = 2 Then Ball(a).InRoche = 1
-                    If Ball(a).BlackHole = 1 Then Ball(a).Size = 3
+                If Ball(a).InRoche = 1 And Ball(a).BlackHole = 0 Then
+                    If Ball(a).BlackHole <> 2 Then NewBalls.AddRange(FractureBall(Ball(a)))
                 End If
+
+
+                If Ball(a).BlackHole = 2 Then Ball(a).InRoche = 1
+                If Ball(a).BlackHole = 1 Then Ball(a).Size = 3
+            End If
             Next
 
             If NewBalls.Count > 0 Then
@@ -243,9 +243,9 @@ Public Module CUDA
             NewBalls = Nothing
 
 
-            mDelta += Round((TotalMass() - PrevMass), 5)
+        mDelta += Round((TotalMass() - PrevMass), 5)
 
-            bolRendering = False
+        bolRendering = False
 
     End Sub
 
@@ -306,7 +306,7 @@ Public Module CUDA
 
 
     <Cudafy>
-    Public Sub CalcPhysics(gpThread As GThread, Body() As Body_Struct, TimeStep As Single, OutBody() As Body_Struct) ', DebugStuff() As Debug_Struct) ', LB As Integer, UB As Integer)
+    Public Sub CalcPhysics(gpThread As GThread, Body() As Body_Struct, TimeStep As Single, OutBody() As Body_Struct, EnableRoche As Integer) ', DebugStuff() As Debug_Struct) ', LB As Integer, UB As Integer)
 
 
         Dim A As Integer = gpThread.blockDim.x * gpThread.blockIdx.x + gpThread.threadIdx.x
@@ -401,9 +401,12 @@ Public Module CUDA
 
 
 
-                If OutBody(A).ForceTot > OutBody(A).Mass * 6 And OutBody(A).BlackHole = 0 Then
-                    ' OutBody(A).InRoche = 1
-                    OutBody(A).InRoche = 0
+                If OutBody(A).ForceTot > OutBody(A).Mass * 10 And OutBody(A).BlackHole = 0 Then
+                    If EnableRoche = 1 Then
+                        OutBody(A).InRoche = 1
+                    Else
+                        OutBody(A).InRoche = 0
+                    End If
                 ElseIf (OutBody(A).ForceTot * 2) < OutBody(A).Mass * 4 Then
                     OutBody(A).InRoche = 0
                 ElseIf OutBody(A).BlackHole = 2 Then
@@ -501,7 +504,6 @@ Public Module CUDA
                                 M1 = MyMass
                                 M2 = MySlaveMass
 
-
                                 dotProd = DistX * (V2x - V1x) + DistY * (V2y - V1y)
                                 colScale = dotProd / Dist
                                 colX = DistX * colScale
@@ -511,8 +513,8 @@ Public Module CUDA
                                 colWeightSlave = 2 * M1 / combMass
 
                                 If MyMass > MySlaveMass Then
-                                    MySpeedX += colWeightSlave * colX
-                                    MySpeedY += colWeightSlave * colY
+                                    MySpeedX += colWeightMaster * colX
+                                    MySpeedY += colWeightMaster * colY
 
                                     Area1 = PI * (ColBody(Master).Size ^ 2)
                                     Area2 = PI * (Body(Slave).Size ^ 2)
@@ -522,8 +524,8 @@ Public Module CUDA
                                 ElseIf MyMass = MySlaveMass Then
                                     If MyUID > MySlaveUID Then
 
-                                        MySpeedX += colWeightSlave * colX
-                                        MySpeedY += colWeightSlave * colY
+                                        MySpeedX += colWeightMaster * colX
+                                        MySpeedY += colWeightMaster * colY
 
                                         Area1 = PI * (ColBody(Master).Size ^ 2)
                                         Area2 = PI * (Body(Slave).Size ^ 2)
@@ -549,14 +551,14 @@ Public Module CUDA
                                 colX = DistX * colScale
                                 colY = DistY * colScale
                                 combMass = M1 + M2
-                                colWeightMaster = 2 * M1 / combMass
-                                colWeightSlave = 2 * M2 / combMass
+                                colWeightMaster = 2 * M2 / combMass
+                                colWeightSlave = 2 * M1 / combMass
 
 
                                 If MyMass > MySlaveMass Then
 
-                                    MySpeedX += colWeightSlave * colX
-                                    MySpeedY += colWeightSlave * colY
+                                    MySpeedX += colWeightMaster * colX
+                                    MySpeedY += colWeightMaster * colY
 
                                     Area1 = PI * (ColBody(Master).Size ^ 2)
                                     Area2 = PI * (Body(Slave).Size ^ 2)
@@ -565,8 +567,8 @@ Public Module CUDA
                                     MyMass = MyMass + MySlaveMass 'Sqr(Ball(B).Mass)
                                 ElseIf MyMass = MySlaveMass Then
                                     If MyUID > MySlaveUID Then
-                                        MySpeedX += colWeightSlave * colX
-                                        MySpeedY += colWeightSlave * colY
+                                        MySpeedX += colWeightMaster * colX
+                                        MySpeedY += colWeightMaster * colY
 
                                         Area1 = PI * (ColBody(Master).Size ^ 2)
                                         Area2 = PI * (Body(Slave).Size ^ 2)
