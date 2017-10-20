@@ -439,10 +439,6 @@ Public Module CUDA
 
 
 #Region "Collisions"
-            Dim V1x As Single
-            Dim V2x As Single
-            Dim V1y As Single
-            Dim V2y As Single
             Dim Area1 As Single, Area2 As Single
 
             Dim dotProd As Single
@@ -453,35 +449,23 @@ Public Module CUDA
             Dim colWeightSlave As Single
             Dim colWeightMaster As Single
 
-            ' Dim OutSpeedX, OutSpeedY, OutSize As Single
             Dim OutSize As Single
             Dim OutUID As Long
             Dim OutInRoche As Integer
+            Dim OutBodyVisible As Integer
 
             Dim MySlaveLocX, MySlaveLocY, MySlaveMass, MySlaveSpeedX, MySlaveSpeedY, MySlaveSize As Single
             Dim MySlaveInRoche As Integer
             Dim MySlaveUID As Long
 
-            ' If A <= Body.Length - 1 And Body(A).Visible = 1 Then
-            '  ColBody(Master) = Body(Master)
 
-            'OutLocX = Body(A).LocX
-            'OutLocY = Body(A).LocY
-            'OutSpeedX = Body(A).SpeedX
-            'OutSpeedY = Body(A).SpeedY
-            'MyForceX = Body(Master).ForceX
-            'MyForceY = Body(Master).ForceY
-            'OutMass = Body(A).Mass
             OutInRoche = Body(A).InRoche
             OutUID = Body(A).UID
             OutSize = Body(A).Size
+            OutBodyVisible = Body(A).Visible
 
+            For B As Integer = 0 To Body.Length - 1
 
-                For B As Integer = 0 To Body.Length - 1
-
-                'Dim MySlaveLocX, MySlaveLocY, MySlaveMass, MySlaveSpeedX, MySlaveSpeedY, MySlaveSize As Single
-                'Dim MySlaveInRoche As Integer
-                'Dim MySlaveUID As Long
 
                 MySlaveLocX = Body(B).LocX
                 MySlaveLocY = Body(B).LocY
@@ -504,174 +488,164 @@ Public Module CUDA
 
 
                     If DistSqrt <= (OutSize * 0.5) + (MySlaveSize * 0.5) Then
-                            ' ColBody(Master).LastColID = Slave
-                            If DistSqrt > 0 Then
 
-                                If OutInRoche = 0 And MySlaveInRoche = 1 Then
-                                    V1x = OutSpeedX
-                                    V1y = OutSpeedY
-                                    V2x = MySlaveSpeedX
-                                    V2y = MySlaveSpeedY
-                                    M1 = OutMass
-                                    M2 = MySlaveMass
+                        If DistSqrt > 0 Then
 
-                                    dotProd = DistX * (V2x - V1x) + DistY * (V2y - V1y)
-                                    colScale = dotProd / Dist
-                                    colX = DistX * colScale
-                                    colY = DistY * colScale
-                                    combMass = M1 + M2
-                                    colWeightMaster = 2 * M2 / combMass
-                                    colWeightSlave = 2 * M1 / combMass
-
-                                    If OutMass > MySlaveMass Then
-                                        OutSpeedX += colWeightMaster * colX
-                                        OutSpeedY += colWeightMaster * colY
-
-                                        Area1 = PI * (OutBody(A).Size ^ 2)
-                                        Area2 = PI * (Body(B).Size ^ 2)
-                                        Area1 = Area1 + Area2
-                                        OutBody(A).Size = Sqrt(Area1 / PI)
-                                        OutMass = OutMass + MySlaveMass 'Sqr(Ball(B).Mass)
-                                    ElseIf OutMass = MySlaveMass Then
-                                        If OutUID > MySlaveUID Then
-
-                                            OutSpeedX += colWeightMaster * colX
-                                            OutSpeedY += colWeightMaster * colY
-
-                                            Area1 = PI * (OutBody(A).Size ^ 2)
-                                            Area2 = PI * (Body(B).Size ^ 2)
-                                            Area1 = Area1 + Area2
-                                            OutBody(A).Size = Sqrt(Area1 / PI)
-                                            OutMass = OutMass + MySlaveMass 'Sqr(Ball(B).Mass)
-                                        Else
-                                            OutBody(A).Visible = 0
-                                        End If
-                                    Else
-                                        OutBody(A).Visible = 0
-                                    End If
-                                ElseIf OutInRoche = 0 And MySlaveInRoche = 0 Then
-                                    V1x = OutSpeedX
-                                    V1y = OutSpeedY
-                                    V2x = MySlaveSpeedX
-                                    V2y = MySlaveSpeedY
-                                    M1 = OutMass
-                                    M2 = MySlaveMass
-
-                                    dotProd = DistX * (V2x - V1x) + DistY * (V2y - V1y)
-                                    colScale = dotProd / Dist
-                                    colX = DistX * colScale
-                                    colY = DistY * colScale
-                                    combMass = M1 + M2
-                                    colWeightMaster = 2 * M2 / combMass
-                                    colWeightSlave = 2 * M1 / combMass
+                            If OutInRoche = 0 And MySlaveInRoche = 1 Then
 
 
-                                    If OutMass > MySlaveMass Then
+                                dotProd = DistX * (MySlaveSpeedX - OutSpeedX) + DistY * (MySlaveSpeedY - OutSpeedY)
+                                colScale = dotProd / Dist
+                                colX = DistX * colScale
+                                colY = DistY * colScale
+                                combMass = OutMass + MySlaveMass
+                                colWeightMaster = 2 * MySlaveMass / combMass
+                                colWeightSlave = 2 * OutMass / combMass
 
-                                        OutSpeedX += colWeightMaster * colX
-                                        OutSpeedY += colWeightMaster * colY
-
-                                        Area1 = PI * (OutBody(A).Size ^ 2)
-                                        Area2 = PI * (Body(B).Size ^ 2)
-                                        Area1 = Area1 + Area2
-                                        OutBody(A).Size = Sqrt(Area1 / PI)
-                                        OutMass = OutMass + MySlaveMass 'Sqr(Ball(B).Mass)
-                                    ElseIf OutMass = MySlaveMass Then
-                                        If OutUID > MySlaveUID Then
-                                            OutSpeedX += colWeightMaster * colX
-                                            OutSpeedY += colWeightMaster * colY
-
-                                            Area1 = PI * (OutBody(A).Size ^ 2)
-                                            Area2 = PI * (Body(B).Size ^ 2)
-                                            Area1 = Area1 + Area2
-                                            OutBody(A).Size = Sqrt(Area1 / PI)
-                                            OutMass = OutMass + MySlaveMass 'Sqr(Ball(B).Mass)
-                                        Else
-                                            OutBody(A).Visible = 0
-                                        End If
-                                    Else
-                                        OutBody(A).Visible = 0
-                                    End If
-
-
-
-
-                                ElseIf OutInRoche = 1 And MySlaveInRoche = 1 Then
-
-                                    Dim BounceForceX As Single
-                                    Dim BounceForceY As Single
-
-                                    'Lame Spring force attempt. It's literally a reversed gravity force that's increased with a multiplier.
-                                    Dim colDist As Single = (OutSize * 0.5) + (MySlaveSize * 0.5)
-                                    '   If DistSqrt < colDist Then
-                                    'Dim EPS As Double = 0.1
-                                    'M1 = MyMass
-                                    'M2 = MySlaveMass
-                                    'TotMass = M1 + M2
-                                    'Force = TotMass / ((DistSqrt * DistSqrt) + EPS)
-
-
-                                    Dim normX As Single = DistX / DistSqrt
-                                    Dim normY As Single = DistY / DistSqrt
-
-                                    Dim relVelX As Single = MySlaveSpeedX - OutSpeedX
-                                    Dim relVelY As Single = MySlaveSpeedY - OutSpeedY
-                                    'Dim gpMath As GPGPUSPARSE
-                                    'gpMath.DOT()
-
-
-                                    Dim SpringF As Single = 2
-                                    BounceForceX = -SpringF * (colDist - DistSqrt) * normX * MySlaveMass
-                                    BounceForceY = -SpringF * (colDist - DistSqrt) * normY * MySlaveMass
-
-
-
-
-                                    Dim Damping As Single = 0.03 '0.8 '0.02
-                                    BounceForceX += Damping * relVelX
-                                    BounceForceY += Damping * relVelY
-
-
-
-                                    'Dim Shear As Single = 0.1
-                                    'Dim tanVelX As Single = relVelX - (((relVelX * normX) + (relVelY * normY)) * normX)
-                                    'Dim tanVelY As Single = relVelY - (((relVelX * normX) + (relVelY * normY)) * normY)
-                                    'ForceX += Shear * tanVelX
-                                    'ForceY += Shear * tanVelY
-                                    ' 
-
-                                    OutSpeedX += BounceForceX
-                                    OutSpeedY += BounceForceY
-
-
-                                ElseIf OutInRoche = 1 And MySlaveInRoche = 0 Then
-                                    OutBody(A).Visible = 0
-                                End If
-
-                            Else ' if bodies are at exact same position
                                 If OutMass > MySlaveMass Then
-                                    Area1 = PI * (OutBody(A).Size ^ 2)
-                                    Area2 = PI * (Body(B).Size ^ 2)
+                                    OutSpeedX += colWeightMaster * colX
+                                    OutSpeedY += colWeightMaster * colY
+
+                                    Area1 = PI * (OutSize ^ 2)
+                                    Area2 = PI * (MySlaveSize ^ 2)
                                     Area1 = Area1 + Area2
-                                    OutBody(A).Size = Sqrt(Area1 / PI)
-                                    OutMass = OutMass + MySlaveMass
+                                    OutSize = Sqrt(Area1 / PI)
+                                    OutMass = OutMass + MySlaveMass 'Sqr(Ball(B).Mass)
+                                ElseIf OutMass = MySlaveMass Then
+                                    If OutUID > MySlaveUID Then
 
+                                        OutSpeedX += colWeightMaster * colX
+                                        OutSpeedY += colWeightMaster * colY
+
+                                        Area1 = PI * (OutSize ^ 2)
+                                        Area2 = PI * (MySlaveSize ^ 2)
+                                        Area1 = Area1 + Area2
+                                        OutSize = Sqrt(Area1 / PI)
+                                        OutMass = OutMass + MySlaveMass 'Sqr(Ball(B).Mass)
+                                    Else
+                                        OutBodyVisible = 0
+                                    End If
                                 Else
-
-                                    OutBody(A).Visible = 0
+                                    OutBodyVisible = 0
                                 End If
+                            ElseIf OutInRoche = 0 And MySlaveInRoche = 0 Then
+
+                                dotProd = DistX * (MySlaveSpeedX - OutSpeedX) + DistY * (MySlaveSpeedY - OutSpeedY)
+                                colScale = dotProd / Dist
+                                colX = DistX * colScale
+                                colY = DistY * colScale
+                                combMass = OutMass + MySlaveMass
+                                colWeightMaster = 2 * MySlaveMass / combMass
+                                colWeightSlave = 2 * OutMass / combMass
+
+
+                                If OutMass > MySlaveMass Then
+
+                                    OutSpeedX += colWeightMaster * colX
+                                    OutSpeedY += colWeightMaster * colY
+
+                                    Area1 = PI * (OutSize ^ 2)
+                                    Area2 = PI * (MySlaveSize ^ 2)
+                                    Area1 = Area1 + Area2
+                                    OutSize = Sqrt(Area1 / PI)
+                                    OutMass = OutMass + MySlaveMass 'Sqr(Ball(B).Mass)
+                                ElseIf OutMass = MySlaveMass Then
+                                    If OutUID > MySlaveUID Then
+                                        OutSpeedX += colWeightMaster * colX
+                                        OutSpeedY += colWeightMaster * colY
+
+                                        Area1 = PI * (OutSize ^ 2)
+                                        Area2 = PI * (MySlaveSize ^ 2)
+                                        Area1 = Area1 + Area2
+                                        OutSize = Sqrt(Area1 / PI)
+                                        OutMass = OutMass + MySlaveMass 'Sqr(Ball(B).Mass)
+                                    Else
+                                        OutBodyVisible = 0
+                                    End If
+                                Else
+                                    OutBodyVisible = 0
+                                End If
+
+
+
+
+                            ElseIf OutInRoche = 1 And MySlaveInRoche = 1 Then
+
+                                Dim BounceForceX As Single
+                                Dim BounceForceY As Single
+
+                                'Lame Spring force attempt. It's literally a reversed gravity force that's increased with a multiplier.
+                                Dim colDist As Single = (OutSize * 0.5) + (MySlaveSize * 0.5)
+                                '   If DistSqrt < colDist Then
+                                'Dim EPS As Double = 0.1
+                                'M1 = MyMass
+                                'M2 = MySlaveMass
+                                'TotMass = M1 + M2
+                                'Force = TotMass / ((DistSqrt * DistSqrt) + EPS)
+
+
+                                Dim normX As Single = DistX / DistSqrt
+                                Dim normY As Single = DistY / DistSqrt
+
+                                Dim relVelX As Single = MySlaveSpeedX - OutSpeedX
+                                Dim relVelY As Single = MySlaveSpeedY - OutSpeedY
+                                'Dim gpMath As GPGPUSPARSE
+                                'gpMath.DOT()
+
+
+                                Dim SpringF As Single = 2
+                                BounceForceX = -SpringF * (colDist - DistSqrt) * normX * MySlaveMass
+                                BounceForceY = -SpringF * (colDist - DistSqrt) * normY * MySlaveMass
+
+
+
+
+                                Dim Damping As Single = 0.03 '0.8 '0.02
+                                BounceForceX += Damping * relVelX
+                                BounceForceY += Damping * relVelY
+
+
+
+                                'Dim Shear As Single = 0.1
+                                'Dim tanVelX As Single = relVelX - (((relVelX * normX) + (relVelY * normY)) * normX)
+                                'Dim tanVelY As Single = relVelY - (((relVelX * normX) + (relVelY * normY)) * normY)
+                                'ForceX += Shear * tanVelX
+                                'ForceY += Shear * tanVelY
+                                ' 
+
+                                OutSpeedX += BounceForceX
+                                OutSpeedY += BounceForceY
+
+
+                            ElseIf OutInRoche = 1 And MySlaveInRoche = 0 Then
+                                OutBodyVisible = 0
+                            End If
+
+                        Else ' if bodies are at exact same position
+                            If OutMass > MySlaveMass Then
+                                Area1 = PI * (OutSize ^ 2)
+                                Area2 = PI * (MySlaveSize ^ 2)
+                                Area1 = Area1 + Area2
+                                OutSize = Sqrt(Area1 / PI)
+                                OutMass = OutMass + MySlaveMass
+
+                            Else
+
+                                OutBodyVisible = 0
                             End If
                         End If
                     End If
+                End If
 
-                Next
+            Next
 
-
-                OutBody(A).SpeedX = OutSpeedX
-                OutBody(A).SpeedY = OutSpeedY
-                OutBody(A).LocX = OutLocX
-                OutBody(A).LocY = OutLocY
-                OutBody(A).Mass = OutMass
+            OutBody(A).SpeedX = OutSpeedX
+            OutBody(A).SpeedY = OutSpeedY
+            OutBody(A).LocX = OutLocX
+            OutBody(A).LocY = OutLocY
+            OutBody(A).Mass = OutMass
+            OutBody(A).Size = OutSize
+            OutBody(A).Visible = OutBodyVisible
 
             gpThread.SyncThreads()
 
