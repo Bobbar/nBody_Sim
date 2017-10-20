@@ -52,14 +52,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Gravity Physics.exe" size="113096">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Gravity Physics.exe" size="114632">
       <assemblyIdentity name="Gravity Physics" version="1.0.0.0" language="neutral" processorArchitecture="amd64" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>59MlXgH5rbgAYkGexCxPPlcD9L4s0Lr3zfSHmp8zkgY=</dsig:DigestValue>
+        <dsig:DigestValue>Z/0WdYbHtR6GRkSpUqdkRA53Qq+uIAWOBhVv7rhrmMg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
