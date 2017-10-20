@@ -16,7 +16,7 @@ Public Module Renderer
     Public FinalOffset As SPoint
     ' Public buffBall() As Body_Struct
     Private BHHighlightPen As New Pen(Color.Red)
-    Private BodyBrush As SolidBrush
+    ' Private BodyBrush As SolidBrush
     Private FollowLoc As SPoint
     'Public RenderWindowDimsH As Integer
     'Public RenderWindowDimsW As Integer
@@ -58,7 +58,7 @@ Public Module Renderer
         End If
         ' Dim myPen As New Pen(Color.Red)
 
-        If Not bolTrails Then gr.Clear(colBackColor)
+
 
         If bolAntiAliasing Then
             gr.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
@@ -67,6 +67,7 @@ Public Module Renderer
         End If
         '  Dim myBrush As SolidBrush '(BallArray(i).Color)
         If bolDraw Then
+            If Not bolTrails Then gr.Clear(colBackColor)
             bolDrawing = True
             If bolFollow Then
                 FollowLoc = FollowBodyLoc(BallArray)
@@ -85,27 +86,25 @@ Public Module Renderer
                     'Else
                     If Not CullBody(BodyLoc) Then
 
-                        If bolInvert Then
-                            BodyBrush = New SolidBrush(Color.Black)
-                        Else
-                            BodyBrush = New SolidBrush(Color.FromArgb(BallArray(i).Color))
-                        End If
-
+                        'If bolInvert Then
+                        '    BodyBrush = New SolidBrush(Color.Black)
+                        'Else
+                        '    BodyBrush = New SolidBrush(Color.FromArgb(BallArray(i).Color))
+                        'End If
 
 
 
                         If bolFollow Then
 
-
                             RelBallPosMod.X = -FollowLoc.X
                             RelBallPosMod.Y = -FollowLoc.Y
 
                         End If
+                        Using BodyBrush = GetBodyBrush(BallArray(i).Color)
+                            ' gr.FillEllipse(myBrush, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
 
-                        ' gr.FillEllipse(myBrush, BodyLoc.X - BodySize / 2 + FinalOffset.X, BodyLoc.Y - BodySize / 2 + FinalOffset.Y, BodySize, BodySize)
-
-                        gr.FillEllipse(BodyBrush, BodyLoc.X - BodySize * 0.5F + FinalOffset.X, BodyLoc.Y - BodySize * 0.5F + FinalOffset.Y, BodySize, BodySize)
-
+                            gr.FillEllipse(BodyBrush, BodyLoc.X - BodySize * 0.5F + FinalOffset.X, BodyLoc.Y - BodySize * 0.5F + FinalOffset.Y, BodySize, BodySize)
+                        End Using
 
 
                         If BallArray(i).BlackHole = 1 Then
@@ -140,13 +139,21 @@ Public Module Renderer
 
             Next
         End If
-        If BodyBrush IsNot Nothing Then BodyBrush.Dispose()
+
 
         Form1.Render.Image = bm
         Form1.Render.Invalidate()
         bolDrawing = False
 
     End Sub
+    Private Function GetBodyBrush(aRGBColor As Integer) As SolidBrush
+        If bolInvert Then
+            Return New SolidBrush(Color.Black)
+        Else
+            Return New SolidBrush(Color.FromArgb(aRGBColor))
+        End If
+    End Function
+
 
     Private Function CullBody(body As SPoint) As Boolean
         If bolCulling Then
